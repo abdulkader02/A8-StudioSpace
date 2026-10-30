@@ -53,7 +53,7 @@ export default function Navbar() {
               href={link.href}
               className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors xl:px-4 ${
                 isActive(link.href)
-                  ? "bg-[#F0F7FC] text-[#176B9B]"
+                  ? "bg-[#F0F7FC] text-black"
                   : "text-slate-600 hover:bg-slate-50 hover:text-[#176B9B]"
               }`}
             >
