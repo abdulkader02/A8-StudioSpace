@@ -59,7 +59,7 @@ export default function Hero() {
   return (
     <section
       aria-label="Featured studios"
-      className="relative h-[calc(100svh-64px)] min-h-[540px] w-full overflow-hidden bg-black sm:h-[calc(100svh-72px)]"
+      className="relative h-[calc(100svh-64px)] min-h-[540px] w-full overflow-hidden bg-brand-dark sm:h-[calc(100svh-72px)]"
     >
       <Swiper
         modules={[Navigation, Pagination, Autoplay, EffectFade, Keyboard, A11y]}
@@ -86,26 +86,26 @@ export default function Hero() {
               style={{ backgroundImage: `url(${slide.image})` }}
             >
               {/* Dark overlay for readability */}
-              <div className="absolute inset-0 bg-black/60" />
-              <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
+              <div className="absolute inset-0 bg-brand-dark/60" />
+              <div className="absolute inset-0 bg-gradient-to-r from-brand-dark/85 via-brand-dark/40 to-transparent" />
 
               <div className="relative mx-auto flex h-full w-full max-w-7xl flex-col justify-center px-4 sm:px-6 lg:px-8">
                 <div className="hero-content max-w-2xl">
                   {/* Badge */}
-                  <span className="inline-flex items-center gap-2 rounded-full border border-[#176B9B]/40 bg-[#176B9B]/15 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-[#4DA3D9]">
+                  <span className="inline-flex items-center gap-2 rounded-full border border-brand-bronze/40 bg-brand-bronze/15 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-brand-bronze-light">
                     <Sparkles className="h-3.5 w-3.5" />
                     {slide.badge}
                   </span>
 
                   {/* Headline */}
-                  <h1 className="mt-6 text-4xl font-bold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-6xl">
+                  <h1 className="mt-6 text-4xl font-bold leading-[1.1] tracking-tight text-brand-ivory sm:text-5xl lg:text-6xl">
                     {slide.titleTop}
                     <br />
-                    <span className="text-[#4DA3D9]">{slide.titleAccent}</span>
+                    <span className="text-brand-bronze">{slide.titleAccent}</span>
                   </h1>
 
                   {/* Subtext */}
-                  <p className="mt-6 max-w-xl text-base leading-relaxed text-slate-300 sm:text-lg">
+                  <p className="mt-6 max-w-xl text-base leading-relaxed text-[#F5F0E8]/75 sm:text-lg">
                     {slide.subtitle}
                   </p>
 
@@ -113,7 +113,7 @@ export default function Hero() {
                   <div className="mt-9 flex flex-wrap items-center gap-4">
                     <Link
                       href="/studios"
-                      className="inline-flex items-center gap-2 rounded-lg bg-[#176B9B] px-6 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#12577F] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#176B9B] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                      className="inline-flex items-center gap-2 rounded-xl bg-brand-bronze px-6 py-3 text-sm font-semibold text-brand-dark shadow-sm transition-colors hover:bg-brand-bronze-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-bronze focus-visible:ring-offset-2 focus-visible:ring-offset-brand-dark"
                     >
                       Explore Studios
                       <ArrowRight className="h-4 w-4" />
@@ -121,7 +121,7 @@ export default function Hero() {
 
                     <Link
                       href="/studios"
-                      className="inline-flex items-center rounded-lg border border-white/20 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-sm transition-colors hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                      className="inline-flex items-center rounded-xl border border-white/20 bg-white/10 px-6 py-3 text-sm font-semibold text-brand-ivory backdrop-blur-sm transition-colors hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-brand-dark"
                     >
                       Host Your Space
                     </Link>
@@ -136,14 +136,14 @@ export default function Hero() {
       {/* Navigation arrows */}
       <button
         type="button"
-        className="hero-prev absolute left-4 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white backdrop-blur-sm transition-colors hover:bg-white/20 md:flex"
+        className="hero-prev absolute left-4 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-white/10 text-brand-ivory backdrop-blur-sm transition-colors hover:bg-white/20 md:flex"
         aria-label="Previous slide"
       >
         <ChevronLeft className="h-5 w-5" />
       </button>
       <button
         type="button"
-        className="hero-next absolute right-4 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white backdrop-blur-sm transition-colors hover:bg-white/20 md:flex"
+        className="hero-next absolute right-4 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-white/10 text-brand-ivory backdrop-blur-sm transition-colors hover:bg-white/20 md:flex"
         aria-label="Next slide"
       >
         <ChevronRight className="h-5 w-5" />

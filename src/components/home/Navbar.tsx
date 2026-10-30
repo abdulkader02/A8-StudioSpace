@@ -12,7 +12,7 @@ const navLinks = [
   { name: "Home", href: "/" },
   { name: "Explore Studios", href: "/studios" },
   { name: "How It Works", href: "#how-it-works" },
-  { name: "About Us", href: "#about" },
+  { name: "About Us", href: "#aboutus" },
 ];
 
 export default function Navbar() {
@@ -25,7 +25,7 @@ export default function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-slate-200 bg-blue-100 backdrop-blur-md">
+    <header className="sticky top-0 z-50 w-full border-b border-brand-dark-soft bg-brand-dark backdrop-blur-md">
       <nav className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 sm:h-[72px] sm:px-6 lg:px-8">
 
         {/* Logo */}
@@ -40,8 +40,8 @@ export default function Navbar() {
             className="flex items-center gap-2 "/>
           
 
-          <span className="text-xl font-bold tracking-tight text-[#102A43] sm:text-2xl">
-            Studio<span className="text-[#176B9B]">Space</span>
+          <span className="text-xl font-bold tracking-tight text-brand-ivory sm:text-2xl">
+            Studio<span className="text-brand-bronze">Space</span>
           </span>
         </Link>
 
@@ -53,8 +53,8 @@ export default function Navbar() {
               href={link.href}
               className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors xl:px-4 ${
                 isActive(link.href)
-                  ? "bg-[#F0F7FC] text-black"
-                  : "text-slate-600 hover:bg-slate-50 hover:text-[#176B9B]"
+                  ? "bg-brand-dark-soft text-brand-ivory"
+                  : "text-[#F5F0E8]/75 hover:bg-brand-dark-soft hover:text-brand-bronze"
               }`}
             >
               {link.name}
@@ -66,14 +66,14 @@ export default function Navbar() {
         <div className="hidden items-center gap-3 lg:flex">
           <Link
             href="/login"
-            className="rounded-lg px-4 py-2.5 text-sm font-semibold text-[#102A43] transition-colors hover:bg-slate-100"
+            className="rounded-lg px-4 py-2.5 text-sm font-semibold text-brand-ivory transition-colors hover:bg-brand-dark-soft"
           >
             Login
           </Link>
 
           <Link
             href="/register"
-            className="rounded-lg bg-[#176B9B] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#12577F] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#176B9B] focus-visible:ring-offset-2"
+            className="rounded-xl bg-brand-bronze px-5 py-2.5 text-sm font-semibold text-brand-dark shadow-sm transition-colors hover:bg-brand-bronze-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-bronze focus-visible:ring-offset-2 focus-visible:ring-offset-brand-dark"
           >
             Register
           </Link>
@@ -86,7 +86,7 @@ export default function Navbar() {
           aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
           aria-expanded={isOpen}
           aria-controls="mobile-navigation"
-          className="flex h-10 w-10 items-center justify-center rounded-lg text-[#102A43] transition-colors hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#176B9B] lg:hidden"
+          className="flex h-10 w-10 items-center justify-center rounded-lg text-brand-ivory transition-colors hover:bg-brand-dark-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-bronze lg:hidden"
         >
           {isOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
@@ -96,7 +96,7 @@ export default function Navbar() {
       {isOpen && (
         <div
           id="mobile-navigation"
-          className="border-t border-slate-200 bg-white px-4 pb-5 pt-3 shadow-lg sm:px-6 lg:hidden"
+          className="border-t border-brand-dark-soft bg-brand-dark px-4 pb-5 pt-3 shadow-lg sm:px-6 lg:hidden"
         >
           <div className="mx-auto flex max-w-7xl flex-col gap-1">
             {navLinks.map((link) => (
@@ -106,19 +106,19 @@ export default function Navbar() {
                 onClick={() => setIsOpen(false)}
                 className={`rounded-lg px-4 py-3 text-sm font-medium transition-colors ${
                   isActive(link.href)
-                    ? "bg-[#F0F7FC] text-[#176B9B]"
-                    : "text-slate-700 hover:bg-slate-50 hover:text-[#176B9B]"
+                    ? "bg-brand-dark-soft text-brand-bronze"
+                    : "text-[#F5F0E8]/80 hover:bg-brand-dark-soft hover:text-brand-bronze"
                 }`}
               >
                 {link.name}
               </Link>
             ))}
 
-            <div className="mt-3 grid grid-cols-2 gap-3 border-t border-slate-100 pt-4">
+            <div className="mt-3 grid grid-cols-2 gap-3 border-t border-brand-dark-soft pt-4">
               <Link
                 href="/login"
                 onClick={() => setIsOpen(false)}
-                className="flex items-center justify-center rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold text-[#102A43] transition-colors hover:bg-slate-50"
+                className="flex items-center justify-center rounded-xl border border-white/15 px-4 py-3 text-sm font-semibold text-brand-ivory transition-colors hover:bg-brand-dark-soft"
               >
                 Login
               </Link>
@@ -126,7 +126,7 @@ export default function Navbar() {
               <Link
                 href="/register"
                 onClick={() => setIsOpen(false)}
-                className="flex items-center justify-center rounded-lg bg-[#176B9B] px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#12577F]"
+                className="flex items-center justify-center rounded-xl bg-brand-bronze px-4 py-3 text-sm font-semibold text-brand-dark transition-colors hover:bg-brand-bronze-hover"
               >
                 Register
               </Link>

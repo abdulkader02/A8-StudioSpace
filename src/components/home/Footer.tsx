@@ -10,11 +10,11 @@ const exploreLinks = [
 ];
 
 const categoryLinks = [
-  { name: "Photo Studios", href: "/studios?category=photo" },
-  { name: "Cinema & Sound Stages", href: "/studios?category=cinema" },
-  { name: "Digital Studios", href: "/studios?category=digital" },
-  { name: "Music & Dolby Suites", href: "/studios?category=music" },
-  { name: "Art & Ceramic Workshops", href: "/studios?category=art" },
+  { name: "Photography Studios", href: "/studios?category=photography" },
+  { name: "Video & Film Studios", href: "/studios?category=film" },
+  { name: "Podcast & Recording Studios", href: "/studios?category=podcast" },
+  { name: "Music Production Studios", href: "/studios?category=music" },
+  { name: "Content Creation Studios", href: "/studios?category=content" },
 ];
 
 function XIcon({ className }: { className?: string }) {
@@ -82,7 +82,7 @@ const socialLinks = [
 
 export default function Footer() {
   return (
-    <footer className="border-t border-slate-200 bg-white">
+    <footer className="border-t border-brand-dark-soft bg-brand-dark">
       <div className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-12">
 
@@ -96,12 +96,12 @@ export default function Footer() {
                 height={40}
                 priority
               />
-              <span className="text-xl font-bold tracking-tight text-[#102A43] sm:text-2xl">
-                Studio<span className="text-[#176B9B]">Space</span>
+              <span className="text-xl font-bold tracking-tight text-brand-ivory sm:text-2xl">
+                Studio<span className="text-brand-bronze">Space</span>
               </span>
             </Link>
 
-            <p className="mt-4 max-w-sm text-sm leading-relaxed text-slate-500">
+            <p className="mt-4 max-w-sm text-sm leading-relaxed text-[#F5F0E8]/70">
               StudioSpace is the premier peer-to-peer workspace sharing
               marketplace connecting filmmakers, photographers, musicians, and
               creators with world-class production facilities.
@@ -110,7 +110,7 @@ export default function Footer() {
 
           {/* Explore */}
           <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-[#102A43]">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-brand-ivory">
               Explore
             </h3>
 
@@ -119,7 +119,7 @@ export default function Footer() {
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className="text-sm text-slate-500 underline underline-offset-4 transition-colors hover:text-[#176B9B]"
+                    className="text-sm text-[#F5F0E8]/70 underline underline-offset-4 transition-colors hover:text-brand-bronze"
                   >
                     {link.name}
                   </Link>
@@ -130,7 +130,7 @@ export default function Footer() {
 
           {/* Categories */}
           <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-[#102A43]">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-brand-ivory">
               Categories
             </h3>
 
@@ -139,7 +139,7 @@ export default function Footer() {
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className="text-sm text-slate-500 underline underline-offset-4 transition-colors hover:text-[#176B9B]"
+                    className="text-sm text-[#F5F0E8]/70 underline underline-offset-4 transition-colors hover:text-brand-bronze"
                   >
                     {link.name}
                   </Link>
@@ -150,7 +150,7 @@ export default function Footer() {
 
           {/* Connect */}
           <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-[#102A43]">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-brand-ivory">
               Connect With Us
             </h3>
 
@@ -165,7 +165,7 @@ export default function Footer() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`StudioSpace on ${social.name}`}
-                    className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#102A43] text-white transition-colors hover:bg-[#176B9B] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#176B9B]"
+                    className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-dark-soft text-brand-ivory transition-colors hover:bg-brand-bronze hover:text-brand-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-bronze"
                   >
                     <Icon className="h-4 w-4" />
                   </a>
@@ -173,11 +173,11 @@ export default function Footer() {
               })}
             </div>
 
-            <p className="mt-5 text-sm leading-relaxed text-slate-500">
+            <p className="mt-5 text-sm leading-relaxed text-[#F5F0E8]/70">
               Need assistance? Email support:
               <a
                 href="mailto:support@studiospace.io"
-                className="mt-1 block font-medium text-[#176B9B] underline underline-offset-4 transition-colors hover:text-[#102A43]"
+                className="mt-1 block font-medium text-brand-bronze underline underline-offset-4 transition-colors hover:text-brand-ivory"
               >
                 support@studiospace.io
               </a>
@@ -187,8 +187,8 @@ export default function Footer() {
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-slate-200">
-        <div className="mx-auto flex w-full max-w-7xl flex-col items-center justify-between gap-3 px-4 py-5 text-sm text-slate-500 sm:flex-row sm:px-6 lg:px-8">
+      <div className="border-t border-brand-dark-soft">
+        <div className="mx-auto flex w-full max-w-7xl flex-col items-center justify-between gap-3 px-4 py-5 text-sm text-[#F5F0E8]/60 sm:flex-row sm:px-6 lg:px-8">
           <p>
             &copy; {new Date().getFullYear()} StudioSpace. All rights reserved.
           </p>
@@ -196,14 +196,14 @@ export default function Footer() {
           <div className="flex items-center gap-6">
             <Link
               href="/privacy"
-              className="transition-colors hover:text-[#176B9B]"
+              className="transition-colors hover:text-brand-bronze"
             >
               Privacy Policy
             </Link>
 
             <Link
               href="/terms"
-              className="transition-colors hover:text-[#176B9B]"
+              className="transition-colors hover:text-brand-bronze"
             >
               Terms of Service
             </Link>

@@ -1,7 +1,9 @@
+
 import Link from "next/link";
 import {
   ArrowRight,
   CalendarCheck,
+  Check,
   Search,
   Sparkles,
   Zap,
@@ -12,7 +14,6 @@ type Step = {
   title: string;
   description: string;
   icon: React.ComponentType<{ className?: string }>;
-  iconClassName: string;
 };
 
 const steps: Step[] = [
@@ -20,127 +21,158 @@ const steps: Step[] = [
     number: "01",
     title: "Discover Spaces",
     description:
-      "Filter verified cyc walls, podcast lounges, soundstages, and mixing suites by location, gear inventory, and creator reviews.",
+      "Explore creative studios, podcast lounges, soundstages, and production spaces. Find the right environment for your next project.",
     icon: Search,
-    iconClassName:
-      "bg-amber-50 text-amber-500 border border-amber-100",
   },
   {
     number: "02",
-    title: "Select Shoot Hours",
+    title: "Choose Your Time",
     description:
-      "Inspect live calendar availability, choose precise hourly blocks, and review transparent breakdown rates with zero surprise fees.",
+      "Explore available booking slots, select your preferred schedule, and review pricing before making a reservation.",
     icon: CalendarCheck,
-    iconClassName:
-      "bg-sky-50 text-sky-600 border border-sky-100",
   },
   {
     number: "03",
-    title: "Book Instantly",
+    title: "Confirm Your Booking",
     description:
-      "Lock in your reservation with double-booking collision prevention, instant host confirmation, and downloadable invoice vouchers.",
+      "Review your booking details and complete the reservation process with clear pricing and confirmation.",
     icon: Zap,
-    iconClassName:
-      "bg-emerald-50 text-emerald-500 border border-emerald-100",
   },
   {
     number: "04",
-    title: "Create & Produce",
+    title: "Create Something Great",
     description:
-      "Arrive at the stage with verified access codes, plug into ready-calibrated equipment grids, and bring your vision to life.",
+      "Show up, set up your equipment, and bring your creative vision to life in a space built for production.",
     icon: Sparkles,
-    iconClassName:
-      "bg-violet-50 text-violet-500 border border-violet-100",
   },
 ];
-
-function StepConnector() {
-  return (
-    <div
-      aria-hidden="true"
-      className="hidden shrink-0 items-center justify-center lg:flex"
-    >
-      <ArrowRight className="h-5 w-5 text-slate-300" />
-    </div>
-  );
-}
 
 export default function HowItWorks() {
   return (
     <section
       id="how-it-works"
       aria-labelledby="how-it-works-heading"
-      className="w-full bg-white py-16 sm:py-20 lg:py-24"
+      className="relative overflow-hidden bg-brand-ivory py-20 sm:py-24 lg:py-28"
     >
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+      {/* Background decorations */}
+      <div className="pointer-events-none absolute -left-32 top-20 h-80 w-80 rounded-full bg-brand-bronze-light/70 blur-3xl" />
+      <div className="pointer-events-none absolute -right-32 bottom-0 h-80 w-80 rounded-full bg-brand-bronze/10 blur-3xl" />
+
+      <div className="relative mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+
         {/* Section Header */}
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="text-xs font-bold uppercase tracking-widest text-[#176B9B]">
-            Frictionless Booking
-          </p>
+        <div className="mx-auto max-w-3xl text-center">
+
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-brand-border bg-white px-4 py-2 shadow-sm">
+            <Sparkles className="h-4 w-4 text-brand-bronze" />
+            <span className="text-xs font-bold uppercase tracking-[0.15em] text-brand-bronze">
+              Simple. Seamless. Creative.
+            </span>
+          </div>
 
           <h2
             id="how-it-works-heading"
-            className="mt-3 text-3xl font-bold tracking-tight text-[#102A43] sm:text-4xl"
+            className="text-3xl font-bold tracking-tight text-brand-charcoal sm:text-4xl lg:text-5xl"
           >
-            How StudioSpace Works
+            Your Creative Journey,
+            <span className="mt-2 block text-brand-bronze">
+              Made Simple.
+            </span>
           </h2>
 
-          <p className="mt-4 text-base leading-relaxed text-slate-500">
-            Four simple steps from pre-production concept to rolling camera in
-            world-class creative facilities.
+          <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-brand-stone sm:text-lg">
+            Finding and booking your ideal creative workspace shouldn&apos;t
+            be complicated. Four simple steps take you from discovery
+            to production.
           </p>
         </div>
 
-        {/* Steps */}
-        <ol className="mt-12 flex flex-col gap-6 lg:mt-16 lg:flex-row lg:items-stretch lg:gap-0">
+        {/* Process Steps */}
+        <ol className="relative mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
+
+          {/* Desktop connecting line */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute left-[12%] right-[12%] top-[58px] hidden h-px border-t-2 border-dashed border-brand-stone/30 lg:block"
+          />
+
           {steps.map((step, index) => {
             const Icon = step.icon;
 
             return (
               <li
                 key={step.number}
-                className="flex flex-1 items-center gap-4"
+                className="group relative"
               >
-                <div className="flex flex-1 flex-col rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md">
-                  {/* Icon + Step number */}
-                  <div className="flex items-start justify-between">
-                    <span
-                      className={`flex h-12 w-12 items-center justify-center rounded-xl ${step.iconClassName}`}
-                    >
-                      <Icon className="h-5 w-5" />
-                    </span>
+                <article className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-brand-border bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-brand-bronze/40 hover:shadow-xl hover:shadow-black/5 sm:p-7">
 
-                    <span className="text-2xl font-bold text-slate-200">
-                      {step.number}
+                  {/* Large background number */}
+                  <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute -right-2 -top-5 text-8xl font-black tracking-tighter text-brand-ivory-dark transition-colors duration-300 group-hover:text-brand-bronze-light"
+                  >
+                    {step.number}
+                  </span>
+
+                  {/* Icon */}
+                  <div className="relative z-10 flex items-center justify-between">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-brand-bronze-light bg-brand-bronze-light text-brand-bronze transition-all duration-300 group-hover:border-brand-bronze group-hover:bg-brand-bronze group-hover:text-brand-dark">
+                      <Icon className="h-6 w-6" />
+                    </div>
+
+                    <span className="text-xs font-bold uppercase tracking-widest text-brand-stone">
+                      Step {step.number}
                     </span>
                   </div>
 
-                  <h3 className="mt-5 text-lg font-bold text-[#102A43]">
-                    {step.title}
-                  </h3>
+                  {/* Content */}
+                  <div className="relative z-10 mt-8 flex-1">
+                    <h3 className="text-xl font-bold tracking-tight text-brand-charcoal">
+                      {step.title}
+                    </h3>
 
-                  <p className="mt-3 text-sm leading-relaxed text-slate-500">
-                    {step.description}
-                  </p>
-                </div>
+                    <p className="mt-4 text-sm leading-7 text-brand-stone">
+                      {step.description}
+                    </p>
+                  </div>
 
-                {index < steps.length - 1 && <StepConnector />}
+                  {/* Bottom indicator */}
+                  <div className="relative z-10 mt-8 flex items-center justify-between border-t border-brand-border pt-5">
+                    <span className="text-xs font-semibold text-brand-stone">
+                      {index === 3 ? "Ready to create" : "Next step"}
+                    </span>
+
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-bronze-light text-brand-bronze transition-all duration-300 group-hover:bg-brand-bronze group-hover:text-brand-dark">
+                      {index === 3 ? (
+                        <Check className="h-4 w-4" />
+                      ) : (
+                        <ArrowRight className="h-4 w-4" />
+                      )}
+                    </div>
+                  </div>
+                </article>
               </li>
             );
           })}
         </ol>
 
-        {/* CTA */}
-        <div className="mt-12 flex justify-center lg:mt-14">
+        {/* Bottom CTA */}
+        <div className="mt-14 flex flex-col items-center justify-center gap-4 text-center sm:mt-16">
+
+          <p className="text-sm text-brand-stone">
+            Your next creative project starts with the right space.
+          </p>
+
           <Link
             href="/studios"
-            className="inline-flex items-center gap-2 rounded-lg bg-[#176B9B] px-8 py-3.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#12577F] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#176B9B] focus-visible:ring-offset-2"
+            className="group inline-flex items-center justify-center gap-3 rounded-xl bg-brand-bronze px-8 py-4 text-sm font-semibold text-brand-dark shadow-lg shadow-black/10 transition-all duration-300 hover:-translate-y-1 hover:bg-brand-bronze-hover hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-bronze focus-visible:ring-offset-2 focus-visible:ring-offset-brand-ivory"
           >
-            Start Exploring Workspaces
-            <ArrowRight className="h-4 w-4" />
+            Explore Creative Spaces
+
+            <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
           </Link>
         </div>
+
       </div>
     </section>
   );
