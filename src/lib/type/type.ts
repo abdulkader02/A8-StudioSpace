@@ -1,21 +1,41 @@
 export type TStudio = {
   _id?: string;
-  id?: string;
   title: string;
   category: string;
   price: number;
-  priceUnit?: string;
-  currency?: string;
+  priceUnit: string;
+  currency: string;
   capacity: number;
-  securityDeposit?: number;
-  location?: {
-    city?: string;
-    area?: string;
+  securityDeposit: number;
+
+  location: {
+    city: string;
+    area: string;
   };
-  imageUrl?: string;
-  amenities?: string[];
-  description?: string;
-  rating?: number;
-  isPublished?: boolean;
-  isFeatured?: boolean;
+
+  imageUrls: string[];
+  amenities: string[];
+  description: string;
+  rating: number;
+
+  // Host information
+  host?: {
+    name?: string;
+    email?: string;
+    image?: string;
+    bio?: string;
+  };
+
+  // Reviews
+  reviews?: {
+    _id?: string;
+    name: string;
+    image?: string;
+    rating: number;
+    comment: string;
+    createdAt?: string;
+  }[];
+
+  isPublished: boolean;
+  isFeatured: boolean;
 };

@@ -1,15 +1,16 @@
+
 "use client";
+
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import type { TStudio } from "@src/lib/type/type.ts";
+import type { TStudio } from "@src/lib/type/type";
+import StudioCard from "@src/components/studio/StudioCard";
+
 import {
   ArrowRight,
-  ArrowUpRight,
   MapPin,
   Search,
   SlidersHorizontal,
-  Star,
-  Users,
   X,
   Camera,
   Clapperboard,
@@ -19,10 +20,12 @@ import {
   Video,
   Building2,
   Sparkles,
+  Users,
 } from "lucide-react";
 
-
-type StudiosResponse = TStudio[] | { data?: TStudio[]; studios?: TStudio[] };
+type StudiosResponse =
+  | TStudio[]
+  | { data?: TStudio[]; studios?: TStudio[] };
 
 const categories = [
   { name: "All Spaces", icon: Sparkles },
@@ -35,116 +38,6 @@ const categories = [
   { name: "Content Creation Studio", icon: Video },
   { name: "Meeting Space", icon: Users },
 ];
-
-const formatPrice = (price: number, currency = "USD") =>
-  new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency,
-    maximumFractionDigits: 0,
-  }).format(price);
-
-function StudioCard({ studio }: { studio: TStudio }) {
-  const studioId = studio._id ?? studio.id;
-
-  const location = [studio.location?.area, studio.location?.city]
-    .filter(Boolean)
-    .join(", ");
-
-  return (
-    <article className="group overflow-hidden rounded-[22px] border border-brand-border bg-white transition-all duration-500 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-brand-charcoal/[0.07]">
-      <div className="relative aspect-[1.28/1] overflow-hidden bg-brand-stone/10">
-        {studio.imageUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={studio.imageUrl}
-            alt={studio.title}
-            loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-          />
-        ) : (
-          <div className="flex h-full items-center justify-center bg-gradient-to-br from-brand-ivory to-brand-bronze/20">
-            <Sparkles className="h-10 w-10 text-brand-bronze/60" />
-          </div>
-        )}
-
-        <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-black/5" />
-
-        {studio.isFeatured && (
-          <div className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-brand-charcoal/75 px-3 py-1.5 text-[11px] font-semibold tracking-wide text-white backdrop-blur-md">
-            <Sparkles className="h-3 w-3 text-brand-bronze-light" />
-            FEATURED
-          </div>
-        )}
-
-        {typeof studio.rating === "number" && studio.rating > 0 && (
-          <div className="absolute right-4 top-4 flex items-center gap-1.5 rounded-full bg-white/95 px-3 py-1.5 text-xs font-bold text-brand-charcoal shadow-sm">
-            <Star className="h-3.5 w-3.5 fill-brand-bronze text-brand-bronze" />
-            {studio.rating.toFixed(1)}
-          </div>
-        )}
-
-        <div className="absolute bottom-4 left-4">
-          <span className="rounded-full border border-white/25 bg-white/15 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-md">
-            {studio.category}
-          </span>
-        </div>
-      </div>
-
-      <div className="p-5 sm:p-6">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <h2 className="truncate text-lg font-semibold tracking-tight text-brand-charcoal transition-colors group-hover:text-brand-bronze">
-              {studio.title}
-            </h2>
-
-            {location && (
-              <p className="mt-2 flex items-center gap-1.5 text-sm text-brand-stone">
-                <MapPin className="h-3.5 w-3.5 shrink-0 text-brand-bronze" />
-                <span className="truncate">{location}</span>
-              </p>
-            )}
-          </div>
-
-          <div className="shrink-0 text-right">
-            <p className="text-lg font-bold text-brand-charcoal">
-              {formatPrice(studio.price, studio.currency)}
-            </p>
-            <p className="mt-0.5 text-xs text-brand-stone">
-              / {studio.priceUnit || "hour"}
-            </p>
-          </div>
-        </div>
-
-        {studio.description && (
-          <p className="mt-4 line-clamp-2 text-sm leading-6 text-brand-stone">
-            {studio.description}
-          </p>
-        )}
-
-        <div className="mt-5 flex items-center justify-between border-t border-brand-border pt-4">
-          <div className="flex items-center gap-2 text-sm text-brand-stone">
-            <Users className="h-4 w-4 text-brand-bronze" />
-            <span>{studio.capacity} guests</span>
-          </div>
-
-          {studioId ? (
-            <Link
-              href={`/studios/${studioId}`}
-              className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-bronze transition-all hover:gap-2.5"
-            >
-              View details
-              <ArrowUpRight className="h-4 w-4" />
-            </Link>
-          ) : (
-            <span className="text-xs text-brand-stone">
-              Details unavailable
-            </span>
-          )}
-        </div>
-      </div>
-    </article>
-  );
-}
 
 export default function AllStudiosPage() {
   const [studios, setStudios] = useState<TStudio[]>([]);
@@ -200,6 +93,7 @@ export default function AllStudiosPage() {
     };
   }, []);
 
+  // Filter studios
   const visibleStudios = useMemo(() => {
     return studios.filter((studio) => {
       if (studio.isPublished === false) return false;
@@ -212,7 +106,10 @@ export default function AllStudiosPage() {
         studio.category.toLowerCase().includes(searchText) ||
         studio.description?.toLowerCase().includes(searchText);
 
-      const studioLocation = [studio.location?.city, studio.location?.area]
+      const studioLocation = [
+        studio.location?.city,
+        studio.location?.area,
+      ]
         .filter(Boolean)
         .join(" ")
         .toLowerCase();
@@ -224,14 +121,19 @@ export default function AllStudiosPage() {
       const matchesCategory =
         category === "All Spaces" || studio.category === category;
 
-      const matchesPrice = !maxPrice || studio.price <= Number(maxPrice);
+      const matchesPrice =
+        !maxPrice || studio.price <= Number(maxPrice);
 
       return (
-        matchesKeyword && matchesLocation && matchesCategory && matchesPrice
+        matchesKeyword &&
+        matchesLocation &&
+        matchesCategory &&
+        matchesPrice
       );
     });
   }, [studios, keyword, location, category, maxPrice]);
 
+  // Reset filters
   const resetFilters = () => {
     setKeyword("");
     setLocation("");
@@ -244,10 +146,11 @@ export default function AllStudiosPage() {
       {/* HERO */}
       <section className="relative overflow-hidden border-b border-brand-border">
         <div className="pointer-events-none absolute -left-32 -top-32 h-[350px] w-[350px] rounded-full bg-brand-bronze/10 blur-[100px]" />
+
         <div className="pointer-events-none absolute -right-32 bottom-0 h-[300px] w-[300px] rounded-full bg-brand-stone/15 blur-[100px]" />
 
         <div className="relative mx-auto max-w-7xl px-4 pb-14 pt-14 sm:px-6 sm:pb-16 sm:pt-16 lg:px-8">
-          {/* CENTERED TWO-LINE HEADING */}
+          {/* HEADING */}
           <div className="mx-auto max-w-2xl text-center">
             <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-brand-bronze/25 bg-white/60 px-3.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-brand-bronze backdrop-blur">
               <Sparkles className="h-3 w-3" />
@@ -267,16 +170,18 @@ export default function AllStudiosPage() {
             </p>
           </div>
 
-          {/* COMPACT SEARCH PANEL */}
+          {/* SEARCH PANEL */}
           <div className="mx-auto mt-8 max-w-5xl rounded-2xl border border-brand-border bg-white p-2.5 shadow-lg shadow-brand-charcoal/[0.05]">
             <div className="grid gap-2 md:grid-cols-[1.2fr_1fr_1fr_auto] md:items-center">
               {/* Keyword */}
               <div className="flex min-w-0 items-center gap-2.5 rounded-xl px-3 py-2.5 transition hover:bg-brand-ivory/70">
                 <Search className="h-4 w-4 shrink-0 text-brand-bronze" />
+
                 <div className="min-w-0 flex-1">
                   <label className="mb-0.5 block text-[9px] font-bold uppercase tracking-[0.14em] text-brand-stone">
                     Find a space
                   </label>
+
                   <input
                     value={keyword}
                     onChange={(e) => setKeyword(e.target.value)}
@@ -291,10 +196,12 @@ export default function AllStudiosPage() {
               {/* Location */}
               <div className="flex min-w-0 items-center gap-2.5 rounded-xl px-3 py-2.5 transition hover:bg-brand-ivory/70">
                 <MapPin className="h-4 w-4 shrink-0 text-brand-bronze" />
+
                 <div className="min-w-0 flex-1">
                   <label className="mb-0.5 block text-[9px] font-bold uppercase tracking-[0.14em] text-brand-stone">
                     Location
                   </label>
+
                   <input
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
@@ -309,10 +216,12 @@ export default function AllStudiosPage() {
               {/* Category */}
               <div className="flex min-w-0 items-center gap-2.5 rounded-xl px-3 py-2.5 transition hover:bg-brand-ivory/70">
                 <SlidersHorizontal className="h-4 w-4 shrink-0 text-brand-bronze" />
+
                 <div className="min-w-0 flex-1">
                   <label className="mb-0.5 block text-[9px] font-bold uppercase tracking-[0.14em] text-brand-stone">
                     Category
                   </label>
+
                   <select
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
@@ -381,10 +290,12 @@ export default function AllStudiosPage() {
               <span className="h-1.5 w-1.5 rounded-full bg-brand-bronze" />
               Flexible hourly booking
             </span>
+
             <span className="flex items-center gap-1.5">
               <span className="h-1.5 w-1.5 rounded-full bg-brand-bronze" />
               Curated creative spaces
             </span>
+
             <span className="flex items-center gap-1.5">
               <span className="h-1.5 w-1.5 rounded-full bg-brand-bronze" />
               Spaces for every idea
@@ -430,9 +341,11 @@ export default function AllStudiosPage() {
             <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-brand-bronze">
               The Studio Collection
             </p>
+
             <h2 className="text-2xl font-semibold tracking-tight text-brand-charcoal sm:text-3xl">
               Spaces worth creating in.
             </h2>
+
             <p className="mt-2 text-xs text-brand-stone sm:text-sm">
               Explore spaces selected for your next creative project.
             </p>
@@ -451,6 +364,7 @@ export default function AllStudiosPage() {
                 className="animate-pulse overflow-hidden rounded-[22px] border border-brand-border bg-white"
               >
                 <div className="aspect-[1.28/1] bg-brand-stone/10" />
+
                 <div className="space-y-3 p-6">
                   <div className="h-5 w-3/4 rounded bg-brand-stone/10" />
                   <div className="h-4 w-1/2 rounded bg-brand-stone/10" />
@@ -462,12 +376,15 @@ export default function AllStudiosPage() {
         ) : fetchError ? (
           <div className="rounded-3xl border border-brand-border bg-white px-6 py-16 text-center">
             <Search className="mx-auto h-8 w-8 text-brand-bronze" />
+
             <h3 className="mt-5 text-xl font-semibold text-brand-charcoal">
               Unable to load studios
             </h3>
+
             <p className="mt-2 text-sm text-brand-stone">
               Please make sure the StudioSpace API is running.
             </p>
+
             <button
               onClick={() => window.location.reload()}
               className="mt-6 rounded-xl bg-brand-charcoal px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-bronze"
@@ -478,12 +395,15 @@ export default function AllStudiosPage() {
         ) : visibleStudios.length === 0 ? (
           <div className="rounded-3xl border border-brand-border bg-white px-6 py-16 text-center">
             <Search className="mx-auto h-8 w-8 text-brand-bronze" />
+
             <h3 className="mt-5 text-xl font-semibold text-brand-charcoal">
               No matching spaces found
             </h3>
+
             <p className="mt-2 text-sm text-brand-stone">
               Try another keyword, category, location, or price range.
             </p>
+
             <button
               onClick={resetFilters}
               className="mt-6 rounded-xl bg-brand-bronze px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-bronze-hover"
@@ -507,6 +427,7 @@ export default function AllStudiosPage() {
       <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
         <div className="relative overflow-hidden rounded-[28px] bg-brand-charcoal px-7 py-10 sm:px-12 lg:px-16 lg:py-12">
           <div className="pointer-events-none absolute -right-20 -top-28 h-80 w-80 rounded-full border border-brand-bronze/20" />
+
           <div className="pointer-events-none absolute -right-8 -top-16 h-56 w-56 rounded-full border border-brand-bronze/20" />
 
           <div className="relative flex flex-col gap-7 lg:flex-row lg:items-center lg:justify-between">

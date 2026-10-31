@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Check, PackagePlus, RotateCcw } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -86,6 +87,7 @@ export default function AddStudioPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState<"success" | "error" | "">("");
+  const router = useRouter();
 
   // Replace this state with actual Better Auth session data.
   const [adminSession] = useState<AdminSession | null>(null);
@@ -112,9 +114,7 @@ export default function AddStudioPage() {
     setMessageType("");
   };
 
-  const handleSubmit = async (
-    event: React.FormEvent<HTMLFormElement>
-  ) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     setIsSubmitting(true);
@@ -163,13 +163,15 @@ export default function AddStudioPage() {
       setMessageType("success");
 
       setForm(initialForm);
+
+      router.push("/my-listings");
     } catch (error) {
       console.error("Add Studio Error:", error);
 
       setMessage(
         error instanceof Error
           ? error.message
-          : "Something went wrong. Please try again."
+          : "Something went wrong. Please try again.",
       );
       setMessageType("error");
     } finally {
@@ -334,9 +336,7 @@ export default function AddStudioPage() {
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="securityDeposit">
-                  Security Deposit (USD)
-                </Label>
+                <Label htmlFor="securityDeposit">Security Deposit (USD)</Label>
 
                 <Input
                   id="securityDeposit"
@@ -344,9 +344,7 @@ export default function AddStudioPage() {
                   min="0"
                   step="0.01"
                   value={form.securityDeposit}
-                  onChange={(e) =>
-                    update("securityDeposit", e.target.value)
-                  }
+                  onChange={(e) => update("securityDeposit", e.target.value)}
                   placeholder="e.g. 100"
                   className="h-12"
                 />
