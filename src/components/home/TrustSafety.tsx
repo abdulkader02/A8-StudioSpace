@@ -65,7 +65,7 @@ const assurances: Feature[] = [
 export default function TrustSafety() {
   return (
     <section
-      id="aboutus"
+      id="about-us"
       aria-labelledby="trust-safety-heading"
       className="relative overflow-hidden bg-brand-ivory-dark py-20 sm:py-24 lg:py-28"
     >

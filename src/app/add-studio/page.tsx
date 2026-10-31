@@ -1,13 +1,7 @@
-
 "use client";
 
 import { useState } from "react";
-import {
-  Check,
-  PackagePlus,
-  RotateCcw,
-  X,
-} from "lucide-react";
+import { Check, PackagePlus, RotateCcw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,6 +31,7 @@ type FormValues = {
   city: string;
   area: string;
   imageUrl: string;
+  rating: string;
   amenities: string[];
   description: string;
 };
@@ -52,6 +47,7 @@ const initialForm: FormValues = {
   city: "",
   area: "",
   imageUrl: "",
+  rating: "",
   amenities: [],
   description: "",
 };
@@ -87,8 +83,11 @@ const amenities = [
 
 export default function AddStudioPage() {
   const [form, setForm] = useState<FormValues>(initialForm);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState<"success" | "error" | "">("");
 
-  // Replace this state with your actual Better Auth session data.
+  // Replace this state with actual Better Auth session data.
   const [adminSession] = useState<AdminSession | null>(null);
 
   const update = (field: TextField, value: string) => {
@@ -109,12 +108,20 @@ export default function AddStudioPage() {
 
   const handleReset = () => {
     setForm(initialForm);
+    setMessage("");
+    setMessageType("");
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
     event.preventDefault();
 
-    const payload = {
+    setIsSubmitting(true);
+    setMessage("");
+    setMessageType("");
+
+    const studioData = {
       title: form.title.trim(),
       category: form.category,
       price: Number(form.price),
@@ -126,22 +133,53 @@ export default function AddStudioPage() {
         city: form.city.trim(),
         area: form.area.trim(),
       },
-      images: form.imageUrl.trim() ? [form.imageUrl.trim()] : [],
+      imageUrl: form.imageUrl.trim(),
       amenities: form.amenities,
       description: form.description.trim(),
+      rating: Number(form.rating || 0),
       isPublished: false,
       isFeatured: false,
     };
 
-    console.log("New Studio Data:", payload);
+    try {
+      const res = await fetch("http://localhost:5000/add-studio", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(studioData),
+      });
 
-    // TODO: Connect this payload to your Express API.
+      const result = await res.json();
+
+      if (!res.ok) {
+        throw new Error(result.message || "Failed to add studio");
+      }
+
+      console.log("Server response:", result);
+      console.log("Studio data:", studioData);
+
+      setMessage("Studio added successfully!");
+      setMessageType("success");
+
+      setForm(initialForm);
+    } catch (error) {
+      console.error("Add Studio Error:", error);
+
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : "Something went wrong. Please try again."
+      );
+      setMessageType("error");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <main className="min-h-screen bg-brand-ivory px-4 py-10 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-5xl">
-
         {/* Page Header */}
         <div className="mb-8">
           <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-brand-bronze/30 bg-brand-bronze-light/20 px-3 py-1 text-sm font-medium text-brand-bronze">
@@ -159,7 +197,6 @@ export default function AddStudioPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-
           {/* Admin Information */}
           <section className="rounded-2xl border border-brand-border bg-white p-6 shadow-sm sm:p-8">
             <div className="mb-5">
@@ -208,6 +245,7 @@ export default function AddStudioPage() {
               <h2 className="text-lg font-semibold text-brand-charcoal">
                 Basic Information
               </h2>
+
               <p className="mt-1 text-sm text-brand-stone">
                 Provide the essential details about your studio.
               </p>
@@ -216,6 +254,7 @@ export default function AddStudioPage() {
             <div className="grid gap-5 sm:grid-cols-2">
               <div className="grid gap-2 sm:col-span-2">
                 <Label htmlFor="title">Studio Name *</Label>
+
                 <Input
                   id="title"
                   value={form.title}
@@ -250,6 +289,7 @@ export default function AddStudioPage() {
 
               <div className="grid gap-2">
                 <Label htmlFor="capacity">Guest Capacity *</Label>
+
                 <Input
                   id="capacity"
                   type="number"
@@ -270,6 +310,7 @@ export default function AddStudioPage() {
               <h2 className="text-lg font-semibold text-brand-charcoal">
                 Pricing Information
               </h2>
+
               <p className="mt-1 text-sm text-brand-stone">
                 Set your studio rental price in US Dollars.
               </p>
@@ -278,6 +319,7 @@ export default function AddStudioPage() {
             <div className="grid gap-5 sm:grid-cols-2">
               <div className="grid gap-2">
                 <Label htmlFor="price">Hourly Price (USD) *</Label>
+
                 <Input
                   id="price"
                   type="number"
@@ -295,6 +337,7 @@ export default function AddStudioPage() {
                 <Label htmlFor="securityDeposit">
                   Security Deposit (USD)
                 </Label>
+
                 <Input
                   id="securityDeposit"
                   type="number"
@@ -308,6 +351,26 @@ export default function AddStudioPage() {
                   className="h-12"
                 />
               </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="rating">Rating (out of 5)</Label>
+
+                <Input
+                  id="rating"
+                  type="number"
+                  min="0"
+                  max="5"
+                  step="0.1"
+                  value={form.rating}
+                  onChange={(e) => update("rating", e.target.value)}
+                  placeholder="e.g. 4.8"
+                  className="h-12"
+                />
+
+                <p className="text-xs text-brand-stone">
+                  Optional. Leave empty if the studio has no rating yet.
+                </p>
+              </div>
             </div>
           </section>
 
@@ -317,6 +380,7 @@ export default function AddStudioPage() {
               <h2 className="text-lg font-semibold text-brand-charcoal">
                 Studio Location
               </h2>
+
               <p className="mt-1 text-sm text-brand-stone">
                 Where is your studio located?
               </p>
@@ -325,11 +389,12 @@ export default function AddStudioPage() {
             <div className="grid gap-5 sm:grid-cols-2">
               <div className="grid gap-2">
                 <Label htmlFor="city">City *</Label>
+
                 <Input
                   id="city"
                   value={form.city}
                   onChange={(e) => update("city", e.target.value)}
-                  placeholder="e.g. New York"
+                  placeholder="e.g. Chattogram"
                   className="h-12"
                   required
                 />
@@ -337,11 +402,12 @@ export default function AddStudioPage() {
 
               <div className="grid gap-2">
                 <Label htmlFor="area">Area / Neighborhood *</Label>
+
                 <Input
                   id="area"
                   value={form.area}
                   onChange={(e) => update("area", e.target.value)}
-                  placeholder="e.g. Manhattan"
+                  placeholder="e.g. GEC Circle"
                   className="h-12"
                   required
                 />
@@ -355,6 +421,7 @@ export default function AddStudioPage() {
               <h2 className="text-lg font-semibold text-brand-charcoal">
                 Studio Image
               </h2>
+
               <p className="mt-1 text-sm text-brand-stone">
                 Add a URL for the main studio image.
               </p>
@@ -362,6 +429,7 @@ export default function AddStudioPage() {
 
             <div className="grid gap-2">
               <Label htmlFor="imageUrl">Image URL</Label>
+
               <Input
                 id="imageUrl"
                 type="url"
@@ -380,6 +448,7 @@ export default function AddStudioPage() {
                 <h2 className="text-lg font-semibold text-brand-charcoal">
                   Studio Amenities
                 </h2>
+
                 <p className="mt-1 text-sm text-brand-stone">
                   Select all facilities available at your studio.
                 </p>
@@ -440,13 +509,16 @@ export default function AddStudioPage() {
               <h2 className="text-lg font-semibold text-brand-charcoal">
                 Studio Description
               </h2>
+
               <p className="mt-1 text-sm text-brand-stone">
-                Describe your studio and what makes it suitable for creative work.
+                Describe your studio and what makes it suitable for creative
+                work.
               </p>
             </div>
 
             <div className="grid gap-2">
               <Label htmlFor="description">Description *</Label>
+
               <Textarea
                 id="description"
                 value={form.description}
@@ -458,12 +530,27 @@ export default function AddStudioPage() {
             </div>
           </section>
 
+          {/* Success / Error Message */}
+          {message && (
+            <div
+              role="status"
+              className={`rounded-xl border px-4 py-3 text-sm ${
+                messageType === "success"
+                  ? "border-green-200 bg-green-50 text-green-700"
+                  : "border-red-200 bg-red-50 text-red-700"
+              }`}
+            >
+              {message}
+            </div>
+          )}
+
           {/* Actions */}
           <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
             <Button
               type="button"
               variant="outline"
               onClick={handleReset}
+              disabled={isSubmitting}
               className="h-12 border-brand-border text-brand-charcoal hover:bg-brand-ivory"
             >
               <RotateCcw className="mr-2 h-4 w-4" />
@@ -472,10 +559,11 @@ export default function AddStudioPage() {
 
             <Button
               type="submit"
+              disabled={isSubmitting}
               className="h-12 bg-brand-bronze px-8 text-white hover:bg-brand-bronze-hover"
             >
               <PackagePlus className="mr-2 h-4 w-4" />
-              Add Studio
+              {isSubmitting ? "Adding Studio..." : "Add Studio"}
             </Button>
           </div>
         </form>
