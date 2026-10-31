@@ -20,7 +20,7 @@ const formatPrice = (price: number, currency = "USD") =>
   }).format(price);
 
 export default function StudioCard({ studio }: { studio: TStudio }) {
-  const studioId = studio._id ?? studio.id;
+  const studioId = studio._id;
   const cardImage = studio.imageUrls?.[0];
 
   const location = [

@@ -1,5 +1,5 @@
 export type TStudio = {
-  _id?: string;
+  _id: string;
   title: string;
   category: string;
   price: number;

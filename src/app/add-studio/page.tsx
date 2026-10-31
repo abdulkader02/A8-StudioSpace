@@ -1,8 +1,10 @@
+
 "use client";
 
 import { useState } from "react";
 import { Check, PackagePlus, RotateCcw } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,14 +17,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { authClient } from "@/lib/auth-client";
 
-// Admin session type
-type AdminSession = {
-  name: string;
-  email: string;
-};
-
-// Studio form type
 type FormValues = {
   title: string;
   category: string;
@@ -83,14 +79,16 @@ const amenities = [
 ];
 
 export default function AddStudioPage() {
-  const [form, setForm] = useState<FormValues>(initialForm);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [message, setMessage] = useState("");
-  const [messageType, setMessageType] = useState<"success" | "error" | "">("");
   const router = useRouter();
 
-  // Replace this state with actual Better Auth session data.
-  const [adminSession] = useState<AdminSession | null>(null);
+  // Get authenticated user information
+  const { data: session, isPending } = authClient.useSession();
+
+  const [form, setForm] = useState<FormValues>(initialForm);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const adminName = session?.user?.name ?? "";
+  const adminEmail = session?.user?.email ?? "";
 
   const update = (field: TextField, value: string) => {
     setForm((current) => ({
@@ -110,16 +108,22 @@ export default function AddStudioPage() {
 
   const handleReset = () => {
     setForm(initialForm);
-    setMessage("");
-    setMessageType("");
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    if (isPending) {
+      toast.error("Please wait. Loading your account information.");
+      return;
+    }
+
+    if (!adminEmail) {
+      toast.error("Please log in before adding a studio.");
+      return;
+    }
+
     setIsSubmitting(true);
-    setMessage("");
-    setMessageType("");
 
     const studioData = {
       title: form.title.trim(),
@@ -133,12 +137,18 @@ export default function AddStudioPage() {
         city: form.city.trim(),
         area: form.area.trim(),
       },
-      imageUrl: form.imageUrl.trim(),
+      imageUrls: form.imageUrl.trim()
+        ? [form.imageUrl.trim()]
+        : [],
       amenities: form.amenities,
       description: form.description.trim(),
       rating: Number(form.rating || 0),
       isPublished: false,
       isFeatured: false,
+
+      // Authenticated user information
+      name: adminName,
+      email: adminEmail,
     };
 
     try {
@@ -159,8 +169,7 @@ export default function AddStudioPage() {
       console.log("Server response:", result);
       console.log("Studio data:", studioData);
 
-      setMessage("Studio added successfully!");
-      setMessageType("success");
+      toast.success("Studio added successfully!");
 
       setForm(initialForm);
 
@@ -168,12 +177,11 @@ export default function AddStudioPage() {
     } catch (error) {
       console.error("Add Studio Error:", error);
 
-      setMessage(
+      toast.error(
         error instanceof Error
           ? error.message
-          : "Something went wrong. Please try again.",
+          : "Something went wrong. Please try again."
       );
-      setMessageType("error");
     } finally {
       setIsSubmitting(false);
     }
@@ -217,8 +225,12 @@ export default function AddStudioPage() {
 
                 <Input
                   id="adminName"
-                  value={adminSession?.name ?? ""}
-                  placeholder="Loading admin information..."
+                  value={adminName}
+                  placeholder={
+                    isPending
+                      ? "Loading admin information..."
+                      : "Name unavailable"
+                  }
                   readOnly
                   aria-readonly="true"
                   className="h-12 cursor-not-allowed bg-brand-ivory text-brand-stone"
@@ -231,8 +243,12 @@ export default function AddStudioPage() {
                 <Input
                   id="adminEmail"
                   type="email"
-                  value={adminSession?.email ?? ""}
-                  placeholder="Loading admin information..."
+                  value={adminEmail}
+                  placeholder={
+                    isPending
+                      ? "Loading admin information..."
+                      : "Email unavailable"
+                  }
                   readOnly
                   aria-readonly="true"
                   className="h-12 cursor-not-allowed bg-brand-ivory text-brand-stone"
@@ -272,7 +288,7 @@ export default function AddStudioPage() {
 
                 <Select
                   value={form.category}
-                  onValueChange={(value) => update("category", value)}
+                  onValueChange={(value) => update("category", value ?? "")}
                   required
                 >
                   <SelectTrigger id="category" className="h-12">
@@ -528,20 +544,6 @@ export default function AddStudioPage() {
             </div>
           </section>
 
-          {/* Success / Error Message */}
-          {message && (
-            <div
-              role="status"
-              className={`rounded-xl border px-4 py-3 text-sm ${
-                messageType === "success"
-                  ? "border-green-200 bg-green-50 text-green-700"
-                  : "border-red-200 bg-red-50 text-red-700"
-              }`}
-            >
-              {message}
-            </div>
-          )}
-
           {/* Actions */}
           <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
             <Button
@@ -557,11 +559,15 @@ export default function AddStudioPage() {
 
             <Button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || isPending || !adminEmail}
               className="h-12 bg-brand-bronze px-8 text-white hover:bg-brand-bronze-hover"
             >
               <PackagePlus className="mr-2 h-4 w-4" />
-              {isSubmitting ? "Adding Studio..." : "Add Studio"}
+              {isPending
+                ? "Loading Account..."
+                : isSubmitting
+                  ? "Adding Studio..."
+                  : "Add Studio"}
             </Button>
           </div>
         </form>

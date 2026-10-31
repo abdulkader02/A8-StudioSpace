@@ -77,7 +77,7 @@ export default async function StudioDetailsPage({
     notFound();
   }
 
-  const studioId = String(studio._id ?? studio.id ?? id);
+  const studioId = String(studio._id ?? id);
 
   const location = [
     studio.location?.area,

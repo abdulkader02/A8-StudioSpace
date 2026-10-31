@@ -415,7 +415,7 @@ export default function AllStudiosPage() {
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {visibleStudios.map((studio, index) => (
               <StudioCard
-                key={studio._id ?? studio.id ?? `${studio.title}-${index}`}
+                key={studio._id ?? `${studio.title}-${index}`}
                 studio={studio}
               />
             ))}

@@ -41,7 +41,7 @@ function SectionLabel({ children }: { children: ReactNode }) {
 export function StudioGallery({ studio }: { studio: TStudio }) {
   const images = Array.from(
     new Set(
-      [...(studio.imageUrls ?? []), ...(studio.gallery ?? [])].filter(
+      (studio.imageUrls ?? []).filter(
         (image): image is string =>
           typeof image === "string" && image.trim().length > 0
       )
