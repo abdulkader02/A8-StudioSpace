@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowUpRight,
   Building2,
-  Eye,
-  EyeOff,
+  // Eye,
+  // EyeOff,
   MapPin,
   Pencil,
   Sparkles,
@@ -59,10 +60,12 @@ export default function MyListing({
       <div className="relative aspect-[1.5/1] overflow-hidden bg-brand-stone/10">
         {coverImage ? (
          
-          <img
+          <Image
             src={coverImage}
             alt={studio.title}
             loading="lazy"
+            width={400}
+            height={400}
             className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
         ) : (
@@ -80,11 +83,11 @@ export default function MyListing({
               : "border-brand-border bg-white/95 text-brand-stone"
           }`}
         >
-          {studio.isPublished ? (
+          {/* {studio.isPublished ? (
             <Eye className="h-3 w-3" />
           ) : (
             <EyeOff className="h-3 w-3" />
-          )}
+          )} */}
 
           {studio.isPublished ? "Published" : "Draft"}
         </span>
