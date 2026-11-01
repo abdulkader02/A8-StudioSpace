@@ -13,6 +13,7 @@ import {
   LayoutDashboard,
   LogOut,
   Loader2,
+  UserRound,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -77,7 +78,6 @@ export default function Navbar() {
     }
   };
 
-  // Avatar Popover
   const UserMenu = () => (
     <Popover>
       <PopoverTrigger
@@ -111,7 +111,6 @@ export default function Navbar() {
         sideOffset={10}
         className="w-64 border border-brand-border bg-brand-ivory p-2 text-brand-charcoal shadow-lg"
       >
-        {/* User Information */}
         <div className="border-b border-brand-border px-3 py-2">
           <p className="font-semibold text-brand-charcoal">
             {user?.name || "User"}
@@ -121,10 +120,19 @@ export default function Navbar() {
           </p>
         </div>
 
+        {/* Profile */}
+        <Link
+          href="/profile"
+          className="mt-2 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-brand-bronze/10 hover:text-brand-bronze"
+        >
+          <UserRound className="size-4" />
+          Profile
+        </Link>
+
         {/* Add New Studio */}
         <Link
           href="/add-studio"
-          className="mt-2 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-brand-bronze/10 hover:text-brand-bronze"
+          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-brand-bronze/10 hover:text-brand-bronze"
         >
           <Plus className="size-4" />
           Add New Studio
@@ -178,12 +186,7 @@ export default function Navbar() {
           className="flex shrink-0 items-center gap-2.5"
           onClick={() => setIsOpen(false)}
         >
-          <Image
-            src={logo}
-            alt="StudioSpace Logo"
-            height={40}
-            width={40}
-          />
+          <Image src={logo} alt="StudioSpace Logo" height={40} width={40} />
 
           <span className="text-xl font-bold tracking-tight text-brand-ivory sm:text-2xl">
             Studio<span className="text-brand-bronze">Space</span>

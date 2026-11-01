@@ -1,37 +1,52 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   Building2,
+  LogIn,
   Plus,
   Search,
   Sparkles,
 } from "lucide-react";
 
 import EditStudioDialog from "@/components/studio/EditStudioDialog";
+import MyListing from "@/components/studio/MyListingCard";
 import { authClient } from "@/lib/auth-client";
 
 import type { TStudio } from "@/lib/type/type";
 
+type ListingStudio = TStudio & {
+  name?: string;
+  email?: string;
+};
+
 type StudiosResponse =
-  | TStudio[]
-  | { data?: TStudio[]; studios?: TStudio[] };
+  | ListingStudio[]
+  | { data?: ListingStudio[]; studios?: ListingStudio[] };
+
+const getOwnerEmail = (studio: ListingStudio) =>
+  (
+    studio.host?.email ??
+    studio.email ??
+    ""
+  ).toLowerCase();
 
 export default function MyListingsPage() {
   // Get the logged-in user's session
   const { data: session, isPending } = authClient.useSession();
 
-  const ownerEmail = session?.user?.email ?? "";
+const user = session?.user;
 
-  const [studios, setStudios] = useState<TStudio[]>([]);
+  const [studios, setStudios] = useState<ListingStudio[]>([]);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState("");
   const [reloadToken, setReloadToken] = useState(0);
   const [search, setSearch] = useState("");
 
-  const [editTarget, setEditTarget] = useState<TStudio | null>(null);
+  const [editTarget, setEditTarget] = useState<TStudio | null>(
+    null
+  );
 
   useEffect(() => {
     let active = true;
@@ -40,7 +55,7 @@ export default function MyListingsPage() {
       // Wait until Better Auth finishes checking the session
       if (isPending) return;
 
-      if (!ownerEmail) {
+      if (!user?.email) {
         if (active) {
           setFetchError("Please log in to view your listings.");
           setLoading(false);
@@ -53,7 +68,9 @@ export default function MyListingsPage() {
         setFetchError("");
 
         const response = await fetch(
-          `http://localhost:5000/studios?email=${encodeURIComponent(ownerEmail)}`,
+         `http://localhost:5000/my-bookings/${(
+        user.email
+      )}`,
           {
             cache: "no-store",
             credentials: "include",
@@ -68,7 +85,7 @@ export default function MyListingsPage() {
 
         const result = Array.isArray(data)
           ? data
-          : data.studios ?? data.data ?? [];
+          : (data.studios ?? data.data ?? []);
 
         if (active) {
           setStudios(result);
@@ -78,7 +95,9 @@ export default function MyListingsPage() {
         console.error("Failed to fetch user's studios:", error);
 
         if (active) {
-          setFetchError("Unable to load your listings. Please try again.");
+          setFetchError(
+            "Unable to load your listings. Please try again."
+          );
         }
       } finally {
         if (active) {
@@ -92,16 +111,23 @@ export default function MyListingsPage() {
     return () => {
       active = false;
     };
-  }, [ownerEmail, isPending, reloadToken]);
+  }, [user?.email, isPending, reloadToken]);
 
   const retryFetch = () => {
     setLoading(true);
     setReloadToken((current) => current + 1);
   };
 
-  const filteredStudios = studios.filter((studio) => {
-    const searchText = search.trim().toLowerCase();
+  // The API returns every studio, so keep only the ones owned by
+  // the signed-in host.
+  const ownerStudios = studios.filter(
+    (studio) =>
+      getOwnerEmail(studio) === user?.email?.toLowerCase()
+  );
 
+  const searchText = search.trim().toLowerCase();
+
+  const filteredStudios = ownerStudios.filter((studio) => {
     if (!searchText) return true;
 
     return (
@@ -118,6 +144,30 @@ export default function MyListingsPage() {
       current.filter((studio) => studio._id !== id)
     );
   };
+
+  // Older listings store the host name/email at the root level,
+  // so surface them as host details for the edit dialog.
+  const handleEdit = (studio: TStudio) => {
+    const listing = studio as ListingStudio;
+
+    const host =
+      studio.host ??
+      (listing.name || listing.email
+        ? { name: listing.name, email: listing.email }
+        : undefined);
+
+    setEditTarget(host ? { ...studio, host } : studio);
+  };
+
+  // Re-fetch after the edit dialog closes so changes appear
+  // without a full page reload.
+  const handleEditClose = () => {
+    setEditTarget(null);
+    setReloadToken((current) => current + 1);
+  };
+
+  const needsAuth = !isPending && !user?.email;
+  const isInitialLoading = loading && ownerStudios.length === 0;
 
   return (
     <main className="min-h-screen bg-brand-ivory">
@@ -139,8 +189,8 @@ export default function MyListingsPage() {
               </h1>
 
               <p className="mt-2 max-w-lg text-sm leading-6 text-brand-stone">
-                Manage your creative spaces, update their details, or remove
-                listings you no longer offer.
+                Manage your creative spaces, update their details, or
+                remove listings you no longer offer.
               </p>
             </div>
 
@@ -170,25 +220,30 @@ export default function MyListingsPage() {
               </p>
 
               <p className="text-xs text-brand-stone">
-                {studios.length} total listings
+                {ownerStudios.length} total{" "}
+                {ownerStudios.length === 1 ? "listing" : "listings"}
+                {loading && ownerStudios.length > 0
+                  ? " · refreshing..."
+                  : ""}
               </p>
             </div>
           </div>
 
           <div className="flex h-11 w-full items-center gap-2 rounded-xl border border-brand-border bg-white px-3 sm:max-w-xs">
-            <Search className="h-4 w-4 text-brand-bronze" />
+            <Search className="h-4 w-4 shrink-0 text-brand-bronze" />
 
             <input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Search your listings..."
+              aria-label="Search your listings"
               className="w-full bg-transparent text-sm text-brand-charcoal outline-none placeholder:text-brand-stone/70"
             />
           </div>
         </div>
 
         {/* Loading */}
-        {loading ? (
+        {isInitialLoading ? (
           <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
             {[1, 2, 3].map((item) => (
               <div
@@ -208,42 +263,58 @@ export default function MyListingsPage() {
         ) : fetchError ? (
           /* Error */
           <div className="rounded-2xl border border-brand-border bg-white px-6 py-16 text-center">
-            <Building2 className="mx-auto h-8 w-8 text-brand-bronze" />
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-bronze/10">
+              <Building2 className="h-7 w-7 text-brand-bronze" />
+            </div>
 
             <h2 className="mt-4 text-lg font-semibold text-brand-charcoal">
-              Could not load listings
+              {needsAuth
+                ? "Sign in to manage listings"
+                : "Could not load listings"}
             </h2>
 
             <p className="mt-2 text-sm text-brand-stone">
               {fetchError}
             </p>
 
-            <button
-              type="button"
-              onClick={retryFetch}
-              className="mt-5 rounded-xl bg-brand-charcoal px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-bronze"
-            >
-              Try again
-            </button>
+            {needsAuth ? (
+              <Link
+                href="/login"
+                className="mt-5 inline-flex items-center gap-2 rounded-xl bg-brand-bronze px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-bronze-hover"
+              >
+                <LogIn className="h-4 w-4" />
+                Sign in
+              </Link>
+            ) : (
+              <button
+                type="button"
+                onClick={retryFetch}
+                className="mt-5 rounded-xl bg-brand-charcoal px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-bronze"
+              >
+                Try again
+              </button>
+            )}
           </div>
         ) : filteredStudios.length === 0 ? (
           /* Empty State */
           <div className="rounded-2xl border border-brand-border bg-white px-6 py-16 text-center">
-            <Building2 className="mx-auto h-9 w-9 text-brand-bronze" />
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-bronze/10">
+              <Building2 className="h-7 w-7 text-brand-bronze" />
+            </div>
 
             <h2 className="mt-4 text-lg font-semibold text-brand-charcoal">
-              {studios.length === 0
+              {ownerStudios.length === 0
                 ? "You haven't listed a space yet"
                 : "No matching listings"}
             </h2>
 
             <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-brand-stone">
-              {studios.length === 0
+              {ownerStudios.length === 0
                 ? "Add your first creative space and manage it from this dashboard."
                 : "Try a different search term or clear your search."}
             </p>
 
-            {studios.length === 0 ? (
+            {ownerStudios.length === 0 ? (
               <Link
                 href="/add-studio"
                 className="mt-5 inline-flex items-center gap-2 rounded-xl bg-brand-bronze px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-bronze-hover"
@@ -268,7 +339,7 @@ export default function MyListingsPage() {
               <MyListing
                 key={studio._id}
                 studio={studio}
-                onEdit={setEditTarget}
+                onEdit={handleEdit}
                 onDeleted={handleStudioDeleted}
               />
             ))}
@@ -280,7 +351,7 @@ export default function MyListingsPage() {
       {editTarget && (
         <EditStudioDialog
           studio={editTarget}
-          onClose={() => setEditTarget(null)}
+          onClose={handleEditClose}
         />
       )}
     </main>

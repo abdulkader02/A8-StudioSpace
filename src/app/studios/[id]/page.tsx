@@ -16,12 +16,7 @@ import {
   DollarSign,
 } from "lucide-react";
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { Badge } from "@/components/ui/badge";
 
@@ -30,20 +25,17 @@ import {
   HostDetails,
   StudioReviews,
   BookingModal,
-} from "@/app/studios/StudioInteractiveSections";
+} from "@/components/booking/BookingCard";
 
 export const dynamic = "force-dynamic";
 
-const formatPrice = (amount: number) =>
-  amount.toLocaleString("en-US");
+const formatPrice = (amount: number) => amount.toLocaleString("en-US");
 
 function CurrencyMark({ currency }: { currency: string }) {
   return currency === "USD" ? (
     <DollarSign className="h-4 w-4 text-brand-bronze" />
   ) : (
-    <span className="text-xs font-semibold text-brand-bronze">
-      {currency}
-    </span>
+    <span className="text-xs font-semibold text-brand-bronze">{currency}</span>
   );
 }
 
@@ -54,21 +46,16 @@ export default async function StudioDetailsPage({
 }) {
   const { id } = await params;
 
-  const res = await fetch(
-    `http://localhost:5000/studio/${id}`,
-    {
-      cache: "no-store",
-    }
-  );
+  const res = await fetch(`http://localhost:5000/studio/${id}`, {
+    cache: "no-store",
+  });
 
   if (res.status === 404) {
     notFound();
   }
 
   if (!res.ok) {
-    throw new Error(
-      `Failed to fetch studio. Status: ${res.status}`
-    );
+    throw new Error(`Failed to fetch studio. Status: ${res.status}`);
   }
 
   const studio = (await res.json()) as TStudio;
@@ -79,28 +66,22 @@ export default async function StudioDetailsPage({
 
   const studioId = String(studio._id ?? id);
 
-  const location = [
-    studio.location?.area,
-    studio.location?.city,
-  ]
+  const location = [studio.location?.area, studio.location?.city]
     .filter(Boolean)
     .join(", ");
 
   const price =
-    typeof studio.price === "number" &&
-    Number.isFinite(studio.price)
+    typeof studio.price === "number" && Number.isFinite(studio.price)
       ? studio.price
       : 0;
 
   const rating =
-    typeof studio.rating === "number" &&
-    Number.isFinite(studio.rating)
+    typeof studio.rating === "number" && Number.isFinite(studio.rating)
       ? studio.rating
       : 0;
 
   const capacity =
-    typeof studio.capacity === "number" &&
-    Number.isFinite(studio.capacity)
+    typeof studio.capacity === "number" && Number.isFinite(studio.capacity)
       ? studio.capacity
       : 0;
 
@@ -129,7 +110,6 @@ export default async function StudioDetailsPage({
             <span className="flex h-9 w-9 items-center justify-center rounded-full border border-brand-border bg-white transition-colors group-hover:border-brand-bronze">
               <ArrowLeft className="h-4 w-4" />
             </span>
-
             Back to studios
           </Link>
 
@@ -180,9 +160,7 @@ export default async function StudioDetailsPage({
                   {rating > 0 ? rating.toFixed(1) : "New"}
                 </strong>
 
-                <span>
-                  {rating > 0 ? "Rating" : "No ratings yet"}
-                </span>
+                <span>{rating > 0 ? "Rating" : "No ratings yet"}</span>
               </span>
             </div>
           </div>
@@ -239,9 +217,7 @@ export default async function StudioDetailsPage({
             {studio.description && (
               <Card className="overflow-hidden rounded-[24px] border-brand-border bg-white shadow-brand">
                 <CardHeader className="pb-3">
-                  <SectionLabel>
-                    About this space
-                  </SectionLabel>
+                  <SectionLabel>About this space</SectionLabel>
 
                   <CardTitle className="text-xl font-semibold tracking-tight text-brand-charcoal sm:text-2xl">
                     Studio overview
@@ -261,9 +237,7 @@ export default async function StudioDetailsPage({
               <Card className="rounded-[24px] border-brand-border bg-white shadow-brand">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0">
                   <div className="space-y-2">
-                    <SectionLabel>
-                      Studio facilities
-                    </SectionLabel>
+                    <SectionLabel>Studio facilities</SectionLabel>
 
                     <CardTitle className="text-xl font-semibold tracking-tight text-brand-charcoal sm:text-2xl">
                       Equipment & Amenities
@@ -278,10 +252,7 @@ export default async function StudioDetailsPage({
                 <CardContent>
                   <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     {amenities.map((amenity) => (
-                      <AmenityChip
-                        key={amenity}
-                        name={amenity}
-                      />
+                      <AmenityChip key={amenity} name={amenity} />
                     ))}
                   </div>
                 </CardContent>
@@ -292,10 +263,7 @@ export default async function StudioDetailsPage({
             <HostDetails host={studio.host} />
 
             {/* Reviews */}
-            <StudioReviews
-              reviews={studio.reviews}
-              rating={rating}
-            />
+            <StudioReviews reviews={studio.reviews} rating={rating} />
           </div>
 
           {/* Right booking column */}
@@ -320,11 +288,7 @@ export default async function StudioDetailsPage({
 }
 
 // Section label
-function SectionLabel({
-  children,
-}: {
-  children: ReactNode;
-}) {
+function SectionLabel({ children }: { children: ReactNode }) {
   return (
     <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand-bronze">
       {children}
@@ -360,20 +324,14 @@ function MetaItem({
 }
 
 // Amenities chip
-function AmenityChip({
-  name,
-}: {
-  name: string;
-}) {
+function AmenityChip({ name }: { name: string }) {
   return (
     <div className="flex items-center gap-3 rounded-xl border border-brand-border bg-brand-ivory/50 px-4 py-3 transition-colors hover:border-brand-bronze/50">
       <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-bronze-light/60 text-brand-bronze">
         <CheckCircle2 className="h-4 w-4" />
       </span>
 
-      <span className="text-sm font-medium text-brand-charcoal">
-        {name}
-      </span>
+      <span className="text-sm font-medium text-brand-charcoal">{name}</span>
     </div>
   );
 }
@@ -413,14 +371,10 @@ function BookingCard({
             {formatPrice(price)}
           </h2>
 
-          <span className="pb-1 text-sm text-white/50">
-            / {priceUnit}
-          </span>
+          <span className="pb-1 text-sm text-white/50">/ {priceUnit}</span>
         </div>
 
-        <p className="mt-1 text-xs text-white/50">
-          {currency}
-        </p>
+        <p className="mt-1 text-xs text-white/50">{currency}</p>
 
         <div className="mt-4 flex items-center gap-2">
           <Star className="h-4 w-4 fill-brand-bronze text-brand-bronze" />
@@ -465,9 +419,7 @@ function BookingCard({
         {/* Price breakdown */}
         <div className="space-y-3 border-t border-dashed border-brand-border pt-5">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-brand-stone">
-              Studio price
-            </span>
+            <span className="text-brand-stone">Studio price</span>
 
             <span className="flex items-center gap-1 font-medium text-brand-charcoal">
               <CurrencyMark currency={currency} />
@@ -476,9 +428,7 @@ function BookingCard({
           </div>
 
           <div className="flex items-center justify-between text-sm">
-            <span className="text-brand-stone">
-              Security deposit
-            </span>
+            <span className="text-brand-stone">Security deposit</span>
 
             <span className="flex items-center gap-1 font-medium text-brand-charcoal">
               <CurrencyMark currency={currency} />
@@ -498,9 +448,8 @@ function BookingCard({
           </div>
 
           <p className="text-[11px] leading-relaxed text-brand-stone">
-            Estimated amount for one booking unit, including
-            the listed security deposit. Confirm the final
-            amount on the booking page.
+            Estimated amount for one booking unit, including the listed security
+            deposit. Confirm the final amount on the booking page.
           </p>
         </div>
 
