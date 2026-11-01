@@ -43,8 +43,7 @@ const categories = [
 
 export default function AllStudiosPage() {
   return (
-    // useSearchParams() must be wrapped in a Suspense boundary so the page
-    // can be prerendered (Next.js build would fail otherwise).
+
     <Suspense fallback={<StudiosPageFallback />}>
       <StudiosContent />
     </Suspense>

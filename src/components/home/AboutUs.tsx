@@ -1,4 +1,8 @@
+"use client";
 
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -62,11 +66,26 @@ const assurances: Feature[] = [
   },
 ];
 
-export default function TrustSafety() {
+export default function AboutUs() {
+  const router = useRouter();
+  const { data: session, isPending } = authClient.useSession();
+
+  const handleBecomeHost = () => {
+    if (isPending) return;
+
+    if (session?.user) {
+      toast.info("You are already logged in. Let's create your studio!");
+      router.push("/add-studio");
+      return;
+    }
+
+    router.push("/register");
+  };
+
   return (
     <section
       id="about-us"
-      aria-labelledby="trust-safety-heading"
+      aria-labelledby="about-us-heading"
       className="relative overflow-hidden bg-brand-ivory-dark py-20 sm:py-24 lg:py-28"
     >
       {/* Background decoration */}
@@ -74,18 +93,17 @@ export default function TrustSafety() {
       <div className="pointer-events-none absolute -right-40 bottom-0 h-96 w-96 rounded-full bg-brand-bronze/10 blur-3xl" />
 
       <div className="relative mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-
         {/* Heading */}
         <div className="mx-auto mb-16 max-w-3xl text-center">
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-brand-border bg-white px-4 py-2 shadow-sm">
             <ShieldCheck className="h-4 w-4 text-brand-bronze" />
             <span className="text-xs font-bold uppercase tracking-[0.15em] text-brand-bronze">
-              Trust & Safety
+              About Us
             </span>
           </div>
 
           <h2
-            id="trust-safety-heading"
+            id="about-us-heading"
             className="text-3xl font-bold leading-tight tracking-tight text-brand-charcoal sm:text-4xl lg:text-5xl"
           >
             Create With Confidence.
@@ -96,14 +114,13 @@ export default function TrustSafety() {
 
           <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-brand-stone sm:text-lg">
             From verified workspaces to structured booking safeguards,
-            StudioSpace is designed to make every creative collaboration
-            more confident and convenient.
+            StudioSpace is designed to make every creative collaboration more
+            confident and convenient.
           </p>
         </div>
 
         {/* Main Content */}
         <div className="grid items-stretch gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
-
           {/* Left Content */}
           <div className="flex flex-col justify-center">
             <div className="inline-flex w-fit items-center gap-2 text-sm font-semibold text-brand-bronze">
@@ -116,10 +133,9 @@ export default function TrustSafety() {
             </h3>
 
             <p className="mt-5 text-base leading-8 text-brand-stone">
-              Great creative work starts with the right environment.
-              We focus on building a trusted marketplace where hosts
-              can showcase their spaces and creators can book with
-              greater confidence.
+              Great creative work starts with the right environment. We focus on
+              building a trusted marketplace where hosts can showcase their
+              spaces and creators can book with greater confidence.
             </p>
 
             {/* Mini trust points */}
@@ -140,13 +156,18 @@ export default function TrustSafety() {
 
             {/* CTA */}
             <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-              <Link
-                href="/register"
-                className="group inline-flex items-center justify-center gap-2 rounded-xl bg-brand-bronze px-6 py-3.5 text-sm font-semibold text-brand-dark shadow-lg shadow-black/10 transition-all duration-300 hover:-translate-y-1 hover:bg-brand-bronze-hover hover:shadow-xl"
+              <button
+                type="button"
+                onClick={handleBecomeHost}
+                disabled={isPending}
+                className="group inline-flex items-center justify-center gap-2 rounded-xl bg-brand-bronze px-6 py-3.5 text-sm font-semibold text-brand-dark shadow-lg shadow-black/10 transition-all duration-300 hover:-translate-y-1 hover:bg-brand-bronze-hover hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60"
               >
-                Become a Host
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </Link>
+                {isPending ? "Checking..." : "Become a Host"}
+
+                {!isPending && (
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                )}
+              </button>
 
               <Link
                 href="/studios"
@@ -221,7 +242,6 @@ export default function TrustSafety() {
             })}
           </div>
         </div>
-
       </div>
     </section>
   );

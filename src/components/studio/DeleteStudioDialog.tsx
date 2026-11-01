@@ -18,7 +18,6 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { apiJson } from "@/lib/api";
 import { notify } from "@/lib/notify";
 
 type Props = {
@@ -31,45 +30,39 @@ const DeleteStudioDialog = ({ id, title, onDeleted }: Props) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [open, setOpen] = useState(false);
 
-  const handleDeleteStudio = async () => {
-    if (isDeleting) {
-      return;
+ const handleDeleteStudio = async () => {
+  if (isDeleting) {
+    return;
+  }
+
+  setIsDeleting(true);
+
+  try {
+    const response = await fetch(`http://localhost:5000/studio/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      throw new Error("Could not delete this studio.");
     }
 
-    setIsDeleting(true);
+    const result = await response.json();
 
-    try {
-      const result = await apiJson<{
-        success?: boolean;
-        message?: string;
-        deletedCount?: number;
-      }>(`/studio/${encodeURIComponent(id)}`, {
-        method: "DELETE",
-      });
-
-      if (result?.success === false) {
-        throw new Error(result.message || "Could not delete this studio.");
-      }
-
-      if (
-        typeof result?.deletedCount === "number" &&
-        result.deletedCount === 0
-      ) {
-        throw new Error("This studio no longer exists.");
-      }
-
-      notify.success("Studio deleted successfully!");
-
-      onDeleted(id);
-      setOpen(false);
-    } catch (error) {
-      console.error("Delete Studio Error:", error);
-      notify.apiError(error, "Could not delete studio. Please try again.");
-    } finally {
-      setIsDeleting(false);
+    if (result?.deletedCount === 0) {
+      throw new Error("This studio no longer exists.");
     }
-  };
 
+    notify.success("Studio deleted successfully!");
+
+    onDeleted(id);
+    setOpen(false);
+  } catch (error) {
+    console.error("Delete Studio Error:", error);
+    notify.apiError(error, "Could not delete studio. Please try again.");
+  } finally {
+    setIsDeleting(false);
+  }
+};
   return (
     <AlertDialog
       open={open}

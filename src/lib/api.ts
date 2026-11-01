@@ -96,12 +96,7 @@ export async function apiRequest(
   }
 }
 
-/**
- * Perform a request and parse the JSON response.
- *
- * Throws {@link ApiError} when the response is not ok or the body is not valid
- * JSON, so callers can show `error.message` directly to the user.
- */
+
 export async function apiJson<T>(
   path: string,
   options: ApiRequestOptions = {},

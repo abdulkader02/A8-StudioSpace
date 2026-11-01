@@ -2,7 +2,7 @@ import Hero from "@/components/home/Hero";
 import Categories from "@/components/home/Categories";
 import Featured from "@/components/home/Featured";
 import HowItWorks from "@/components/home/HowItWorks";
-import TrustSafety from "@/components/home/TrustSafety";
+import AboutUs from "@/components/home/AboutUs";
 
 export default function Home() {
   return (
@@ -11,7 +11,7 @@ export default function Home() {
       <Categories />
       <Featured />
       <HowItWorks />
-      <TrustSafety />
+      <AboutUs/>
     </div>
   );
 }

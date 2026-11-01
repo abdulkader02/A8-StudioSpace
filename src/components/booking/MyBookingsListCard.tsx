@@ -34,10 +34,7 @@ export default function MyBookingsList({
   const router = useRouter();
   const [isRefreshing, startRefresh] = useTransition();
 
-  /**
-   * Status changes made in this session are kept as overrides so the list stays
-   * in sync when the server component re-renders with fresh bookings.
-   */
+ 
   const [statusOverrides, setStatusOverrides] = useState<
     Partial<Record<string, TBookingStatus>>
   >({});
