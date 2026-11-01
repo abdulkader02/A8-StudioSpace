@@ -24,9 +24,12 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 
-import { apiJson } from "@/lib/api";
 import { notify } from "@/lib/notify";
 import type { TStudio } from "@/lib/type/type";
+
+const API_URL = (
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000"
+).replace(/\/+$/, "");
 
 type Props = {
   studio: TStudio;
@@ -115,7 +118,6 @@ export default function EditStudioDialog({
     setIsSubmitting(true);
 
     try {
-      // Input-er extra fields ke MongoDB structure-e convert
       const {
         _id,
         city,
@@ -147,9 +149,7 @@ export default function EditStudioDialog({
         throw new Error("Please check the deposit and rating values.");
       }
 
-      // The form only edits the cover image. Keep the rest of the gallery
-      // intact when the URL was not changed, instead of dropping every image
-      // except the first one on save.
+  
       const trimmedImageUrl = imageUrl.trim();
       const existingImages = (studio.imageUrls ?? []).filter(Boolean);
 
@@ -174,12 +174,9 @@ export default function EditStudioDialog({
         imageUrls,
       };
 
-      const result = await apiJson<{
-        success?: boolean;
-        message?: string;
-        matchedCount?: number;
-        modifiedCount?: number;
-      }>(`/studio/${_id}`, {
+        //FETCHING
+
+      const response = await fetch(`${API_URL}/studio/${_id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -187,7 +184,14 @@ export default function EditStudioDialog({
         body: JSON.stringify(updatedData),
       });
 
-      if (result?.success === false) {
+      const result = (await response.json()) as {
+        success?: boolean;
+        message?: string;
+        matchedCount?: number;
+        modifiedCount?: number;
+      };
+
+      if (!response.ok || result?.success === false) {
         throw new Error(result.message || "Could not update this studio.");
       }
 

@@ -20,6 +20,10 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { notify } from "@/lib/notify";
 
+const API_URL = (
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000"
+).replace(/\/+$/, "");
+
 type Props = {
   id: string;
   title: string;
@@ -38,15 +42,18 @@ const DeleteStudioDialog = ({ id, title, onDeleted }: Props) => {
   setIsDeleting(true);
 
   try {
-    const response = await fetch(`http://localhost:5000/studio/${id}`, {
+    const response = await fetch(`${API_URL}/studio/${id}`, {
       method: "DELETE",
     });
 
-    if (!response.ok) {
-      throw new Error("Could not delete this studio.");
-    }
+    const result = (await response.json()) as {
+      deletedCount?: number;
+      message?: string;
+    };
 
-    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.message || "Could not delete this studio.");
+    }
 
     if (result?.deletedCount === 0) {
       throw new Error("This studio no longer exists.");

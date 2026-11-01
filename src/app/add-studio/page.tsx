@@ -17,11 +17,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { apiJson } from "@/lib/api";
 import { authClient } from "@/lib/auth-client";
 import { notify } from "@/lib/notify";
 
-
+const API_URL = (
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000"
+).replace(/\/+$/, "");
 
 type FormValues = {
   title: string;
@@ -202,10 +203,7 @@ const handleSubmit = async (
   };
 
   try {
-    const result = await apiJson<{
-      success?: boolean;
-      message?: string;
-    }>("/add-studio", {
+    const response = await fetch(`${API_URL}/add-studio`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -213,7 +211,12 @@ const handleSubmit = async (
       body: JSON.stringify(studioData),
     });
 
-    if (result?.success !== true) {
+    const result = (await response.json()) as {
+      success?: boolean;
+      message?: string;
+    };
+
+    if (!response.ok || result?.success !== true) {
       throw new Error(result?.message || "Failed to add studio");
     }
 

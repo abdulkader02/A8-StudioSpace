@@ -15,7 +15,6 @@ import {
 } from "lucide-react";
 
 import { authClient } from "@/lib/auth-client";
-import { apiJson } from "@/lib/api";
 import { notify } from "@/lib/notify";
 import { getStudioImages } from "@/lib/studio";
 import type { TBookingPayload } from "@/lib/type/booking";
@@ -35,6 +34,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+
+const API_URL = (
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000"
+).replace(/\/+$/, "");
 
 /* ----------------------------------
    Studio Gallery
@@ -344,10 +347,7 @@ export function BookingModal({
         },
       };
 
-      const result = await apiJson<{
-        success?: boolean;
-        message?: string;
-      }>("/booking", {
+      const response = await fetch(`${API_URL}/booking`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -355,7 +355,12 @@ export function BookingModal({
         body: JSON.stringify(data),
       });
 
-      if (result?.success !== true) {
+      const result = (await response.json()) as {
+        success?: boolean;
+        message?: string;
+      };
+
+      if (!response.ok || result?.success !== true) {
         throw new Error(result?.message || "Booking failed.");
       }
 

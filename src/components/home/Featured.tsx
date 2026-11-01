@@ -8,7 +8,11 @@ import StudioCard from "@src/components/studio/StudioCard";
 import EmptyState from "@/components/shared/EmptyState";
 import { StudioGridSkeleton } from "@/components/shared/LoadingStates";
 import type { TStudio } from "@src/lib/type/type";
-import { fetchStudioList, getErrorMessage } from "@/lib/api";
+import { getErrorMessage } from "@/lib/utils";
+
+const API_URL = (
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000"
+).replace(/\/+$/, "");
 
 export default function Featured() {
   const [studios, setStudios] = useState<TStudio[]>([]);
@@ -23,16 +27,22 @@ export default function Featured() {
       try {
         setLoading(true);
 
-        const data = await fetchStudioList("/featured-studios", {
+        const response = await fetch(`${API_URL}/featured-studios`, {
           cache: "no-store",
         });
 
+        if (!response.ok) {
+          throw new Error(
+            "Unable to load featured studios. Please try again.",
+          );
+        }
+
+        const data = (await response.json()) as TStudio[];
+
         if (active) {
-          // The endpoint returns published studios sorted by rating and
-          // recency; keep the guard and cap so the home page never shows
-          // drafts or more than six cards.
+         
           setStudios(
-            data
+            (Array.isArray(data) ? data : [])
               .filter((studio) => studio.isPublished !== false)
               .slice(0, 6),
           );

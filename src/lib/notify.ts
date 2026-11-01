@@ -1,6 +1,6 @@
 import { toast } from "sonner";
 
-import { getErrorMessage } from "@/lib/api";
+import { getErrorMessage } from "@/lib/utils";
 
 /** Shared toast helpers so every workflow uses the same Sonner setup. */
 export const notify = {

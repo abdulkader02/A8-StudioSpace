@@ -166,7 +166,7 @@ export default function StudioCard({ studio }: StudioCardProps) {
 
           {studioId ? (
             <Link
-              href={`/studios/${encodeURIComponent(studioId)}`}
+              href={`/studios/${studioId}`}
               aria-label={`View details for ${studioTitle}`}
               className="inline-flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-xl bg-brand-charcoal px-4 text-xs font-semibold text-white transition-colors hover:bg-brand-bronze focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-bronze focus-visible:ring-offset-2"
             >

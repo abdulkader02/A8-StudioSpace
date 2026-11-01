@@ -8,8 +8,8 @@ import type { TStudio } from "@src/lib/type/type";
 import StudioCard from "@src/components/studio/StudioCard";
 import EmptyState from "@/components/shared/EmptyState";
 import { StudioGridSkeleton } from "@/components/shared/LoadingStates";
-import { fetchStudioList, getErrorMessage } from "@/lib/api";
 import { categoryNameToSlug, categorySlugToName } from "@/lib/studio";
+import { getErrorMessage } from "@/lib/utils";
 
 import {
   ArrowRight,
@@ -28,6 +28,10 @@ import {
   Users,
   RotateCcw,
 } from "lucide-react";
+
+const API_URL = (
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000"
+).replace(/\/+$/, "");
 
 const categories = [
   { name: "All Spaces", icon: Sparkles },
@@ -78,12 +82,20 @@ function StudiosContent() {
       try {
         setLoading(true);
 
-        const data = await fetchStudioList("/studios", {
+        const response = await fetch(`${API_URL}/studios`, {
           cache: "no-store",
         });
 
+        if (!response.ok) {
+          throw new Error(
+            "Unable to load studios. Please make sure the StudioSpace API is running.",
+          );
+        }
+
+        const data = (await response.json()) as TStudio[];
+
         if (active) {
-          setStudios(data);
+          setStudios(Array.isArray(data) ? data : []);
           setFetchError("");
         }
       } catch (error) {

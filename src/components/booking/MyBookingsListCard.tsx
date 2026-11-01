@@ -18,9 +18,12 @@ import {
 
 import EmptyState from "@/components/shared/EmptyState";
 import { Spinner } from "@/components/ui/spinner";
-import { apiJson } from "@/lib/api";
 import { notify } from "@/lib/notify";
 import type { TBooking, TBookingStatus } from "@/lib/type/booking";
+
+const API_URL = (
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000"
+).replace(/\/+$/, "");
 
 type MyBookingsListProps = {
   initialBookings: TBooking[];
@@ -81,17 +84,19 @@ export default function MyBookingsList({
     setCancellingId(bookingId);
 
     try {
-      const result = await apiJson<{ success?: boolean; message?: string }>(
-        `/booking/${encodeURIComponent(bookingId)}/cancel`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
+      const response = await fetch(`${API_URL}/booking/${bookingId}/cancel`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+      });
 
-      if (result?.success !== true) {
+      const result = (await response.json()) as {
+        success?: boolean;
+        message?: string;
+      };
+
+      if (!response.ok || result?.success !== true) {
         throw new Error(result?.message || "Failed to cancel the booking.");
       }
 

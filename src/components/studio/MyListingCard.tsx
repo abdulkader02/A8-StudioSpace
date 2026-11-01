@@ -58,7 +58,7 @@ export default function MyListing({
       {/* Cover Image */}
       <div className="relative aspect-[1.5/1] overflow-hidden bg-brand-stone/10">
         {coverImage ? (
-          // eslint-disable-next-line @next/next/no-img-element
+         
           <img
             src={coverImage}
             alt={studio.title}

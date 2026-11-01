@@ -16,10 +16,14 @@ import EditStudioDialog from "@/components/studio/EditStudioDialog";
 import MyListing from "@/components/studio/MyListingCard";
 import EmptyState from "@/components/shared/EmptyState";
 import { ListingGridSkeleton } from "@/components/shared/LoadingStates";
-import { fetchStudioList, getErrorMessage } from "@/lib/api";
 import { authClient } from "@/lib/auth-client";
+import { getErrorMessage } from "@/lib/utils";
 
 import type { TStudio } from "@/lib/type/type";
+
+const API_URL = (
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000"
+).replace(/\/+$/, "");
 
 type ListingStudio = TStudio & {
   name?: string;
@@ -68,10 +72,20 @@ export default function MyListingsPage() {
         // GET /my-listings/:email is already scoped to the signed-in user;
         // no cookies/credentials are involved, and the API's CORS policy
         // (Access-Control-Allow-Origin: *) rejects credentialed requests.
-        const result = await fetchStudioList(
-          `/my-listings/${encodeURIComponent(user.email)}`,
+        const response = await fetch(
+          `${API_URL}/my-listings/${encodeURIComponent(user.email)}`,
           { cache: "no-store" },
         );
+
+        if (!response.ok) {
+          throw new Error("Unable to load your listings. Please try again.");
+        }
+
+        const data = (await response.json()) as
+          | TStudio[]
+          | { studios?: TStudio[] };
+
+        const result = Array.isArray(data) ? data : data.studios ?? [];
 
         if (active) {
           setStudios(result as ListingStudio[]);

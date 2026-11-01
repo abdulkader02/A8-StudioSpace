@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import type { TStudio } from "@src/lib/type/type";
-import { ApiError, apiJson, getErrorMessage } from "@/lib/api";
+import { getErrorMessage } from "@/lib/utils";
 
 import {
   MapPin,
@@ -32,6 +32,10 @@ import {
 
 export const dynamic = "force-dynamic";
 
+const API_URL = (
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000"
+).replace(/\/+$/, "");
+
 const formatPrice = (amount: number) => amount.toLocaleString("en-US");
 
 function CurrencyMark({ currency }: { currency: string }) {
@@ -52,23 +56,32 @@ type StudioResult = { studio: TStudio } | { error: string };
  * is rendered as a friendly message instead of a crash page.
  */
 async function getStudio(id: string): Promise<StudioResult> {
-  let studio: TStudio;
+  let response: Response;
 
   try {
-    studio = await apiJson<TStudio>(`/studio/${encodeURIComponent(id)}`, {
+    response = await fetch(`${API_URL}/studio/${id}`, {
       cache: "no-store",
     });
   } catch (error) {
-    if (
-      error instanceof ApiError &&
-      (error.status === 404 || error.status === 400)
-    ) {
-      notFound();
-    }
-
     return {
       error: getErrorMessage(error, "We couldn't load this studio right now."),
     };
+  }
+
+  if (response.status === 404 || response.status === 400) {
+    notFound();
+  }
+
+  if (!response.ok) {
+    return { error: "We couldn't load this studio right now." };
+  }
+
+  let studio: TStudio;
+
+  try {
+    studio = (await response.json()) as TStudio;
+  } catch {
+    return { error: "The StudioSpace API returned an invalid response." };
   }
 
   if (!studio || typeof studio !== "object" || !studio.title) {

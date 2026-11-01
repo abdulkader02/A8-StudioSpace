@@ -1,13 +1,17 @@
 import { headers } from "next/headers";
 import { CalendarDays, LogIn } from "lucide-react";
 
-import { apiJson, fetchStudioList, getErrorMessage } from "@/lib/api";
 import { getStudioCoverImage } from "@/lib/studio";
 import { auth } from "@/lib/auth";
+import { getErrorMessage } from "@/lib/utils";
 import type { TBooking } from "@/lib/type/booking";
 import type { TStudio } from "@/lib/type/type";
 import MyBookingsListCard from "@/components/booking/MyBookingsListCard";
 import EmptyState from "@/components/shared/EmptyState";
+
+const API_URL = (
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000"
+).replace(/\/+$/, "");
 
 type BookingsResponse =
   | TBooking[]
@@ -45,7 +49,17 @@ const formatLocation = (location?: TStudio["location"]) => {
 
 const getStudios = async (): Promise<TStudio[]> => {
   try {
-    return await fetchStudioList("/studios", { cache: "no-store" });
+    const response = await fetch(`${API_URL}/studios`, {
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      throw new Error("Unable to fetch studios.");
+    }
+
+    const data = (await response.json()) as TStudio[];
+
+    return Array.isArray(data) ? data : [];
   } catch (err) {
     console.error("My Bookings Studios Error:", err);
     return [];
@@ -91,10 +105,16 @@ const MyBookingsPage = async () => {
   const studiosPromise = getStudios();
 
   try {
-    const data = await apiJson<BookingsResponse>(
-      `/my-bookings/${encodeURIComponent(user.email)}`,
+    const response = await fetch(
+      `${API_URL}/my-bookings/${encodeURIComponent(user.email)}`,
       { cache: "no-store" },
     );
+
+    if (!response.ok) {
+      throw new Error("Unable to load your bookings. Please try again later.");
+    }
+
+    const data = (await response.json()) as BookingsResponse;
 
     bookings = normalizeBookings(data);
   } catch (err) {
