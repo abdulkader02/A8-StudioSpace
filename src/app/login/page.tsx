@@ -5,8 +5,6 @@ import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
-import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -24,7 +22,9 @@ import {
   FieldSeparator,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
 import { authClient } from "@/lib/auth-client";
+import { notify } from "@/lib/notify";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -34,6 +34,10 @@ export default function LoginPage() {
 
   const handleEmailLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (loading || googleLoading) {
+      return;
+    }
 
     const formData = new FormData(e.currentTarget);
 
@@ -49,17 +53,21 @@ export default function LoginPage() {
         ...user,
       });
 
-      if (data) {
-        toast.success("Login successful!");
-        router.push("/");
+      if (error) {
+        notify.error(error.message || "Invalid email or password.");
+        return;
       }
 
-      if (error) {
-        toast.error(error.message || "Invalid email or password.");
+      if (!data) {
+        notify.error("We couldn't sign you in. Please try again.");
+        return;
       }
+
+      notify.success("Signed in successfully. Welcome back!");
+      router.push("/");
     } catch (error) {
       console.error(error);
-      toast.error("Something went wrong. Please try again.");
+      notify.apiError(error, "Could not sign you in. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -67,6 +75,10 @@ export default function LoginPage() {
 
   // Google Login
   const handleGoogleLogin = async () => {
+    if (loading || googleLoading) {
+      return;
+    }
+
     setGoogleLoading(true);
 
     try {
@@ -76,11 +88,11 @@ export default function LoginPage() {
       });
 
       if (error) {
-        toast.error(error.message || "Google login failed.");
+        notify.error(error.message || "Google sign-in failed.");
       }
     } catch (error) {
       console.error(error);
-      toast.error("Google login failed. Please try again.");
+      notify.apiError(error, "Google sign-in failed. Please try again.");
     } finally {
       setGoogleLoading(false);
     }
@@ -112,7 +124,7 @@ export default function LoginPage() {
                   className="w-full border-brand-border text-brand-charcoal hover:bg-brand-stone/10"
                 >
                   {googleLoading ? (
-                    <Loader2 className="size-4 animate-spin" />
+                    <Spinner />
                   ) : (
                     <svg viewBox="0 0 24 24" className="size-4">
                       <path
@@ -171,7 +183,7 @@ export default function LoginPage() {
                 >
                   {loading ? (
                     <>
-                      <Loader2 className="mr-2 size-4 animate-spin" />
+                      <Spinner className="mr-2" />
                       Logging in...
                     </>
                   ) : (

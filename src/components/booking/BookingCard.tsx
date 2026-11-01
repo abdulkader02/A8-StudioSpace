@@ -5,17 +5,27 @@ import type { FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
-import { CalendarDays, Clock, Star, UserRound, Users } from "lucide-react";
-
-import { toast } from "sonner";
+import {
+  CalendarDays,
+  Clock,
+  Image as ImageIcon,
+  Star,
+  UserRound,
+  Users,
+} from "lucide-react";
 
 import { authClient } from "@/lib/auth-client";
+import { apiJson } from "@/lib/api";
+import { notify } from "@/lib/notify";
+import { getStudioImages } from "@/lib/studio";
 import type { TBookingPayload } from "@/lib/type/booking";
 import type { TStudio } from "@src/lib/type/type";
 
+import EmptyState from "@/components/shared/EmptyState";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 
 import {
@@ -33,13 +43,16 @@ import {
 export function StudioGallery({ studio }: { studio: TStudio }) {
   const [selectedImage, setSelectedImage] = useState(0);
 
-  const images = studio.imageUrls?.filter(Boolean) ?? [];
+  const images = getStudioImages(studio);
 
   if (images.length === 0) {
     return (
-      <div className="flex h-80 items-center justify-center rounded-2xl bg-brand-stone/10 text-sm text-muted-foreground">
-        No images available
-      </div>
+      <EmptyState
+        compact
+        icon={ImageIcon}
+        title="No gallery images yet"
+        description="The host hasn't added photos for this studio yet. Check back soon for a closer look."
+      />
     );
   }
 
@@ -169,9 +182,12 @@ export function StudioReviews({ reviews = [], rating }: StudioReviewsProps) {
       </div>
 
       {reviews.length === 0 ? (
-        <p className="rounded-xl bg-brand-stone/10 p-5 text-sm text-muted-foreground">
-          No reviews have been added yet.
-        </p>
+        <EmptyState
+          compact
+          icon={Star}
+          title="No reviews yet"
+          description="Be the first creator to book this space and share your experience."
+        />
       ) : (
         <div className="grid gap-4 md:grid-cols-2">
           {reviews.map((review, index) => (
@@ -219,6 +235,8 @@ type BookingModalProps = {
   deposit: number;
   currency: string;
   priceUnit: string;
+  /** Maximum number of guests allowed by the studio (0 = unknown). */
+  capacity?: number;
 };
 
 export function BookingModal({
@@ -228,6 +246,7 @@ export function BookingModal({
   deposit,
   currency,
   priceUnit,
+  capacity = 0,
 }: BookingModalProps) {
   const router = useRouter();
 
@@ -252,7 +271,12 @@ export function BookingModal({
 
   const total = subtotal + deposit;
 
-  const today = new Date().toISOString().split("T")[0];
+  // Use the visitor's local date: toISOString() is UTC and can point at
+  // yesterday for users in positive time zones before ~06:00.
+  const now = new Date();
+  const today = new Date(now.getTime() - now.getTimezoneOffset() * 60_000)
+    .toISOString()
+    .slice(0, 10);
 
   /* ----------------------------------
      Handle Booking Form Submit
@@ -261,14 +285,18 @@ export function BookingModal({
   const handleBooking = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    if (isSubmitting) {
+      return;
+    }
+
     if (!user) {
-      toast.error("Please sign in to book this studio.");
+      notify.error("Please sign in to book this studio.");
       router.push("/login");
       return;
     }
 
     if (!date || !startTime) {
-      toast.error("Please select a date and start time.");
+      notify.error("Please select a date and start time.");
       return;
     }
 
@@ -280,12 +308,17 @@ export function BookingModal({
       parsedCrewCount < 1 ||
       !Number.isInteger(parsedCrewCount)
     ) {
-      toast.error("Please enter valid booking details.");
+      notify.error("Please enter valid booking details.");
       return;
     }
 
     if (date < today) {
-      toast.error("Please select today or a future date.");
+      notify.error("Please select today or a future date.");
+      return;
+    }
+
+    if (capacity > 0 && parsedCrewCount > capacity) {
+      notify.error(`This studio allows up to ${capacity} guests.`);
       return;
     }
 
@@ -298,7 +331,7 @@ export function BookingModal({
         startTime,
         duration: parsedDuration,
         crewCount: parsedCrewCount,
-        notes,
+        notes: notes.trim(),
         price,
         deposit,
         subtotal,
@@ -311,7 +344,10 @@ export function BookingModal({
         },
       };
 
-      const res = await fetch("http://localhost:5000/booking", {
+      const result = await apiJson<{
+        success?: boolean;
+        message?: string;
+      }>("/booking", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -319,13 +355,13 @@ export function BookingModal({
         body: JSON.stringify(data),
       });
 
-      const bookingRes = await res.json();
-
-      if (!res.ok) {
-        throw new Error(bookingRes.message || "Booking failed.");
+      if (result?.success !== true) {
+        throw new Error(result?.message || "Booking failed.");
       }
 
-      toast.success("Booking request submitted successfully!");
+      notify.success(
+        result?.message || "Booking request submitted successfully!",
+      );
 
       setOpen(false);
 
@@ -333,11 +369,7 @@ export function BookingModal({
     } catch (error) {
       console.error("Booking error:", error);
 
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "Something went wrong. Please try again.",
-      );
+      notify.apiError(error, "Could not create this booking. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -351,10 +383,24 @@ export function BookingModal({
         disabled={isPending}
         onClick={() => setOpen(true)}
       >
-        {isPending ? "Loading..." : "Book this studio"}
+        {isPending ? (
+          <>
+            <Spinner className="mr-2" />
+            Loading account...
+          </>
+        ) : (
+          "Book this studio"
+        )}
       </Button>
 
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog
+        open={open}
+        onOpenChange={(nextOpen) => {
+          if (!isSubmitting) {
+            setOpen(nextOpen);
+          }
+        }}
+      >
         <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>Book this studio</DialogTitle>
@@ -436,6 +482,7 @@ export function BookingModal({
                   name="crewCount"
                   type="number"
                   min={1}
+                  max={capacity > 0 ? capacity : undefined}
                   step={1}
                   required
                   value={crewCount}
@@ -495,7 +542,14 @@ export function BookingModal({
               disabled={isSubmitting || isPending}
               className="w-full bg-brand-bronze text-white hover:bg-brand-bronze/90"
             >
-              {isSubmitting ? "Submitting..." : "Confirm booking"}
+              {isSubmitting ? (
+                <>
+                  <Spinner className="mr-2" />
+                  Submitting...
+                </>
+              ) : (
+                "Confirm booking"
+              )}
             </Button>
           </form>
         </DialogContent>

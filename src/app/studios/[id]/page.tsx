@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import type { TStudio } from "@src/lib/type/type";
+import { ApiError, apiJson, getErrorMessage } from "@/lib/api";
 
 import {
   MapPin,
@@ -19,6 +20,8 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { Badge } from "@/components/ui/badge";
+
+import EmptyState from "@/components/shared/EmptyState";
 
 import {
   StudioGallery,
@@ -39,6 +42,42 @@ function CurrencyMark({ currency }: { currency: string }) {
   );
 }
 
+type StudioResult = { studio: TStudio } | { error: string };
+
+/**
+ * GET /studio/:id
+ *
+ * The backend answers 404 for a missing studio and 400 for a malformed id;
+ * both mean "this page does not exist". Any other failure (API offline, 5xx)
+ * is rendered as a friendly message instead of a crash page.
+ */
+async function getStudio(id: string): Promise<StudioResult> {
+  let studio: TStudio;
+
+  try {
+    studio = await apiJson<TStudio>(`/studio/${encodeURIComponent(id)}`, {
+      cache: "no-store",
+    });
+  } catch (error) {
+    if (
+      error instanceof ApiError &&
+      (error.status === 404 || error.status === 400)
+    ) {
+      notFound();
+    }
+
+    return {
+      error: getErrorMessage(error, "We couldn't load this studio right now."),
+    };
+  }
+
+  if (!studio || typeof studio !== "object" || !studio.title) {
+    notFound();
+  }
+
+  return { studio };
+}
+
 export default async function StudioDetailsPage({
   params,
 }: {
@@ -46,23 +85,13 @@ export default async function StudioDetailsPage({
 }) {
   const { id } = await params;
 
-  const res = await fetch(`http://localhost:5000/studio/${id}`, {
-    cache: "no-store",
-  });
+  const result = await getStudio(id);
 
-  if (res.status === 404) {
-    notFound();
+  if ("error" in result) {
+    return <StudioLoadError message={result.error} />;
   }
 
-  if (!res.ok) {
-    throw new Error(`Failed to fetch studio. Status: ${res.status}`);
-  }
-
-  const studio = (await res.json()) as TStudio;
-
-  if (!studio || !studio.title) {
-    notFound();
-  }
+  const { studio } = result;
 
   const studioId = String(studio._id ?? id);
 
@@ -278,10 +307,37 @@ export default async function StudioDetailsPage({
                 priceUnit={priceUnit}
                 studioId={studioId}
                 studioTitle={studio.title}
+                capacity={capacity}
               />
             </div>
           </aside>
         </div>
+      </div>
+    </main>
+  );
+}
+
+// Shown when the backend is unreachable or returns an unexpected error.
+function StudioLoadError({ message }: { message: string }) {
+  return (
+    <main className="flex min-h-screen items-center justify-center bg-brand-ivory px-4 py-16 text-brand-charcoal">
+      <div className="w-full max-w-lg">
+        <EmptyState
+          tone="error"
+          icon={ImageIcon}
+          eyebrow="Studio unavailable"
+          title="Unable to load this studio"
+          description={message}
+          action={{
+            label: "Back to studios",
+            href: "/studios",
+            icon: ArrowLeft,
+          }}
+          secondaryAction={{
+            label: "Return home",
+            href: "/",
+          }}
+        />
       </div>
     </main>
   );
@@ -346,6 +402,7 @@ function BookingCard({
   priceUnit,
   studioId,
   studioTitle,
+  capacity,
 }: {
   price: number;
   rating: number;
@@ -355,6 +412,7 @@ function BookingCard({
   priceUnit: string;
   studioId: string;
   studioTitle: string;
+  capacity: number;
 }) {
   return (
     <Card className="overflow-hidden rounded-[28px] border-brand-border bg-white shadow-brand">
@@ -461,6 +519,7 @@ function BookingCard({
           deposit={deposit}
           currency={currency}
           priceUnit={priceUnit}
+          capacity={capacity}
         />
 
         <p className="text-center text-[11px] leading-relaxed text-brand-stone">

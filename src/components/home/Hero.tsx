@@ -1,7 +1,13 @@
+
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
+import {
+  ArrowRight,
+  ChevronLeft,
+  ChevronRight,
+  Sparkles,
+} from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import {
   A11y,
@@ -62,7 +68,14 @@ export default function Hero() {
       className="relative h-[calc(100svh-64px)] min-h-[540px] w-full overflow-hidden bg-brand-dark sm:h-[calc(100svh-72px)]"
     >
       <Swiper
-        modules={[Navigation, Pagination, Autoplay, EffectFade, Keyboard, A11y]}
+        modules={[
+          Navigation,
+          Pagination,
+          Autoplay,
+          EffectFade,
+          Keyboard,
+          A11y,
+        ]}
         className="hero-swiper h-full w-full"
         slidesPerView={1}
         loop
@@ -70,8 +83,15 @@ export default function Hero() {
         fadeEffect={{ crossFade: true }}
         speed={800}
         keyboard={{ enabled: true }}
-        autoplay={{ delay: 6000, disableOnInteraction: false, pauseOnMouseEnter: true }}
-        navigation={{ nextEl: ".hero-next", prevEl: ".hero-prev" }}
+        autoplay={{
+          delay: 6000,
+          disableOnInteraction: false,
+          pauseOnMouseEnter: true,
+        }}
+        navigation={{
+          nextEl: ".hero-next",
+          prevEl: ".hero-prev",
+        }}
         pagination={{ clickable: true }}
         a11y={{
           prevSlideMessage: "Previous slide",
@@ -82,14 +102,19 @@ export default function Hero() {
         {slides.map((slide) => (
           <SwiperSlide key={slide.titleAccent}>
             <div
-              className="hero-slide h-full w-full bg-cover bg-center"
-              style={{ backgroundImage: `url(${slide.image})` }}
+              className="hero-slide relative h-full w-full bg-cover bg-center"
+              style={{
+                backgroundImage: `url("${slide.image}")`,
+              }}
             >
-              {/* Dark overlay for readability */}
-              <div className="absolute inset-0 bg-brand-dark/60" />
-              <div className="absolute inset-0 bg-gradient-to-r from-brand-dark/85 via-brand-dark/40 to-transparent" />
+              {/* Dark overlay */}
+              <div className="absolute inset-0 z-0 bg-brand-dark/60" />
 
-              <div className="relative mx-auto flex h-full w-full max-w-7xl flex-col justify-center px-4 sm:px-6 lg:px-8">
+              {/* Gradient overlay */}
+              <div className="absolute inset-0 z-0 bg-gradient-to-r from-brand-dark/85 via-brand-dark/40 to-transparent" />
+
+              {/* Hero content */}
+              <div className="relative z-10 mx-auto flex h-full w-full max-w-7xl flex-col justify-center px-4 sm:px-6 lg:px-8">
                 <div className="hero-content max-w-2xl">
                   {/* Badge */}
                   <span className="inline-flex items-center gap-2 rounded-full border border-brand-bronze/40 bg-brand-bronze/15 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-brand-bronze-light">
@@ -101,7 +126,9 @@ export default function Hero() {
                   <h1 className="mt-6 text-4xl font-bold leading-[1.1] tracking-tight text-brand-ivory sm:text-5xl lg:text-6xl">
                     {slide.titleTop}
                     <br />
-                    <span className="text-brand-bronze">{slide.titleAccent}</span>
+                    <span className="text-brand-bronze">
+                      {slide.titleAccent}
+                    </span>
                   </h1>
 
                   {/* Subtext */}
@@ -120,7 +147,7 @@ export default function Hero() {
                     </Link>
 
                     <Link
-                      href="/studios"
+                      href="/add-studio"
                       className="inline-flex items-center rounded-xl border border-white/20 bg-white/10 px-6 py-3 text-sm font-semibold text-brand-ivory backdrop-blur-sm transition-colors hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-brand-dark"
                     >
                       Host Your Space
@@ -136,14 +163,15 @@ export default function Hero() {
       {/* Navigation arrows */}
       <button
         type="button"
-        className="hero-prev absolute left-4 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-white/10 text-brand-ivory backdrop-blur-sm transition-colors hover:bg-white/20 md:flex"
+        className="hero-prev absolute left-4 top-1/2 z-20 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-white/10 text-brand-ivory backdrop-blur-sm transition-colors hover:bg-white/20 md:flex"
         aria-label="Previous slide"
       >
         <ChevronLeft className="h-5 w-5" />
       </button>
+
       <button
         type="button"
-        className="hero-next absolute right-4 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-white/10 text-brand-ivory backdrop-blur-sm transition-colors hover:bg-white/20 md:flex"
+        className="hero-next absolute right-4 top-1/2 z-20 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-white/10 text-brand-ivory backdrop-blur-sm transition-colors hover:bg-white/20 md:flex"
         aria-label="Next slide"
       >
         <ChevronRight className="h-5 w-5" />

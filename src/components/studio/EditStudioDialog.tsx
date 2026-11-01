@@ -1,8 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import { Check, Pencil } from "lucide-react";
 
 import {
@@ -23,8 +21,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 
+import { apiJson } from "@/lib/api";
+import { notify } from "@/lib/notify";
 import type { TStudio } from "@/lib/type/type";
 
 type Props = {
@@ -65,19 +66,18 @@ export default function EditStudioDialog({
   studio,
   onClose,
 }: Props) {
-  const router = useRouter();
-
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [form, setForm] = useState({
     ...studio,
+    amenities: studio.amenities ?? [],
     price: String(studio.price ?? ""),
     capacity: String(studio.capacity ?? ""),
     securityDeposit: String(studio.securityDeposit ?? ""),
     rating: String(studio.rating ?? ""),
     city: studio.location?.city || "",
     area: studio.location?.area || "",
-    imageUrl: studio.imageUrls?.[0] || "",
+    imageUrl: studio.imageUrls?.[0] || studio.imageUrl || "",
   });
 
   // Field update
@@ -90,12 +90,16 @@ export default function EditStudioDialog({
 
   // Amenities update
   const toggleAmenity = (amenity: string) => {
-    setForm((current) => ({
-      ...current,
-      amenities: current.amenities.includes(amenity)
-        ? current.amenities.filter((item) => item !== amenity)
-        : [...current.amenities, amenity],
-    }));
+    setForm((current) => {
+      const selected = current.amenities ?? [];
+
+      return {
+        ...current,
+        amenities: selected.includes(amenity)
+          ? selected.filter((item) => item !== amenity)
+          : [...selected, amenity],
+      };
+    });
   };
 
   // Submit
@@ -103,6 +107,10 @@ export default function EditStudioDialog({
     event: React.FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
+
+    if (isSubmitting) {
+      return;
+    }
 
     setIsSubmitting(true);
 
@@ -116,49 +124,87 @@ export default function EditStudioDialog({
         ...studioData
       } = form;
 
+      const price = Number(form.price);
+      const capacity = Number(form.capacity);
+      const securityDeposit = Number(form.securityDeposit || 0);
+      const rating = Number(form.rating || 0);
+
+      if (!Number.isFinite(price) || price < 0) {
+        throw new Error("Please enter a valid hourly price.");
+      }
+
+      if (!Number.isInteger(capacity) || capacity < 1) {
+        throw new Error("Please enter a valid guest capacity.");
+      }
+
+      if (
+        !Number.isFinite(securityDeposit) ||
+        securityDeposit < 0 ||
+        !Number.isFinite(rating) ||
+        rating < 0 ||
+        rating > 5
+      ) {
+        throw new Error("Please check the deposit and rating values.");
+      }
+
+      // The form only edits the cover image. Keep the rest of the gallery
+      // intact when the URL was not changed, instead of dropping every image
+      // except the first one on save.
+      const trimmedImageUrl = imageUrl.trim();
+      const existingImages = (studio.imageUrls ?? []).filter(Boolean);
+
+      const imageUrls = !trimmedImageUrl
+        ? []
+        : trimmedImageUrl === existingImages[0]
+          ? existingImages
+          : [trimmedImageUrl];
+
       const updatedData = {
         ...studioData,
-        price: Number(form.price),
-        capacity: Number(form.capacity),
-        securityDeposit: Number(form.securityDeposit || 0),
-        rating: Number(form.rating || 0),
+        price,
+        capacity,
+        securityDeposit,
+        rating,
 
         location: {
           city: city.trim(),
           area: area.trim(),
         },
 
-        imageUrls: imageUrl.trim()
-          ? [imageUrl.trim()]
-          : [],
+        imageUrls,
       };
 
-      const response = await fetch(
-        `http://localhost:5000/studio/${_id}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(updatedData),
-        }
-      );
+      const result = await apiJson<{
+        success?: boolean;
+        message?: string;
+        matchedCount?: number;
+        modifiedCount?: number;
+      }>(`/studio/${_id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedData),
+      });
 
-      if (!response.ok) {
-        throw new Error("Failed to update studio");
+      if (result?.success === false) {
+        throw new Error(result.message || "Could not update this studio.");
       }
 
-      toast.success("Studio updated successfully!");
+      if (
+        typeof result?.matchedCount === "number" &&
+        result.matchedCount === 0
+      ) {
+        throw new Error("This studio no longer exists.");
+      }
 
+      notify.success("Studio updated successfully!");
+
+      // The parent reloads its listings when the dialog closes.
       onClose();
-
-      setTimeout(() => {
-        router.push("/my-listings");
-        router.refresh();
-      }, 1000);
     } catch (error) {
       console.error("Update Studio Error:", error);
-      toast.error("Could not update studio. Please try again.");
+      notify.apiError(error, "Could not update studio. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -477,11 +523,17 @@ export default function EditStudioDialog({
               disabled={isSubmitting}
               className="bg-brand-bronze text-white hover:bg-brand-bronze-hover"
             >
-              <Pencil className="mr-2 h-4 w-4" />
-
-              {isSubmitting
-                ? "Saving Changes..."
-                : "Save Changes"}
+              {isSubmitting ? (
+                <>
+                  <Spinner className="mr-2" />
+                  Saving Changes...
+                </>
+              ) : (
+                <>
+                  <Pencil className="mr-2 h-4 w-4" />
+                  Save Changes
+                </>
+              )}
             </Button>
           </div>
         </form>

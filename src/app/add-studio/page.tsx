@@ -4,11 +4,11 @@
 import { useState } from "react";
 import { Check, PackagePlus, RotateCcw } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Spinner } from "@/components/ui/spinner";
 import {
   Select,
   SelectContent,
@@ -17,7 +17,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { apiJson } from "@/lib/api";
 import { authClient } from "@/lib/auth-client";
+import { notify } from "@/lib/notify";
+
+
 
 type FormValues = {
   title: string;
@@ -110,82 +114,122 @@ export default function AddStudioPage() {
     setForm(initialForm);
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+const handleSubmit = async (
+  event: React.FormEvent<HTMLFormElement>
+) => {
+  event.preventDefault();
 
-    if (isPending) {
-      toast.error("Please wait. Loading your account information.");
-      return;
-    }
+  if (isSubmitting) {
+    return;
+  }
 
-    if (!adminEmail) {
-      toast.error("Please log in before adding a studio.");
-      return;
-    }
+  if (isPending) {
+    notify.error("Please wait while we load your account information.");
+    return;
+  }
 
-    setIsSubmitting(true);
+  if (!adminEmail) {
+    notify.error("Please log in before adding a studio.");
+    return;
+  }
 
-    const studioData = {
-      title: form.title.trim(),
-      category: form.category,
-      price: Number(form.price),
-      priceUnit: "hour",
-      currency: "USD",
-      capacity: Number(form.capacity),
-      securityDeposit: Number(form.securityDeposit || 0),
-      location: {
-        city: form.city.trim(),
-        area: form.area.trim(),
-      },
-      imageUrls: form.imageUrl.trim()
-        ? [form.imageUrl.trim()]
-        : [],
-      amenities: form.amenities,
-      description: form.description.trim(),
-      rating: Number(form.rating || 0),
-      isPublished: false,
-      isFeatured: false,
+  const price = Number(form.price);
+  const capacity = Number(form.capacity);
+  const securityDeposit = Number(form.securityDeposit || 0);
+  const rating = Number(form.rating || 0);
 
-      // Authenticated user information
+  if (!form.title.trim() || !form.category) {
+    notify.error("Please provide a studio name and category.");
+    return;
+  }
+
+  if (!Number.isFinite(price) || price < 0) {
+    notify.error("Please enter a valid hourly price.");
+    return;
+  }
+
+  if (!Number.isInteger(capacity) || capacity < 1) {
+    notify.error("Please enter a valid guest capacity.");
+    return;
+  }
+
+  if (
+    !Number.isFinite(securityDeposit) ||
+    securityDeposit < 0 ||
+    !Number.isFinite(rating) ||
+    rating < 0 ||
+    rating > 5
+  ) {
+    notify.error("Please check the deposit and rating values.");
+    return;
+  }
+
+  setIsSubmitting(true);
+
+  const studioData = {
+    title: form.title.trim(),
+    category: form.category,
+    price,
+    priceUnit: "hour",
+    currency: "USD",
+    capacity,
+    securityDeposit,
+
+    location: {
+      city: form.city.trim(),
+      area: form.area.trim(),
+    },
+
+    imageUrls: form.imageUrl.trim()
+      ? [form.imageUrl.trim()]
+      : [],
+
+    amenities: form.amenities,
+    description: form.description.trim(),
+    rating,
+    isPublished: false,
+    isFeatured: false,
+
+    // Authenticated user information
+    name: adminName,
+    email: adminEmail,
+
+    // Host information
+    host: {
       name: adminName,
       email: adminEmail,
-    };
-
-    try {
-      const res = await fetch("http://localhost:5000/add-studio", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(studioData),
-      });
-
-      const result = await res.json();
-
-      if (!res.ok) {
-        throw new Error(result.message || "Failed to add studio");
-      }
-
-      console.log("Server response:", result);
-      console.log("Studio data:", studioData);
-
-      toast.success("Studio added successfully!");
-
-      setForm(initialForm);
-
-      router.push("/my-listings");
-    } catch (error) {
-      console.error("Add Studio Error:", error);
-
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "Something went wrong. Please try again."
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
+    },
   };
+
+  try {
+    const result = await apiJson<{
+      success?: boolean;
+      message?: string;
+    }>("/add-studio", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(studioData),
+    });
+
+    if (result?.success !== true) {
+      throw new Error(result?.message || "Failed to add studio");
+    }
+
+    notify.success(result?.message || "Studio added successfully!");
+
+    setForm(initialForm);
+
+    router.push("/my-listings");
+  } catch (error) {
+    console.error("Add Studio Error:", error);
+
+    notify.apiError(error, "Could not add this studio. Please try again.");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   return (
     <main className="min-h-screen bg-brand-ivory px-4 py-10 sm:px-6 lg:px-8">
@@ -562,12 +606,22 @@ export default function AddStudioPage() {
               disabled={isSubmitting || isPending || !adminEmail}
               className="h-12 bg-brand-bronze px-8 text-white hover:bg-brand-bronze-hover"
             >
-              <PackagePlus className="mr-2 h-4 w-4" />
-              {isPending
-                ? "Loading Account..."
-                : isSubmitting
-                  ? "Adding Studio..."
-                  : "Add Studio"}
+              {isPending ? (
+                <>
+                  <Spinner className="mr-2" />
+                  Loading Account...
+                </>
+              ) : isSubmitting ? (
+                <>
+                  <Spinner className="mr-2" />
+                  Adding Studio...
+                </>
+              ) : (
+                <>
+                  <PackagePlus className="mr-2 h-4 w-4" />
+                  Add Studio
+                </>
+              )}
             </Button>
           </div>
         </form>

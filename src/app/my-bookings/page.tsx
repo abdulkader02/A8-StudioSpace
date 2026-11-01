@@ -1,14 +1,37 @@
-import Link from "next/link";
 import { headers } from "next/headers";
+import { CalendarDays, LogIn } from "lucide-react";
 
+import { apiJson, fetchStudioList, getErrorMessage } from "@/lib/api";
+import { getStudioCoverImage } from "@/lib/studio";
 import { auth } from "@/lib/auth";
 import type { TBooking } from "@/lib/type/booking";
 import type { TStudio } from "@/lib/type/type";
 import MyBookingsListCard from "@/components/booking/MyBookingsListCard";
+import EmptyState from "@/components/shared/EmptyState";
 
-type StudiosResponse =
-  | TStudio[]
-  | { data?: TStudio[]; studios?: TStudio[] };
+type BookingsResponse =
+  | TBooking[]
+  | { bookings?: TBooking[]; data?: TBooking[] };
+
+const normalizeBookings = (payload: unknown): TBooking[] => {
+  if (Array.isArray(payload)) {
+    return payload as TBooking[];
+  }
+
+  if (payload && typeof payload === "object") {
+    const wrapped = payload as { bookings?: unknown; data?: unknown };
+
+    if (Array.isArray(wrapped.bookings)) {
+      return wrapped.bookings as TBooking[];
+    }
+
+    if (Array.isArray(wrapped.data)) {
+      return wrapped.data as TBooking[];
+    }
+  }
+
+  return [];
+};
 
 const formatLocation = (location?: TStudio["location"]) => {
   if (!location) return undefined;
@@ -22,17 +45,7 @@ const formatLocation = (location?: TStudio["location"]) => {
 
 const getStudios = async (): Promise<TStudio[]> => {
   try {
-    const res = await fetch("http://localhost:5000/studios", {
-      cache: "no-store",
-    });
-
-    if (!res.ok) return [];
-
-    const data: StudiosResponse = await res.json();
-
-    return Array.isArray(data)
-      ? data
-      : (data.studios ?? data.data ?? []);
+    return await fetchStudioList("/studios", { cache: "no-store" });
   } catch (err) {
     console.error("My Bookings Studios Error:", err);
     return [];
@@ -48,22 +61,23 @@ const MyBookingsPage = async () => {
 
   if (!user?.email) {
     return (
-      <main className="min-h-screen bg-brand-ivory px-4 py-16">
-        <div className="mx-auto max-w-3xl rounded-2xl border border-brand-border bg-white p-8 text-center shadow-sm">
-          <h1 className="text-2xl font-bold text-brand-charcoal">
-            Please sign in
-          </h1>
-
-          <p className="mt-2 text-brand-stone">
-            Sign in to view your bookings.
-          </p>
-
-          <Link
-            href="/login"
-            className="mt-6 inline-flex h-11 items-center justify-center rounded-xl bg-brand-bronze px-6 text-sm font-semibold text-white transition hover:bg-brand-bronze-hover"
-          >
-            Sign in to continue
-          </Link>
+      <main className="min-h-screen bg-brand-ivory px-4 py-16 sm:px-6">
+        <div className="mx-auto max-w-3xl">
+          <EmptyState
+            icon={CalendarDays}
+            eyebrow="Your bookings"
+            title="Sign in to view your bookings"
+            description="Your studio reservations, shoot dates, statuses, and receipts are tied to your StudioSpace account."
+            action={{
+              label: "Sign in to continue",
+              href: "/login",
+              icon: LogIn,
+            }}
+            secondaryAction={{
+              label: "Browse studios",
+              href: "/studios",
+            }}
+          />
         </div>
       </main>
     );
@@ -77,27 +91,19 @@ const MyBookingsPage = async () => {
   const studiosPromise = getStudios();
 
   try {
-    const res = await fetch(
-      `http://localhost:5000/my-bookings/${(
-        user.email
-      )}`,
-      {
-        cache: "no-store",
-      }
+    const data = await apiJson<BookingsResponse>(
+      `/my-bookings/${encodeURIComponent(user.email)}`,
+      { cache: "no-store" },
     );
 
-    if (!res.ok) {
-      throw new Error("Failed to fetch bookings.");
-    }
-
-    const data: TBooking[] = await res.json();
-
-    bookings = Array.isArray(data) ? data : [];
+    bookings = normalizeBookings(data);
   } catch (err) {
     console.error("My Bookings Error:", err);
 
-    error =
-      "Unable to load your bookings. Please try again later.";
+    error = getErrorMessage(
+      err,
+      "Unable to load your bookings. Please try again later.",
+    );
   }
 
   const studios = await studiosPromise;
@@ -110,9 +116,7 @@ const MyBookingsPage = async () => {
 
     return {
       ...booking,
-      imageUrl:
-        booking.imageUrl ??
-        studio?.imageUrls?.find((image) => Boolean(image)),
+      imageUrl: booking.imageUrl ?? getStudioCoverImage(studio),
       location: booking.location ?? formatLocation(studio?.location),
     };
   });

@@ -6,12 +6,17 @@ import {
   Building2,
   LogIn,
   Plus,
+  RotateCcw,
   Search,
   Sparkles,
+  X,
 } from "lucide-react";
 
 import EditStudioDialog from "@/components/studio/EditStudioDialog";
 import MyListing from "@/components/studio/MyListingCard";
+import EmptyState from "@/components/shared/EmptyState";
+import { ListingGridSkeleton } from "@/components/shared/LoadingStates";
+import { fetchStudioList, getErrorMessage } from "@/lib/api";
 import { authClient } from "@/lib/auth-client";
 
 import type { TStudio } from "@/lib/type/type";
@@ -21,22 +26,13 @@ type ListingStudio = TStudio & {
   email?: string;
 };
 
-type StudiosResponse =
-  | ListingStudio[]
-  | { data?: ListingStudio[]; studios?: ListingStudio[] };
-
 const getOwnerEmail = (studio: ListingStudio) =>
-  (
-    studio.host?.email ??
-    studio.email ??
-    ""
-  ).toLowerCase();
+  (studio.host?.email || studio.email || "").trim().toLowerCase();
 
 export default function MyListingsPage() {
-  // Get the logged-in user's session
   const { data: session, isPending } = authClient.useSession();
 
-const user = session?.user;
+  const user = session?.user;
 
   const [studios, setStudios] = useState<ListingStudio[]>([]);
   const [loading, setLoading] = useState(true);
@@ -44,22 +40,24 @@ const user = session?.user;
   const [reloadToken, setReloadToken] = useState(0);
   const [search, setSearch] = useState("");
 
-  const [editTarget, setEditTarget] = useState<TStudio | null>(
-    null
-  );
+  const [editTarget, setEditTarget] = useState<TStudio | null>(null);
 
   useEffect(() => {
     let active = true;
 
     const loadStudios = async () => {
-      // Wait until Better Auth finishes checking the session
-      if (isPending) return;
+      if (isPending) {
+        return;
+      }
 
+      // User is not logged in
       if (!user?.email) {
         if (active) {
+          setStudios([]);
           setFetchError("Please log in to view your listings.");
           setLoading(false);
         }
+
         return;
       }
 
@@ -67,28 +65,16 @@ const user = session?.user;
         setLoading(true);
         setFetchError("");
 
-        const response = await fetch(
-         `http://localhost:5000/my-bookings/${(
-        user.email
-      )}`,
-          {
-            cache: "no-store",
-            credentials: "include",
-          }
+        // GET /my-listings/:email is already scoped to the signed-in user;
+        // no cookies/credentials are involved, and the API's CORS policy
+        // (Access-Control-Allow-Origin: *) rejects credentialed requests.
+        const result = await fetchStudioList(
+          `/my-listings/${encodeURIComponent(user.email)}`,
+          { cache: "no-store" },
         );
 
-        if (!response.ok) {
-          throw new Error(`Request failed: ${response.status}`);
-        }
-
-        const data: StudiosResponse = await response.json();
-
-        const result = Array.isArray(data)
-          ? data
-          : (data.studios ?? data.data ?? []);
-
         if (active) {
-          setStudios(result);
+          setStudios(result as ListingStudio[]);
           setFetchError("");
         }
       } catch (error) {
@@ -96,7 +82,10 @@ const user = session?.user;
 
         if (active) {
           setFetchError(
-            "Unable to load your listings. Please try again."
+            getErrorMessage(
+              error,
+              "Unable to load your listings. Please try again.",
+            ),
           );
         }
       } finally {
@@ -114,25 +103,31 @@ const user = session?.user;
   }, [user?.email, isPending, reloadToken]);
 
   const retryFetch = () => {
+    if (loading) {
+      return;
+    }
+
     setLoading(true);
     setReloadToken((current) => current + 1);
   };
 
-  // The API returns every studio, so keep only the ones owned by
-  // the signed-in host.
+  // Filter listings by the logged-in user's email
+  const currentUserEmail = (user?.email ?? "").trim().toLowerCase();
+
   const ownerStudios = studios.filter(
-    (studio) =>
-      getOwnerEmail(studio) === user?.email?.toLowerCase()
+    (studio) => getOwnerEmail(studio) === currentUserEmail
   );
 
   const searchText = search.trim().toLowerCase();
 
   const filteredStudios = ownerStudios.filter((studio) => {
-    if (!searchText) return true;
+    if (!searchText) {
+      return true;
+    }
 
     return (
-      studio.title.toLowerCase().includes(searchText) ||
-      studio.category.toLowerCase().includes(searchText) ||
+      studio.title?.toLowerCase().includes(searchText) ||
+      studio.category?.toLowerCase().includes(searchText) ||
       studio.location?.city?.toLowerCase().includes(searchText) ||
       studio.location?.area?.toLowerCase().includes(searchText)
     );
@@ -145,29 +140,32 @@ const user = session?.user;
     );
   };
 
-  // Older listings store the host name/email at the root level,
-  // so surface them as host details for the edit dialog.
+  // Prepare host information for the edit dialog
   const handleEdit = (studio: TStudio) => {
     const listing = studio as ListingStudio;
 
     const host =
       studio.host ??
       (listing.name || listing.email
-        ? { name: listing.name, email: listing.email }
+        ? {
+            name: listing.name,
+            email: listing.email,
+          }
         : undefined);
 
     setEditTarget(host ? { ...studio, host } : studio);
   };
 
-  // Re-fetch after the edit dialog closes so changes appear
-  // without a full page reload.
+  // Close edit dialog and reload listings
   const handleEditClose = () => {
     setEditTarget(null);
     setReloadToken((current) => current + 1);
   };
 
   const needsAuth = !isPending && !user?.email;
-  const isInitialLoading = loading && ownerStudios.length === 0;
+
+  const isInitialLoading =
+    isPending || (loading && ownerStudios.length === 0);
 
   return (
     <main className="min-h-screen bg-brand-ivory">
@@ -244,94 +242,86 @@ const user = session?.user;
 
         {/* Loading */}
         {isInitialLoading ? (
-          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-            {[1, 2, 3].map((item) => (
-              <div
-                key={item}
-                className="animate-pulse overflow-hidden rounded-2xl border border-brand-border bg-white"
-              >
-                <div className="aspect-[1.5/1] bg-brand-stone/10" />
-
-                <div className="space-y-3 p-5">
-                  <div className="h-4 w-2/3 rounded bg-brand-stone/10" />
-                  <div className="h-3 w-1/2 rounded bg-brand-stone/10" />
-                  <div className="h-9 rounded bg-brand-stone/10" />
-                </div>
-              </div>
-            ))}
-          </div>
+          <ListingGridSkeleton />
         ) : fetchError ? (
-          /* Error */
-          <div className="rounded-2xl border border-brand-border bg-white px-6 py-16 text-center">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-bronze/10">
-              <Building2 className="h-7 w-7 text-brand-bronze" />
-            </div>
-
-            <h2 className="mt-4 text-lg font-semibold text-brand-charcoal">
-              {needsAuth
+          <EmptyState
+            tone="error"
+            icon={needsAuth ? LogIn : Building2}
+            eyebrow={needsAuth ? "Account required" : "Dashboard unavailable"}
+            title={
+              needsAuth
                 ? "Sign in to manage listings"
-                : "Could not load listings"}
-            </h2>
-
-            <p className="mt-2 text-sm text-brand-stone">
-              {fetchError}
-            </p>
-
-            {needsAuth ? (
-              <Link
-                href="/login"
-                className="mt-5 inline-flex items-center gap-2 rounded-xl bg-brand-bronze px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-bronze-hover"
-              >
-                <LogIn className="h-4 w-4" />
-                Sign in
-              </Link>
-            ) : (
-              <button
-                type="button"
-                onClick={retryFetch}
-                className="mt-5 rounded-xl bg-brand-charcoal px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-bronze"
-              >
-                Try again
-              </button>
-            )}
-          </div>
+                : "Could not load listings"
+            }
+            description={fetchError}
+            action={
+              needsAuth
+                ? {
+                    label: "Sign in",
+                    href: "/login",
+                    icon: LogIn,
+                  }
+                : {
+                    label: "Try again",
+                    onClick: retryFetch,
+                    icon: RotateCcw,
+                  }
+            }
+            secondaryAction={
+              needsAuth
+                ? {
+                    label: "Browse studios",
+                    href: "/studios",
+                  }
+                : {
+                    label: "Back to home",
+                    href: "/",
+                  }
+            }
+          />
         ) : filteredStudios.length === 0 ? (
-          /* Empty State */
-          <div className="rounded-2xl border border-brand-border bg-white px-6 py-16 text-center">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-bronze/10">
-              <Building2 className="h-7 w-7 text-brand-bronze" />
-            </div>
-
-            <h2 className="mt-4 text-lg font-semibold text-brand-charcoal">
-              {ownerStudios.length === 0
+          <EmptyState
+            icon={Building2}
+            eyebrow={
+              ownerStudios.length === 0 ? "Start hosting" : "No matches"
+            }
+            title={
+              ownerStudios.length === 0
                 ? "You haven't listed a space yet"
-                : "No matching listings"}
-            </h2>
-
-            <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-brand-stone">
-              {ownerStudios.length === 0
-                ? "Add your first creative space and manage it from this dashboard."
-                : "Try a different search term or clear your search."}
-            </p>
-
-            {ownerStudios.length === 0 ? (
-              <Link
-                href="/add-studio"
-                className="mt-5 inline-flex items-center gap-2 rounded-xl bg-brand-bronze px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-bronze-hover"
-              >
-                <Plus className="h-4 w-4" />
-                Add your first space
-              </Link>
-            ) : (
-              <button
-                type="button"
-                onClick={() => setSearch("")}
-                className="mt-5 rounded-xl bg-brand-charcoal px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-bronze"
-              >
-                Clear search
-              </button>
-            )}
-          </div>
+                : "No matching listings"
+            }
+            description={
+              ownerStudios.length === 0
+                ? "Add your first creative space and manage bookings, details, and availability from this dashboard."
+                : "Try a different search term or clear your search to see all of your listings."
+            }
+            action={
+              ownerStudios.length === 0
+                ? {
+                    label: "Add Your First Studio",
+                    href: "/add-studio",
+                    icon: Plus,
+                  }
+                : {
+                    label: "Clear search",
+                    onClick: () => setSearch(""),
+                    icon: X,
+                  }
+            }
+            secondaryAction={
+              ownerStudios.length === 0
+                ? {
+                    label: "Browse studios",
+                    href: "/studios",
+                    icon: Search,
+                  }
+                : {
+                    label: "Add a studio",
+                    href: "/add-studio",
+                    icon: Plus,
+                  }
+            }
+          />
         ) : (
           /* Studio Cards */
           <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">

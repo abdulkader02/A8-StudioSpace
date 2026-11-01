@@ -14,6 +14,8 @@ export type TStudio = {
   };
 
   imageUrls: string[];
+  /** Legacy single-image field still present on some older documents. */
+  imageUrl?: string;
   amenities: string[];
   description: string;
   rating: number;

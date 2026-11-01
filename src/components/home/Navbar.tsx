@@ -12,13 +12,13 @@ import {
   CalendarDays,
   LayoutDashboard,
   LogOut,
-  Loader2,
   UserRound,
 } from "lucide-react";
-import { toast } from "sonner";
 
 import logo from "@/assets/logo.png";
 import { authClient } from "@/lib/auth-client";
+import { notify } from "@/lib/notify";
+import { Spinner } from "@/components/ui/spinner";
 
 import {
   Popover,
@@ -32,6 +32,128 @@ const navLinks = [
   { name: "How It Works", href: "/#how-it-works" },
   { name: "About Us", href: "/#about-us" },
 ];
+
+type NavbarUser = {
+  name?: string | null;
+  email?: string | null;
+  image?: string | null;
+};
+
+type UserMenuProps = {
+  user: NavbarUser;
+  isLoggingOut: boolean;
+  onLogout: () => void;
+  onNavigate?: () => void;
+};
+
+function UserMenu({
+  user,
+  isLoggingOut,
+  onLogout,
+  onNavigate,
+}: UserMenuProps) {
+  return (
+    <Popover>
+      <PopoverTrigger
+        render={
+          <button
+            type="button"
+            aria-label="Open user menu"
+            className="flex items-center gap-2 rounded-full border border-brand-dark-soft p-1.5 transition-colors hover:bg-brand-dark-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-bronze"
+          >
+            {user.image ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={user.image}
+                alt={user.name || "User"}
+                className="size-9 rounded-full border border-brand-bronze object-cover"
+              />
+            ) : (
+              <div className="flex size-9 items-center justify-center rounded-full bg-brand-bronze font-semibold text-brand-dark">
+                {user.name?.charAt(0).toUpperCase() || "U"}
+              </div>
+            )}
+
+            <span className="hidden max-w-28 truncate text-sm font-medium text-brand-ivory sm:block">
+              {user.name || "My Account"}
+            </span>
+          </button>
+        }
+      />
+
+      <PopoverContent
+        align="end"
+        sideOffset={10}
+        className="w-64 border border-brand-border bg-brand-ivory p-2 text-brand-charcoal shadow-lg"
+      >
+        <div className="border-b border-brand-border px-3 py-2">
+          <p className="font-semibold text-brand-charcoal">
+            {user.name || "User"}
+          </p>
+          <p className="truncate text-xs text-brand-stone">{user.email}</p>
+        </div>
+
+        {/* Profile */}
+        <Link
+          href="/profile"
+          onClick={onNavigate}
+          className="mt-2 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-brand-bronze/10 hover:text-brand-bronze"
+        >
+          <UserRound className="size-4" />
+          Profile
+        </Link>
+
+        {/* Add New Studio */}
+        <Link
+          href="/add-studio"
+          onClick={onNavigate}
+          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-brand-bronze/10 hover:text-brand-bronze"
+        >
+          <Plus className="size-4" />
+          Add New Studio
+        </Link>
+
+        {/* My Studio Listings */}
+        <Link
+          href="/my-listings"
+          onClick={onNavigate}
+          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-brand-bronze/10 hover:text-brand-bronze"
+        >
+          <LayoutDashboard className="size-4" />
+          My Studio Listings
+        </Link>
+
+        {/* My Bookings */}
+        <Link
+          href="/my-bookings"
+          onClick={onNavigate}
+          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-brand-bronze/10 hover:text-brand-bronze"
+        >
+          <CalendarDays className="size-4" />
+          My Bookings
+        </Link>
+
+        <div className="my-2 border-t border-brand-border" />
+
+        {/* Sign Out */}
+        <button
+          type="button"
+          onClick={onLogout}
+          disabled={isLoggingOut}
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-red-600 transition-colors hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {isLoggingOut ? (
+            <Spinner className="size-4" />
+          ) : (
+            <LogOut className="size-4" />
+          )}
+
+          {isLoggingOut ? "Signing out..." : "Sign Out"}
+        </button>
+      </PopoverContent>
+    </Popover>
+  );
+}
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -62,120 +184,21 @@ export default function Navbar() {
       const { error } = await authClient.signOut();
 
       if (error) {
-        toast.error(error.message || "Logout failed.");
+        notify.error(error.message || "Could not sign you out.");
         return;
       }
 
-      toast.success("Logged out successfully.");
+      notify.success("Signed out successfully.");
       setIsOpen(false);
       router.push("/login");
       router.refresh();
     } catch (error) {
       console.error("Logout error:", error);
-      toast.error("Something went wrong. Please try again.");
+      notify.apiError(error, "Could not sign out. Please try again.");
     } finally {
       setIsLoggingOut(false);
     }
   };
-
-  const UserMenu = () => (
-    <Popover>
-      <PopoverTrigger
-        render={
-          <button
-            type="button"
-            aria-label="Open user menu"
-            className="flex items-center gap-2 rounded-full border border-brand-dark-soft p-1.5 transition-colors hover:bg-brand-dark-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-bronze"
-          >
-            {user?.image ? (
-              <img
-                src={user.image}
-                alt={user.name || "User"}
-                className="size-9 rounded-full border border-brand-bronze object-cover"
-              />
-            ) : (
-              <div className="flex size-9 items-center justify-center rounded-full bg-brand-bronze font-semibold text-brand-dark">
-                {user?.name?.charAt(0).toUpperCase() || "U"}
-              </div>
-            )}
-
-            <span className="hidden max-w-28 truncate text-sm font-medium text-brand-ivory sm:block">
-              {user?.name || "My Account"}
-            </span>
-          </button>
-        }
-      />
-
-      <PopoverContent
-        align="end"
-        sideOffset={10}
-        className="w-64 border border-brand-border bg-brand-ivory p-2 text-brand-charcoal shadow-lg"
-      >
-        <div className="border-b border-brand-border px-3 py-2">
-          <p className="font-semibold text-brand-charcoal">
-            {user?.name || "User"}
-          </p>
-          <p className="truncate text-xs text-brand-stone">
-            {user?.email}
-          </p>
-        </div>
-
-        {/* Profile */}
-        <Link
-          href="/profile"
-          className="mt-2 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-brand-bronze/10 hover:text-brand-bronze"
-        >
-          <UserRound className="size-4" />
-          Profile
-        </Link>
-
-        {/* Add New Studio */}
-        <Link
-          href="/add-studio"
-          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-brand-bronze/10 hover:text-brand-bronze"
-        >
-          <Plus className="size-4" />
-          Add New Studio
-        </Link>
-
-        {/* My Studio Listings */}
-        <Link
-          href="/my-listings"
-          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-brand-bronze/10 hover:text-brand-bronze"
-        >
-          <LayoutDashboard className="size-4" />
-          My Studio Listings
-        </Link>
-
-        {/* My Bookings */}
-        <Link
-          href="/my-bookings"
-          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-brand-bronze/10 hover:text-brand-bronze"
-        >
-          <CalendarDays className="size-4" />
-          My Bookings
-        </Link>
-
-        <div className="my-2 border-t border-brand-border" />
-
-        {/* Sign Out */}
-        <button
-          type="button"
-          onClick={handleLogout}
-          disabled={isLoggingOut}
-          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-red-600 transition-colors hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {isLoggingOut ? (
-            <Loader2 className="size-4 animate-spin" />
-          ) : (
-            <LogOut className="size-4" />
-          )}
-
-          {isLoggingOut ? "Signing out..." : "Sign Out"}
-        </button>
-      </PopoverContent>
-    </Popover>
-  );
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-brand-dark-soft bg-brand-dark backdrop-blur-md">
@@ -213,7 +236,11 @@ export default function Navbar() {
         {/* Desktop Authentication */}
         <div className="hidden items-center gap-3 lg:flex">
           {isPending ? null : user ? (
-            <UserMenu />
+            <UserMenu
+              user={user}
+              isLoggingOut={isLoggingOut}
+              onLogout={handleLogout}
+            />
           ) : (
             <>
               <Link
@@ -271,7 +298,12 @@ export default function Navbar() {
             <div className="mt-3 border-t border-brand-dark-soft pt-4">
               {isPending ? null : user ? (
                 <div className="flex items-center px-2">
-                  <UserMenu />
+                  <UserMenu
+                    user={user}
+                    isLoggingOut={isLoggingOut}
+                    onLogout={handleLogout}
+                    onNavigate={() => setIsOpen(false)}
+                  />
                 </div>
               ) : (
                 <div className="grid grid-cols-2 gap-3">

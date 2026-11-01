@@ -1,13 +1,12 @@
 
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Loader2 } from "lucide-react";
-import { toast } from "sonner";
 
 import { authClient } from "@/lib/auth-client";
+import { notify } from "@/lib/notify";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -25,16 +24,21 @@ import {
   FieldSeparator,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function SignUpPage() {
   const router = useRouter();
 
-  const [loading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
  const handleEmailSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (loading || socialLoading) {
+      return;
+    }
 
     const formData = new FormData(e.currentTarget);
 
@@ -47,40 +51,57 @@ export default function SignUpPage() {
 
     // Password validation
     if (!/[A-Z]/.test(user.password)) {
-        toast.error("Password must contain an uppercase letter.");
+        setPasswordError("Password must contain an uppercase letter.");
+        notify.error("Password must contain an uppercase letter.");
         return;
     }
 
     if (!/[a-z]/.test(user.password)) {
-        toast.error("Password must contain a lowercase letter.");
+        setPasswordError("Password must contain a lowercase letter.");
+        notify.error("Password must contain a lowercase letter.");
         return;
     }
 
     if (user.password.length < 6) {
-        toast.error("Password must be at least 6 characters.");
+        setPasswordError("Password must be at least 6 characters.");
+        notify.error("Password must be at least 6 characters.");
         return;
     }
 
+    setPasswordError("");
+
     try {
+        setLoading(true);
+
         const { data, error } = await authClient.signUp.email({
             ...user,
         });
 
-        if (data) {
-            toast.success("Registration successful!");
-            router.push("/login");
+        if (error) {
+            notify.error(error.message || "Could not create your account.");
+            return;
         }
 
-        if (error) {
-            toast.error(error.message);
+        if (!data) {
+            notify.error("Could not create your account. Please try again.");
+            return;
         }
+
+        notify.success("Account created successfully. Please sign in.");
+        router.push("/login");
     } catch (error) {
         console.error(error);
-        toast.error("Something went wrong. Please try again.");
+        notify.apiError(error, "Registration failed. Please try again.");
+    } finally {
+        setLoading(false);
     }
 };
   // Google social login
   const handleSocialLogin = async (provider: "google") => {
+    if (loading || socialLoading) {
+      return;
+    }
+
     setSocialLoading(provider);
 
     try {
@@ -90,11 +111,11 @@ export default function SignUpPage() {
       });
 
       if (error) {
-        toast.error(error.message || `${provider} login failed.`);
+        notify.error(error.message || `${provider} sign-in failed.`);
       }
     } catch (error) {
       console.error(`${provider} login error:`, error);
-      toast.error("Social login failed. Please try again.");
+      notify.apiError(error, "Social sign-in failed. Please try again.");
     } finally {
       setSocialLoading("");
     }
@@ -126,7 +147,7 @@ export default function SignUpPage() {
                   onClick={() => handleSocialLogin("google")}
                 >
                   {socialLoading === "google" ? (
-                    <Loader2 className="animate-spin" />
+                    <Spinner />
                   ) : (
                     <svg viewBox="0 0 24 24" className="size-4">
                       <path
@@ -217,7 +238,7 @@ export default function SignUpPage() {
                 >
                   {loading ? (
                     <>
-                      <Loader2 className="mr-2 size-4 animate-spin" />
+                      <Spinner className="mr-2" />
                       Registering...
                     </>
                   ) : (

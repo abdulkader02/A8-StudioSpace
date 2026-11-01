@@ -1,10 +1,15 @@
 
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import type { TStudio } from "@src/lib/type/type";
 import StudioCard from "@src/components/studio/StudioCard";
+import EmptyState from "@/components/shared/EmptyState";
+import { StudioGridSkeleton } from "@/components/shared/LoadingStates";
+import { fetchStudioList, getErrorMessage } from "@/lib/api";
+import { categoryNameToSlug, categorySlugToName } from "@/lib/studio";
 
 import {
   ArrowRight,
@@ -21,11 +26,8 @@ import {
   Building2,
   Sparkles,
   Users,
+  RotateCcw,
 } from "lucide-react";
-
-type StudiosResponse =
-  | TStudio[]
-  | { data?: TStudio[]; studios?: TStudio[] };
 
 const categories = [
   { name: "All Spaces", icon: Sparkles },
@@ -40,44 +42,61 @@ const categories = [
 ];
 
 export default function AllStudiosPage() {
+  return (
+    // useSearchParams() must be wrapped in a Suspense boundary so the page
+    // can be prerendered (Next.js build would fail otherwise).
+    <Suspense fallback={<StudiosPageFallback />}>
+      <StudiosContent />
+    </Suspense>
+  );
+}
+
+function StudiosContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const categoryParam = searchParams.get("category");
+
   const [studios, setStudios] = useState<TStudio[]>([]);
   const [loading, setLoading] = useState(true);
-  const [fetchError, setFetchError] = useState(false);
+  const [fetchError, setFetchError] = useState("");
+  const [reloadToken, setReloadToken] = useState(0);
 
   const [keyword, setKeyword] = useState("");
   const [location, setLocation] = useState("");
-  const [category, setCategory] = useState("All Spaces");
   const [maxPrice, setMaxPrice] = useState("");
 
-  // Fetch studios
+  // Get category directly from URL
+  const category = categoryParam
+    ? categorySlugToName[categoryParam] || "All Spaces"
+    : "All Spaces";
+
+  // Fetch studios from MongoDB
   useEffect(() => {
     let active = true;
 
     const fetchStudios = async () => {
       try {
-        const res = await fetch("http://localhost:5000/studios", {
+        setLoading(true);
+
+        const data = await fetchStudioList("/studios", {
           cache: "no-store",
         });
 
-        if (!res.ok) {
-          throw new Error(`API error: ${res.status}`);
-        }
-
-        const data: StudiosResponse = await res.json();
-
-        const result = Array.isArray(data)
-          ? data
-          : (data.studios ?? data.data ?? []);
-
         if (active) {
-          setStudios(result);
-          setFetchError(false);
+          setStudios(data);
+          setFetchError("");
         }
       } catch (error) {
         console.error("Fetch studios error:", error);
 
         if (active) {
-          setFetchError(true);
+          setFetchError(
+            getErrorMessage(
+              error,
+              "Please make sure the StudioSpace API is running.",
+            ),
+          );
         }
       } finally {
         if (active) {
@@ -91,19 +110,44 @@ export default function AllStudiosPage() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [reloadToken]);
+
+  const retryFetch = () => {
+    if (loading) {
+      return;
+    }
+
+    setReloadToken((current) => current + 1);
+  };
+
+  // Handle category selection and update URL
+  const handleCategoryChange = (selectedCategory: string) => {
+    if (selectedCategory === "All Spaces") {
+      router.push("/studios", { scroll: false });
+      return;
+    }
+
+    const slug = categoryNameToSlug[selectedCategory];
+
+    if (slug) {
+      router.push(`/studios?category=${slug}`, {
+        scroll: false,
+      });
+    }
+  };
 
   // Filter studios
   const visibleStudios = useMemo(() => {
     return studios.filter((studio) => {
+      // Hide unpublished studios
       if (studio.isPublished === false) return false;
 
       const searchText = keyword.trim().toLowerCase();
 
       const matchesKeyword =
         !searchText ||
-        studio.title.toLowerCase().includes(searchText) ||
-        studio.category.toLowerCase().includes(searchText) ||
+        studio.title?.toLowerCase().includes(searchText) ||
+        studio.category?.toLowerCase().includes(searchText) ||
         studio.description?.toLowerCase().includes(searchText);
 
       const studioLocation = [
@@ -121,8 +165,14 @@ export default function AllStudiosPage() {
       const matchesCategory =
         category === "All Spaces" || studio.category === category;
 
+      const studioPrice = Number(studio.price);
+      const priceLimit = Number(maxPrice);
+
       const matchesPrice =
-        !maxPrice || studio.price <= Number(maxPrice);
+        !maxPrice ||
+        (Number.isFinite(studioPrice) &&
+          Number.isFinite(priceLimit) &&
+          studioPrice <= priceLimit);
 
       return (
         matchesKeyword &&
@@ -137,9 +187,16 @@ export default function AllStudiosPage() {
   const resetFilters = () => {
     setKeyword("");
     setLocation("");
-    setCategory("All Spaces");
     setMaxPrice("");
+
+    router.push("/studios", { scroll: false });
   };
+
+  const hasActiveFilters =
+    keyword.trim() !== "" ||
+    location.trim() !== "" ||
+    category !== "All Spaces" ||
+    maxPrice !== "";
 
   return (
     <main className="min-h-screen bg-brand-ivory">
@@ -224,7 +281,7 @@ export default function AllStudiosPage() {
 
                   <select
                     value={category}
-                    onChange={(e) => setCategory(e.target.value)}
+                    onChange={(e) => handleCategoryChange(e.target.value)}
                     className="w-full cursor-pointer appearance-none bg-transparent text-xs font-medium text-brand-charcoal outline-none"
                   >
                     {categories.map((item) => (
@@ -269,10 +326,7 @@ export default function AllStudiosPage() {
                 <option value="150">Up to $150</option>
               </select>
 
-              {(keyword ||
-                location ||
-                category !== "All Spaces" ||
-                maxPrice) && (
+              {hasActiveFilters && (
                 <button
                   onClick={resetFilters}
                   className="ml-auto inline-flex items-center gap-1 text-[10px] font-semibold text-brand-bronze transition hover:text-brand-bronze-hover"
@@ -315,7 +369,9 @@ export default function AllStudiosPage() {
               return (
                 <button
                   key={item.name}
-                  onClick={() => setCategory(item.name)}
+                  type="button"
+                  onClick={() => handleCategoryChange(item.name)}
+                  aria-pressed={active}
                   className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-2 text-[11px] font-semibold transition ${
                     active
                       ? "border-brand-charcoal bg-brand-charcoal text-brand-ivory"
@@ -357,60 +413,67 @@ export default function AllStudiosPage() {
         </div>
 
         {loading ? (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {[1, 2, 3, 4, 5, 6].map((item) => (
-              <div
-                key={item}
-                className="animate-pulse overflow-hidden rounded-[22px] border border-brand-border bg-white"
-              >
-                <div className="aspect-[1.28/1] bg-brand-stone/10" />
-
-                <div className="space-y-3 p-6">
-                  <div className="h-5 w-3/4 rounded bg-brand-stone/10" />
-                  <div className="h-4 w-1/2 rounded bg-brand-stone/10" />
-                  <div className="h-4 w-full rounded bg-brand-stone/10" />
-                </div>
-              </div>
-            ))}
-          </div>
+          <StudioGridSkeleton />
         ) : fetchError ? (
-          <div className="rounded-3xl border border-brand-border bg-white px-6 py-16 text-center">
-            <Search className="mx-auto h-8 w-8 text-brand-bronze" />
-
-            <h3 className="mt-5 text-xl font-semibold text-brand-charcoal">
-              Unable to load studios
-            </h3>
-
-            <p className="mt-2 text-sm text-brand-stone">
-              Please make sure the StudioSpace API is running.
-            </p>
-
-            <button
-              onClick={() => window.location.reload()}
-              className="mt-6 rounded-xl bg-brand-charcoal px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-bronze"
-            >
-              Try again
-            </button>
-          </div>
+          <EmptyState
+            tone="error"
+            icon={Search}
+            eyebrow="Connection issue"
+            title="Unable to load studios"
+            description={fetchError}
+            action={{
+              label: "Try again",
+              onClick: retryFetch,
+              icon: RotateCcw,
+            }}
+            secondaryAction={{
+              label: "Back to home",
+              href: "/",
+            }}
+          />
         ) : visibleStudios.length === 0 ? (
-          <div className="rounded-3xl border border-brand-border bg-white px-6 py-16 text-center">
-            <Search className="mx-auto h-8 w-8 text-brand-bronze" />
-
-            <h3 className="mt-5 text-xl font-semibold text-brand-charcoal">
-              No matching spaces found
-            </h3>
-
-            <p className="mt-2 text-sm text-brand-stone">
-              Try another keyword, category, location, or price range.
-            </p>
-
-            <button
-              onClick={resetFilters}
-              className="mt-6 rounded-xl bg-brand-bronze px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-bronze-hover"
-            >
-              Clear all filters
-            </button>
-          </div>
+          <EmptyState
+            icon={Search}
+            eyebrow={
+              hasActiveFilters ? "No matches" : "The collection is growing"
+            }
+            title={
+              hasActiveFilters
+                ? "No spaces match your filters"
+                : "No studios published yet"
+            }
+            description={
+              hasActiveFilters
+                ? "Try another keyword, category, location, or price range to find a space that fits your shoot."
+                : "New creative spaces are added regularly. Browse by category or check back soon for the next opening."
+            }
+            action={
+              hasActiveFilters
+                ? {
+                    label: "Clear filters",
+                    onClick: resetFilters,
+                    icon: X,
+                  }
+                : {
+                    label: "Browse categories",
+                    href: "/#categories",
+                    icon: Sparkles,
+                  }
+            }
+            secondaryAction={
+              hasActiveFilters
+                ? {
+                    label: "Explore all studios",
+                    href: "/studios",
+                    icon: Search,
+                  }
+                : {
+                    label: "List your space",
+                    href: "/add-studio",
+                    icon: Building2,
+                  }
+            }
+          />
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {visibleStudios.map((studio, index) => (
@@ -460,6 +523,21 @@ export default function AllStudiosPage() {
           </div>
         </div>
       </section>
+    </main>
+  );
+}
+
+function StudiosPageFallback() {
+  return (
+    <main className="min-h-screen bg-brand-ivory">
+      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mb-10 space-y-3">
+          <div className="h-8 w-64 animate-pulse rounded bg-brand-stone/10" />
+          <div className="h-4 w-96 max-w-full animate-pulse rounded bg-brand-stone/10" />
+        </div>
+
+        <StudioGridSkeleton />
+      </div>
     </main>
   );
 }

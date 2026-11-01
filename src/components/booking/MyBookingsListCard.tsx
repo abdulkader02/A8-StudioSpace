@@ -1,9 +1,10 @@
 
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   CalendarDays,
   Clock,
@@ -11,12 +12,15 @@ import {
   Users,
   ReceiptText,
   XCircle,
-  LoaderCircle,
   ArrowRight,
+  RotateCcw,
 } from "lucide-react";
-import { toast } from "sonner";
 
-import type { TBooking } from "@/lib/type/booking";
+import EmptyState from "@/components/shared/EmptyState";
+import { Spinner } from "@/components/ui/spinner";
+import { apiJson } from "@/lib/api";
+import { notify } from "@/lib/notify";
+import type { TBooking, TBookingStatus } from "@/lib/type/booking";
 
 type MyBookingsListProps = {
   initialBookings: TBooking[];
@@ -27,56 +31,81 @@ export default function MyBookingsList({
   initialBookings,
   error,
 }: MyBookingsListProps) {
-  const [bookings, setBookings] = useState<TBooking[]>(initialBookings);
+  const router = useRouter();
+  const [isRefreshing, startRefresh] = useTransition();
+
+  /**
+   * Status changes made in this session are kept as overrides so the list stays
+   * in sync when the server component re-renders with fresh bookings.
+   */
+  const [statusOverrides, setStatusOverrides] = useState<
+    Partial<Record<string, TBookingStatus>>
+  >({});
   const [cancellingId, setCancellingId] = useState<string | null>(null);
   const [receiptBooking, setReceiptBooking] = useState<TBooking | null>(null);
 
+  const bookings = initialBookings.map((booking) => {
+    const override = statusOverrides[booking._id];
+
+    return override ? { ...booking, status: override } : booking;
+  });
+
+  useEffect(() => {
+    if (!receiptBooking) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setReceiptBooking(null);
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [receiptBooking]);
+
   const handleCancelBooking = async (bookingId: string) => {
+    if (cancellingId) {
+      return;
+    }
+
     const booking = bookings.find((item) => item._id === bookingId);
 
     if (!booking) {
-      toast.error("Booking not found.");
+      notify.error("Booking not found.");
       return;
     }
 
     if (booking.status !== "Pending") {
-      toast.error("Only pending bookings can be cancelled.");
+      notify.error("Only pending bookings can be cancelled.");
       return;
     }
 
     setCancellingId(bookingId);
 
     try {
-      const response = await fetch(
-        `http://localhost:5000/booking/${bookingId}/cancel`,
+      const result = await apiJson<{ success?: boolean; message?: string }>(
+        `/booking/${encodeURIComponent(bookingId)}/cancel`,
         {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
-      const result = await response.json();
-
-      if (!response.ok || !result.success) {
-        throw new Error(result.message || "Failed to cancel the booking.");
+      if (result?.success !== true) {
+        throw new Error(result?.message || "Failed to cancel the booking.");
       }
 
-      setBookings((previousBookings) =>
-        previousBookings.map((item) =>
-          item._id === bookingId
-            ? { ...item, status: "Cancelled" }
-            : item
-        )
-      );
+      setStatusOverrides((current) => ({
+        ...current,
+        [bookingId]: "Cancelled",
+      }));
 
-      toast.success(result.message || "Booking cancelled successfully.");
+      notify.success(result?.message || "Booking cancelled successfully.");
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Something went wrong.";
-
-      toast.error(message);
+      notify.apiError(error, "Could not cancel this booking. Please try again.");
     } finally {
       setCancellingId(null);
     }
@@ -102,7 +131,12 @@ export default function MyBookingsList({
   };
 
   const formatDate = (date: string) => {
-    const parsedDate = new Date(`${date}T00:00:00`);
+    if (!date) return "—";
+
+    // Accept both "YYYY-MM-DD" and full ISO timestamps from the API.
+    const parsedDate = /^\d{4}-\d{2}-\d{2}$/.test(date)
+      ? new Date(`${date}T00:00:00`)
+      : new Date(date);
 
     if (Number.isNaN(parsedDate.getTime())) {
       return date;
@@ -115,11 +149,18 @@ export default function MyBookingsList({
     });
   };
 
-  const formatCurrency = (amount: number, currency: string) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: currency || "USD",
-    }).format(amount);
+  const formatCurrency = (amount: number, currency?: string) => {
+    const safeAmount = Number.isFinite(amount) ? amount : 0;
+    const code = (currency || "USD").toUpperCase();
+
+    try {
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: code,
+      }).format(safeAmount);
+    } catch {
+      return `${code} ${safeAmount.toFixed(2)}`;
+    }
   };
 
   return (
@@ -154,26 +195,61 @@ export default function MyBookingsList({
 
         {/* Error Message */}
         {error && bookings.length > 0 && (
-          <div className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm leading-6 text-red-700">
-            {error}
+          <div
+            role="alert"
+            className="mb-5 flex flex-col gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm leading-6 text-red-700 sm:flex-row sm:items-center sm:justify-between"
+          >
+            <p>{error}</p>
+
+            <button
+              type="button"
+              onClick={() => startRefresh(() => router.refresh())}
+              disabled={isRefreshing}
+              className="inline-flex min-h-9 shrink-0 items-center justify-center gap-2 self-start rounded-lg border border-red-200 bg-white px-3 py-2 text-xs font-semibold text-red-700 transition hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-200 disabled:cursor-not-allowed disabled:opacity-60 sm:self-center sm:text-sm"
+            >
+              {isRefreshing ? (
+                <Spinner className="size-3.5" />
+              ) : (
+                <RotateCcw className="h-3.5 w-3.5" />
+              )}
+              {isRefreshing ? "Retrying..." : "Try again"}
+            </button>
           </div>
         )}
 
         {/* Empty State */}
         {bookings.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-gray-300 bg-white px-5 py-14 text-center shadow-sm sm:px-8 sm:py-16">
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-100">
-              <CalendarDays className="h-7 w-7 text-gray-400" />
-            </div>
-
-            <h2 className="text-lg font-semibold text-gray-900 sm:text-xl">
-              {error ? "Could not load bookings" : "No bookings yet"}
-            </h2>
-
-            <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-gray-500">
-              {error || "Your studio bookings will appear here."}
-            </p>
-          </div>
+          error ? (
+            <EmptyState
+              tone="error"
+              icon={CalendarDays}
+              eyebrow="Bookings unavailable"
+              title="Could not load bookings"
+              description={error}
+              action={{
+                label: isRefreshing ? "Retrying..." : "Try again",
+                onClick: () => startRefresh(() => router.refresh()),
+                icon: RotateCcw,
+                loading: isRefreshing,
+              }}
+            />
+          ) : (
+            <EmptyState
+              icon={CalendarDays}
+              eyebrow="Your schedule is open"
+              title="No bookings yet"
+              description="When you reserve a studio, your shoot dates, booking status, and receipts will appear here."
+              action={{
+                label: "Browse Studios",
+                href: "/studios",
+                icon: ArrowRight,
+              }}
+              secondaryAction={{
+                label: "List your studio",
+                href: "/add-studio",
+              }}
+            />
+          )
         ) : (
           /* Booking Cards */
           <div className="space-y-3 sm:space-y-4">
@@ -285,12 +361,12 @@ export default function MyBookingsList({
                           <button
                             type="button"
                             onClick={() => handleCancelBooking(booking._id)}
-                            disabled={isCancelling}
+                            disabled={isCancelling || cancellingId !== null}
                             className="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-medium text-red-700 transition hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-200 disabled:cursor-not-allowed disabled:opacity-60 sm:text-sm"
                           >
                             {isCancelling ? (
                               <>
-                                <LoaderCircle className="h-3.5 w-3.5 animate-spin" />
+                                <Spinner className="size-3.5" />
                                 Cancelling...
                               </>
                             ) : (
@@ -313,6 +389,9 @@ export default function MyBookingsList({
         {/* Receipt Modal */}
         {receiptBooking && (
           <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Booking receipt"
             className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/50 p-3 backdrop-blur-sm sm:p-5"
             onClick={() => setReceiptBooking(null)}
           >

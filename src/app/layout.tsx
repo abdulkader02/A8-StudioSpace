@@ -31,7 +31,19 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           {children}
           </main>
           <Footer/>
-          <Toaster position="top-right" richColors />
+          <Toaster
+            position="top-right"
+            richColors
+            closeButton
+            duration={4000}
+            toastOptions={{
+              classNames: {
+                toast: "font-sans",
+                title: "font-semibold",
+                description: "text-xs leading-5",
+              },
+            }}
+          />
           </body>
     </html>
   );

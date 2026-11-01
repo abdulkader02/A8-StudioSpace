@@ -17,6 +17,7 @@ import DeleteStudioDialog from "@/components/studio/DeleteStudioDialog";
 import { Button } from "@/components/ui/button";
 
 import type { TStudio } from "@/lib/type/type";
+import { getStudioCoverImage } from "@/lib/studio";
 
 type Props = {
   studio: TStudio;
@@ -43,7 +44,7 @@ export default function MyListing({
   onEdit,
   onDeleted,
 }: Props) {
-  const coverImage = studio.imageUrls?.find((image) => Boolean(image));
+  const coverImage = getStudioCoverImage(studio);
 
   const location = [studio.location?.area, studio.location?.city]
     .filter(Boolean)
