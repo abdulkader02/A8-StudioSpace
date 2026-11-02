@@ -9,26 +9,26 @@ import {
 
 export default function NotFound() {
   return (
-    <section className="relative flex min-h-[calc(100svh-64px)] items-center overflow-hidden bg-brand-ivory px-4 py-16 sm:px-6 lg:px-8">
-      <div className="pointer-events-none absolute -left-32 top-10 h-96 w-96 rounded-full bg-brand-bronze-light/70 blur-3xl" />
+    <section className="relative flex min-h-[calc(100svh-64px)] items-center overflow-hidden bg-background px-4 py-16 sm:px-6 lg:px-8">
+      <div className="pointer-events-none absolute -left-32 top-10 h-96 w-96 rounded-full bg-secondary/70 blur-3xl" />
 
       <div className="pointer-events-none absolute -right-32 bottom-0 h-96 w-96 rounded-full bg-brand-bronze/10 blur-3xl" />
 
       <div className="relative mx-auto grid w-full max-w-7xl items-center gap-12 lg:grid-cols-2 lg:gap-16">
         <div className="text-center lg:text-left">
-          <div className="inline-flex items-center gap-2 rounded-full border border-brand-bronze/25 bg-white px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-brand-bronze shadow-sm">
+          <div className="inline-flex items-center gap-2 rounded-full border border-brand-bronze/25 bg-card px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-brand-bronze shadow-sm">
             <Sparkles className="h-3.5 w-3.5" />
             404 · Scene not found
           </div>
 
-          <h1 className="mt-6 text-4xl font-semibold leading-tight tracking-tight text-brand-charcoal sm:text-5xl lg:text-6xl">
+          <h1 className="mt-6 text-4xl font-semibold leading-tight tracking-tight text-foreground sm:text-5xl lg:text-6xl">
             This set is still
             <span className="mt-2 block font-serif font-normal italic text-brand-bronze">
               under construction.
             </span>
           </h1>
 
-          <p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-brand-stone sm:text-base">
+          <p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-muted-foreground sm:text-base">
             The page you were looking for may have moved, been renamed, or
             never made it past pre-production. Let&apos;s get you back to a
             space that&apos;s ready for action.
@@ -45,7 +45,7 @@ export default function NotFound() {
 
             <Link
               href="/studios"
-              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-brand-border bg-white px-6 py-3 text-sm font-semibold text-brand-charcoal transition hover:border-brand-bronze hover:text-brand-bronze focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-bronze focus-visible:ring-offset-2"
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-border bg-card px-6 py-3 text-sm font-semibold text-foreground transition hover:border-brand-bronze hover:text-brand-bronze focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-bronze focus-visible:ring-offset-2"
             >
               <Search className="h-4 w-4" />
               Explore Studios
@@ -55,7 +55,7 @@ export default function NotFound() {
         </div>
 
         <div className="relative mx-auto w-full max-w-xl">
-          <div className="relative overflow-hidden rounded-[32px] border border-brand-border bg-brand-charcoal p-4 shadow-2xl shadow-brand-charcoal/20 sm:p-6">
+          <div className="relative overflow-hidden rounded-[32px] border border-border bg-brand-charcoal p-4 shadow-2xl shadow-brand-charcoal/20 sm:p-6">
             <div className="mb-4 flex items-center justify-between px-1">
               <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-brand-ivory/60">
                 <Camera className="h-4 w-4 text-brand-bronze" />
@@ -286,11 +286,11 @@ export default function NotFound() {
             </svg>
           </div>
 
-          <div className="absolute -bottom-5 -left-3 hidden rounded-2xl border border-brand-border bg-white px-4 py-3 shadow-lg sm:block">
+          <div className="absolute -bottom-5 -left-3 hidden rounded-2xl border border-border bg-card px-4 py-3 shadow-lg sm:block">
             <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-brand-bronze">
               Director&apos;s note
             </p>
-            <p className="mt-1 text-xs font-medium text-brand-charcoal">
+            <p className="mt-1 text-xs font-medium text-foreground">
               Wrong scene? Return to the studio floor.
             </p>
           </div>

@@ -30,7 +30,7 @@ const actionStyles = {
   primary:
     "bg-brand-bronze text-white hover:bg-brand-bronze-hover focus-visible:ring-brand-bronze",
   secondary:
-    "border border-brand-border bg-white text-brand-charcoal hover:border-brand-bronze hover:text-brand-bronze focus-visible:ring-brand-bronze",
+    "border border-border bg-card text-foreground hover:border-brand-bronze hover:text-brand-bronze focus-visible:ring-brand-bronze",
 };
 
 function EmptyStateActionButton({
@@ -93,20 +93,20 @@ export default function EmptyState({
     <div
       role={tone === "error" ? "alert" : "status"}
       className={cn(
-        "relative overflow-hidden rounded-3xl border border-brand-border bg-white text-center shadow-sm",
+        "relative overflow-hidden rounded-3xl border border-border bg-card text-center shadow-sm",
         compact ? "px-4 py-8" : "px-6 py-14 sm:px-8 sm:py-16",
         className,
       )}
     >
       <div className="pointer-events-none absolute -right-16 -top-20 h-48 w-48 rounded-full bg-brand-bronze/10 blur-3xl" />
 
-      <div className="pointer-events-none absolute -bottom-24 -left-16 h-48 w-48 rounded-full bg-brand-bronze-light/60 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-24 -left-16 h-48 w-48 rounded-full bg-secondary/60 blur-3xl" />
 
       <div className="relative mx-auto flex max-w-lg flex-col items-center">
         {Icon && (
           <div
             className={cn(
-              "mb-5 flex items-center justify-center rounded-2xl border border-brand-bronze/20 bg-brand-bronze-light/40 text-brand-bronze",
+              "mb-5 flex items-center justify-center rounded-2xl border border-brand-bronze/20 bg-secondary/40 text-brand-bronze",
               compact ? "h-12 w-12" : "h-16 w-16",
             )}
           >
@@ -122,7 +122,7 @@ export default function EmptyState({
 
         <h2
           className={cn(
-            "font-semibold tracking-tight text-brand-charcoal",
+            "font-semibold tracking-tight text-foreground",
             compact ? "text-base" : "text-xl sm:text-2xl",
           )}
         >
@@ -131,7 +131,7 @@ export default function EmptyState({
 
         <p
           className={cn(
-            "mt-2 max-w-md leading-6 text-brand-stone",
+            "mt-2 max-w-md leading-6 text-muted-foreground",
             compact ? "text-xs" : "text-sm",
           )}
         >

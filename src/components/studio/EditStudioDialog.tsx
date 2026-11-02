@@ -210,21 +210,21 @@ export default function EditStudioDialog({ studio, onClose }: Props) {
         }
       }}
     >
-      <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto border-brand-border bg-brand-ivory p-0">
-        <DialogHeader className="sticky top-0 z-10 border-b border-brand-border bg-white p-5 text-left">
-          <DialogTitle className="text-xl font-semibold text-brand-charcoal">
+      <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto border-border bg-background p-0">
+        <DialogHeader className="sticky top-0 z-10 border-b border-border bg-card p-5 text-left">
+          <DialogTitle className="text-xl font-semibold text-foreground">
             Edit Studio
           </DialogTitle>
 
-          <DialogDescription className="text-sm text-brand-stone">
+          <DialogDescription className="text-sm text-muted-foreground">
             Update your studio information.
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-5 p-5 sm:p-7">
           {/* Host Information */}
-          <section className="rounded-xl border border-brand-border bg-white p-5">
-            <h3 className="mb-4 font-semibold text-brand-charcoal">
+          <section className="rounded-xl border border-border bg-card p-5">
+            <h3 className="mb-4 font-semibold text-foreground">
               Host Information
             </h3>
 
@@ -237,7 +237,7 @@ export default function EditStudioDialog({ studio, onClose }: Props) {
                   value={form.host?.name || ""}
                   placeholder="Not available"
                   readOnly
-                  className="bg-brand-ivory"
+                  className="bg-background"
                 />
               </div>
 
@@ -249,15 +249,15 @@ export default function EditStudioDialog({ studio, onClose }: Props) {
                   value={form.host?.email || ""}
                   placeholder="Not available"
                   readOnly
-                  className="bg-brand-ivory"
+                  className="bg-background"
                 />
               </div>
             </div>
           </section>
 
           {/* Basic Information */}
-          <section className="rounded-xl border border-brand-border bg-white p-5">
-            <h3 className="mb-4 font-semibold text-brand-charcoal">
+          <section className="rounded-xl border border-border bg-card p-5">
+            <h3 className="mb-4 font-semibold text-foreground">
               Basic Information
             </h3>
 
@@ -310,8 +310,8 @@ export default function EditStudioDialog({ studio, onClose }: Props) {
           </section>
 
           {/* Pricing */}
-          <section className="rounded-xl border border-brand-border bg-white p-5">
-            <h3 className="mb-4 font-semibold text-brand-charcoal">
+          <section className="rounded-xl border border-border bg-card p-5">
+            <h3 className="mb-4 font-semibold text-foreground">
               Pricing Information
             </h3>
 
@@ -362,8 +362,8 @@ export default function EditStudioDialog({ studio, onClose }: Props) {
           </section>
 
           {/* Location */}
-          <section className="rounded-xl border border-brand-border bg-white p-5">
-            <h3 className="mb-4 font-semibold text-brand-charcoal">
+          <section className="rounded-xl border border-border bg-card p-5">
+            <h3 className="mb-4 font-semibold text-foreground">
               Studio Location
             </h3>
 
@@ -393,8 +393,8 @@ export default function EditStudioDialog({ studio, onClose }: Props) {
           </section>
 
           {/* Image */}
-          <section className="rounded-xl border border-brand-border bg-white p-5">
-            <h3 className="mb-4 font-semibold text-brand-charcoal">
+          <section className="rounded-xl border border-border bg-card p-5">
+            <h3 className="mb-4 font-semibold text-foreground">
               Studio Image
             </h3>
 
@@ -412,8 +412,8 @@ export default function EditStudioDialog({ studio, onClose }: Props) {
           </section>
 
           {/* Amenities */}
-          <section className="rounded-xl border border-brand-border bg-white p-5">
-            <h3 className="mb-4 font-semibold text-brand-charcoal">
+          <section className="rounded-xl border border-border bg-card p-5">
+            <h3 className="mb-4 font-semibold text-foreground">
               Studio Amenities
             </h3>
 
@@ -428,8 +428,8 @@ export default function EditStudioDialog({ studio, onClose }: Props) {
                     onClick={() => toggleAmenity(amenity)}
                     className={`flex items-center gap-2 rounded-lg border p-3 text-left text-sm transition-colors ${
                       selected
-                        ? "border-brand-bronze bg-brand-bronze-light/20 text-brand-charcoal"
-                        : "border-brand-border text-brand-stone hover:bg-brand-ivory"
+                        ? "border-brand-bronze bg-secondary/20 text-foreground"
+                        : "border-border text-muted-foreground hover:bg-background"
                     }`}
                   >
                     <span className="flex h-5 w-5 items-center justify-center rounded border border-brand-bronze">
@@ -444,8 +444,8 @@ export default function EditStudioDialog({ studio, onClose }: Props) {
           </section>
 
           {/* Description */}
-          <section className="rounded-xl border border-brand-border bg-white p-5">
-            <h3 className="mb-4 font-semibold text-brand-charcoal">
+          <section className="rounded-xl border border-border bg-card p-5">
+            <h3 className="mb-4 font-semibold text-foreground">
               Studio Description
             </h3>
 
@@ -466,7 +466,7 @@ export default function EditStudioDialog({ studio, onClose }: Props) {
               variant="outline"
               onClick={onClose}
               disabled={isSubmitting}
-              className="border-brand-border text-brand-charcoal"
+              className="border-border text-foreground"
             >
               Cancel
             </Button>

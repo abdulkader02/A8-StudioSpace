@@ -100,13 +100,13 @@ export default function LoginPage() {
 
   return (
     <div className="mx-auto my-10 w-full max-w-md px-4">
-      <Card className="border-brand-border bg-brand-ivory shadow-lg">
+      <Card className="border-border bg-background shadow-lg">
         <CardHeader className="space-y-2 text-center">
-          <CardTitle className="text-2xl font-bold text-brand-charcoal">
+          <CardTitle className="text-2xl font-bold text-foreground">
             Welcome Back
           </CardTitle>
 
-          <CardDescription className="text-brand-stone">
+          <CardDescription className="text-muted-foreground">
             Login to your StudioSpace account.
           </CardDescription>
         </CardHeader>
@@ -121,7 +121,7 @@ export default function LoginPage() {
                   variant="outline"
                   disabled={googleLoading || loading}
                   onClick={handleGoogleLogin}
-                  className="w-full border-brand-border text-brand-charcoal hover:bg-brand-stone/10"
+                  className="w-full border-border text-foreground hover:bg-muted-foreground/10"
                 >
                   {googleLoading ? (
                     <Spinner />
@@ -137,7 +137,7 @@ export default function LoginPage() {
                 </Button>
               </Field>
 
-              <FieldSeparator className="*:data-[slot=field-separator-content]:bg-brand-ivory">
+              <FieldSeparator className="*:data-[slot=field-separator-content]:bg-background">
                 Or continue with email
               </FieldSeparator>
 
@@ -150,7 +150,7 @@ export default function LoginPage() {
                   type="email"
                   placeholder="m@example.com"
                   required
-                  className="border-brand-border"
+                  className="border-border"
                 />
               </Field>
 
@@ -159,7 +159,7 @@ export default function LoginPage() {
                 <div className="flex items-center justify-between">
                   <FieldLabel htmlFor="password">Password</FieldLabel>
 
-                  <span className="text-xs text-brand-stone">
+                  <span className="text-xs text-muted-foreground">
                     Forgot password?
                   </span>
                 </div>
@@ -170,7 +170,7 @@ export default function LoginPage() {
                   type="password"
                   placeholder="Enter your password"
                   required
-                  className="border-brand-border"
+                  className="border-border"
                 />
               </Field>
 
@@ -191,7 +191,7 @@ export default function LoginPage() {
                   )}
                 </Button>
 
-                <FieldDescription className="text-center text-brand-stone">
+                <FieldDescription className="text-center text-muted-foreground">
                   Don&apos;t have an account?{" "}
                   <Link
                     href="/register"
@@ -206,7 +206,7 @@ export default function LoginPage() {
         </CardContent>
       </Card>
 
-      <FieldDescription className="mt-4 px-6 text-center text-brand-stone">
+      <FieldDescription className="mt-4 px-6 text-center text-muted-foreground">
         By continuing, you agree to our{" "}
         <Link href="/terms" className="underline underline-offset-4">
           Terms of Service

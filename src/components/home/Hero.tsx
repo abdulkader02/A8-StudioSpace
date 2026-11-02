@@ -124,11 +124,7 @@ export default function Hero() {
 
                   {/* Headline */}
                   <h1 className="mt-6 text-4xl font-bold leading-[1.1] tracking-tight text-brand-ivory sm:text-5xl lg:text-6xl">
-                    {slide.titleTop}
-                    <br />
-                    <span className="text-brand-bronze">
-                      {slide.titleAccent}
-                    </span>
+                    {slide.titleTop} <span className="text-brand-bronze">{slide.titleAccent}</span>
                   </h1>
 
                   {/* Subtext */}

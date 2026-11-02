@@ -179,25 +179,25 @@ export default function MyListingsPage() {
     isPending || (loading && ownerStudios.length === 0);
 
   return (
-    <main className="min-h-screen bg-brand-ivory">
+    <main className="min-h-screen bg-background">
       {/* Header */}
-      <section className="border-b border-brand-border bg-white/50">
+      <section className="border-b border-border bg-card/50">
         <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
           <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
             <div>
-              <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-brand-bronze/25 bg-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-brand-bronze">
+              <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-brand-bronze/25 bg-card px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-brand-bronze">
                 <Sparkles className="h-3 w-3" />
                 Host dashboard
               </div>
 
-              <h1 className="text-3xl font-semibold tracking-tight text-brand-charcoal sm:text-4xl">
+              <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
                 My{" "}
                 <span className="font-serif italic text-brand-bronze">
                   Listings
                 </span>
               </h1>
 
-              <p className="mt-2 max-w-lg text-sm leading-6 text-brand-stone">
+              <p className="mt-2 max-w-lg text-sm leading-6 text-muted-foreground">
                 Manage your creative spaces, update their details, or
                 remove listings you no longer offer.
               </p>
@@ -224,11 +224,11 @@ export default function MyListingsPage() {
             </div>
 
             <div>
-              <p className="text-lg font-semibold text-brand-charcoal">
+              <p className="text-lg font-semibold text-foreground">
                 Your spaces
               </p>
 
-              <p className="text-xs text-brand-stone">
+              <p className="text-xs text-muted-foreground">
                 {ownerStudios.length} total{" "}
                 {ownerStudios.length === 1 ? "listing" : "listings"}
                 {loading && ownerStudios.length > 0
@@ -238,7 +238,7 @@ export default function MyListingsPage() {
             </div>
           </div>
 
-          <div className="flex h-11 w-full items-center gap-2 rounded-xl border border-brand-border bg-white px-3 sm:max-w-xs">
+          <div className="flex h-11 w-full items-center gap-2 rounded-xl border border-border bg-card px-3 sm:max-w-xs">
             <Search className="h-4 w-4 shrink-0 text-brand-bronze" />
 
             <input
@@ -246,7 +246,7 @@ export default function MyListingsPage() {
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Search your listings..."
               aria-label="Search your listings"
-              className="w-full bg-transparent text-sm text-brand-charcoal outline-none placeholder:text-brand-stone/70"
+              className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground/70"
             />
           </div>
         </div>

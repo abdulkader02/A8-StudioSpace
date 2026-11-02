@@ -137,15 +137,15 @@ export default async function StudioDetailsPage({
   const amenities = studio.amenities ?? [];
 
   return (
-    <main className="min-h-screen bg-brand-ivory text-brand-charcoal">
+    <main className="min-h-screen bg-background text-foreground">
       {/* Header */}
-      <header className="sticky top-0 z-30 border-b border-brand-border/80 bg-brand-ivory/90 backdrop-blur-xl">
+      <header className="sticky top-0 z-30 border-b border-border/80 bg-background/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <Link
             href="/studios"
-            className="group inline-flex items-center gap-2 text-sm font-semibold text-brand-stone transition-colors hover:text-brand-charcoal"
+            className="group inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground"
           >
-            <span className="flex h-9 w-9 items-center justify-center rounded-full border border-brand-border bg-white transition-colors group-hover:border-brand-bronze">
+            <span className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card transition-colors group-hover:border-brand-bronze">
               <ArrowLeft className="h-4 w-4" />
             </span>
             Back to studios
@@ -153,7 +153,7 @@ export default async function StudioDetailsPage({
 
           <Badge
             variant="outline"
-            className="border-brand-bronze/30 bg-brand-bronze-light/30 px-3 py-1.5 text-brand-charcoal"
+            className="border-brand-bronze/30 bg-secondary/30 px-3 py-1.5 text-foreground"
           >
             {studio.category}
           </Badge>
@@ -164,7 +164,7 @@ export default async function StudioDetailsPage({
         {/* Studio heading */}
         <section className="mb-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
           <div className="space-y-4">
-            <div className="flex flex-wrap items-center gap-2 text-xs font-medium uppercase tracking-[0.15em] text-brand-stone">
+            <div className="flex flex-wrap items-center gap-2 text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
               <span>StudioSpace</span>
               <span className="text-brand-bronze">/</span>
 
@@ -179,11 +179,11 @@ export default async function StudioDetailsPage({
               <span>{studio.category}</span>
             </div>
 
-            <h1 className="max-w-3xl text-3xl font-semibold tracking-tight text-brand-charcoal sm:text-4xl lg:text-5xl">
+            <h1 className="max-w-3xl text-3xl font-semibold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
               {studio.title}
             </h1>
 
-            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-brand-stone">
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
               {location && (
                 <span className="flex items-center gap-2">
                   <MapPin className="h-4 w-4 text-brand-bronze" />
@@ -194,7 +194,7 @@ export default async function StudioDetailsPage({
               <span className="flex items-center gap-1.5">
                 <Star className="h-4 w-4 fill-brand-bronze text-brand-bronze" />
 
-                <strong className="text-brand-charcoal">
+                <strong className="text-foreground">
                   {rating > 0 ? rating.toFixed(1) : "New"}
                 </strong>
 
@@ -205,12 +205,12 @@ export default async function StudioDetailsPage({
 
           {/* Header price */}
           <div className="flex items-center">
-            <div className="flex items-center gap-1 rounded-full bg-brand-charcoal px-4 py-2 text-sm font-semibold text-white">
+            <div className="flex items-center gap-1 rounded-full bg-foreground px-4 py-2 text-sm font-semibold text-background">
               <CurrencyMark currency={currency} />
 
               {formatPrice(price)}
 
-              <span className="ml-1 font-normal text-white/70">
+              <span className="ml-1 font-normal text-background/70">
                 / {priceUnit}
               </span>
             </div>
@@ -253,17 +253,17 @@ export default async function StudioDetailsPage({
 
             {/* Overview */}
             {studio.description && (
-              <Card className="overflow-hidden rounded-[24px] border-brand-border bg-white shadow-brand">
+              <Card className="overflow-hidden rounded-[24px] border-border bg-card shadow-brand">
                 <CardHeader className="pb-3">
                   <SectionLabel>About this space</SectionLabel>
 
-                  <CardTitle className="text-xl font-semibold tracking-tight text-brand-charcoal sm:text-2xl">
+                  <CardTitle className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
                     Studio overview
                   </CardTitle>
                 </CardHeader>
 
                 <CardContent>
-                  <p className="max-w-3xl whitespace-pre-line text-sm leading-8 text-brand-stone sm:text-base">
+                  <p className="max-w-3xl whitespace-pre-line text-sm leading-8 text-muted-foreground sm:text-base">
                     {studio.description}
                   </p>
                 </CardContent>
@@ -272,17 +272,17 @@ export default async function StudioDetailsPage({
 
             {/* Amenities */}
             {amenities.length > 0 && (
-              <Card className="rounded-[24px] border-brand-border bg-white shadow-brand">
+              <Card className="rounded-[24px] border-border bg-card shadow-brand">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0">
                   <div className="space-y-2">
                     <SectionLabel>Studio facilities</SectionLabel>
 
-                    <CardTitle className="text-xl font-semibold tracking-tight text-brand-charcoal sm:text-2xl">
+                    <CardTitle className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
                       Equipment & Amenities
                     </CardTitle>
                   </div>
 
-                  <span className="rounded-full bg-brand-ivory px-3 py-1.5 text-xs font-semibold text-brand-stone">
+                  <span className="rounded-full bg-background px-3 py-1.5 text-xs font-semibold text-muted-foreground">
                     {amenities.length} items
                   </span>
                 </CardHeader>
@@ -329,7 +329,7 @@ export default async function StudioDetailsPage({
 // Shown when the backend is unreachable or returns an unexpected error.
 function StudioLoadError({ message }: { message: string }) {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-brand-ivory px-4 py-16 text-brand-charcoal">
+    <main className="flex min-h-screen items-center justify-center bg-background px-4 py-16 text-foreground">
       <div className="w-full max-w-lg">
         <EmptyState
           tone="error"
@@ -372,16 +372,16 @@ function MetaItem({
   icon: ReactNode;
 }) {
   return (
-    <div className="rounded-2xl border border-brand-border bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-brand">
-      <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-brand-bronze-light/50 text-brand-bronze">
+    <div className="rounded-2xl border border-border bg-card p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-brand">
+      <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-secondary/50 text-brand-bronze">
         {icon}
       </div>
 
-      <p className="mb-1 text-[10px] font-bold uppercase tracking-wider text-brand-stone">
+      <p className="mb-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
         {label}
       </p>
 
-      <p className="break-words text-sm font-semibold text-brand-charcoal">
+      <p className="break-words text-sm font-semibold text-foreground">
         {value}
       </p>
     </div>
@@ -391,12 +391,12 @@ function MetaItem({
 // Amenities chip
 function AmenityChip({ name }: { name: string }) {
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-brand-border bg-brand-ivory/50 px-4 py-3 transition-colors hover:border-brand-bronze/50">
-      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-bronze-light/60 text-brand-bronze">
+    <div className="flex items-center gap-3 rounded-xl border border-border bg-background/50 px-4 py-3 transition-colors hover:border-brand-bronze/50">
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-secondary/60 text-brand-bronze">
         <CheckCircle2 className="h-4 w-4" />
       </span>
 
-      <span className="text-sm font-medium text-brand-charcoal">{name}</span>
+      <span className="text-sm font-medium text-foreground">{name}</span>
     </div>
   );
 }
@@ -424,7 +424,7 @@ function BookingCard({
   capacity: number;
 }) {
   return (
-    <Card className="overflow-hidden rounded-[28px] border-brand-border bg-white shadow-brand">
+    <Card className="overflow-hidden rounded-[28px] border-border bg-card shadow-brand">
       {/* Booking header */}
       <div className="bg-brand-dark p-6 text-white sm:p-7">
         <p className="text-xs font-medium uppercase tracking-[0.2em] text-white/50">
@@ -460,23 +460,23 @@ function BookingCard({
         {/* Booking information */}
         <div className="space-y-4">
           <div className="flex items-center justify-between gap-3">
-            <span className="flex items-center gap-2 text-sm text-brand-stone">
+            <span className="flex items-center gap-2 text-sm text-muted-foreground">
               <CalendarDays className="h-4 w-4" />
               Booking duration
             </span>
 
-            <span className="text-sm font-semibold text-brand-charcoal">
+            <span className="text-sm font-semibold text-foreground">
               1 {priceUnit}
             </span>
           </div>
 
           <div className="flex items-center justify-between gap-3">
-            <span className="flex items-center gap-2 text-sm text-brand-stone">
+            <span className="flex items-center gap-2 text-sm text-muted-foreground">
               <ShieldCheck className="h-4 w-4" />
               Security deposit
             </span>
 
-            <span className="flex items-center gap-1 text-sm font-semibold text-brand-charcoal">
+            <span className="flex items-center gap-1 text-sm font-semibold text-foreground">
               <CurrencyMark currency={currency} />
               {formatPrice(deposit)}
             </span>
@@ -484,37 +484,37 @@ function BookingCard({
         </div>
 
         {/* Price breakdown */}
-        <div className="space-y-3 border-t border-dashed border-brand-border pt-5">
+        <div className="space-y-3 border-t border-dashed border-border pt-5">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-brand-stone">Studio price</span>
+            <span className="text-muted-foreground">Studio price</span>
 
-            <span className="flex items-center gap-1 font-medium text-brand-charcoal">
+            <span className="flex items-center gap-1 font-medium text-foreground">
               <CurrencyMark currency={currency} />
               {formatPrice(price)}
             </span>
           </div>
 
           <div className="flex items-center justify-between text-sm">
-            <span className="text-brand-stone">Security deposit</span>
+            <span className="text-muted-foreground">Security deposit</span>
 
-            <span className="flex items-center gap-1 font-medium text-brand-charcoal">
+            <span className="flex items-center gap-1 font-medium text-foreground">
               <CurrencyMark currency={currency} />
               {formatPrice(deposit)}
             </span>
           </div>
 
-          <div className="flex items-center justify-between border-t border-brand-border pt-4">
-            <span className="font-semibold text-brand-charcoal">
+          <div className="flex items-center justify-between border-t border-border pt-4">
+            <span className="font-semibold text-foreground">
               Estimated total
             </span>
 
-            <span className="flex items-center gap-1 text-xl font-bold text-brand-charcoal">
+            <span className="flex items-center gap-1 text-xl font-bold text-foreground">
               <CurrencyMark currency={currency} />
               {formatPrice(total)}
             </span>
           </div>
 
-          <p className="text-[11px] leading-relaxed text-brand-stone">
+          <p className="text-[11px] leading-relaxed text-muted-foreground">
             Estimated amount for one booking unit, including the listed security
             deposit. Confirm the final amount on the booking page.
           </p>
@@ -531,7 +531,7 @@ function BookingCard({
           capacity={capacity}
         />
 
-        <p className="text-center text-[11px] leading-relaxed text-brand-stone">
+        <p className="text-center text-[11px] leading-relaxed text-muted-foreground">
           Review your booking details before proceeding.
         </p>
       </CardContent>

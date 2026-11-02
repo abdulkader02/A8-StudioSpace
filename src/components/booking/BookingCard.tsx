@@ -57,7 +57,7 @@ export function StudioGallery({ studio }: { studio: TStudio }) {
 
   return (
     <div className="space-y-4">
-      <div className="relative h-[350px] overflow-hidden rounded-2xl bg-brand-stone/10 md:h-[480px]">
+      <div className="relative h-[350px] overflow-hidden rounded-2xl bg-muted-foreground/10 md:h-[480px]">
         <Image
           src={images[selectedImage]}
           alt={studio.title}
@@ -69,7 +69,7 @@ export function StudioGallery({ studio }: { studio: TStudio }) {
       </div>
 
       {images.length > 1 && (
-        <div className="grid grid-cols-4 gap-3 sm:grid-cols-5">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
           {images.map((image, index) => (
             <button
               key={`${image}-${index}`}
@@ -114,7 +114,7 @@ export function HostDetails({ host }: HostDetailsProps) {
       <h2 className="mb-4 text-lg font-semibold">Meet your host</h2>
 
       <div className="flex items-start gap-4">
-        <div className="relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-brand-stone/30">
+        <div className="relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted-foreground/30">
           {host?.image ? (
             <Image
               src={host.image}
@@ -281,112 +281,117 @@ export function BookingModal({
      Handle Booking Form Submit
   ---------------------------------- */
 
-  const handleBooking = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
 
-    if (isSubmitting) {
-      return;
-    }
+const handleBooking = async (event: FormEvent<HTMLFormElement>) => {
+  event.preventDefault();
 
-    if (!user) {
-      notify.error("Please sign in to book this studio.");
-      router.push("/login");
-      return;
-    }
+  if (isSubmitting) return;
 
-    if (!date || !startTime) {
-      notify.error("Please select a date and start time.");
-      return;
-    }
+  if (!user) {
+    notify.error("Please sign in to book this studio.");
+    router.push("/login");
+    return;
+  }
 
-    if (
-      !Number.isFinite(parsedDuration) ||
-      parsedDuration < 1 ||
-      !Number.isInteger(parsedDuration) ||
-      !Number.isFinite(parsedCrewCount) ||
-      parsedCrewCount < 1 ||
-      !Number.isInteger(parsedCrewCount)
-    ) {
-      notify.error("Please enter valid booking details.");
-      return;
-    }
+  if (!date || !startTime) {
+    notify.error("Please select a date and start time.");
+    return;
+  }
 
-    if (date < today) {
-      notify.error("Please select today or a future date.");
-      return;
-    }
+  if (
+    !Number.isFinite(parsedDuration) ||
+    parsedDuration < 1 ||
+    !Number.isInteger(parsedDuration) ||
+    !Number.isFinite(parsedCrewCount) ||
+    parsedCrewCount < 1 ||
+    !Number.isInteger(parsedCrewCount)
+  ) {
+    notify.error("Please enter valid booking details.");
+    return;
+  }
 
-    if (capacity > 0 && parsedCrewCount > capacity) {
-      notify.error(`This studio allows up to ${capacity} guests.`);
-      return;
-    }
+  if (date < today) {
+    notify.error("Please select today or a future date.");
+    return;
+  }
 
-    try {
-      setIsSubmitting(true);
-      const data: TBookingPayload = {
-        studioId,
-        studioTitle,
-        date,
-        startTime,
-        duration: parsedDuration,
-        crewCount: parsedCrewCount,
-        notes: notes.trim(),
-        price,
-        deposit,
-        subtotal,
-        total,
-        currency,
-        priceUnit,
-        user: {
-          name: user.name,
-          email: user.email,
+  if (capacity > 0 && parsedCrewCount > capacity) {
+    notify.error(`This studio allows up to ${capacity} guests.`);
+    return;
+  }
+
+  try {
+    setIsSubmitting(true);
+
+    const data: TBookingPayload = {
+      studioId,
+      studioTitle,
+      date,
+      startTime,
+      duration: parsedDuration,
+      crewCount: parsedCrewCount,
+      notes: notes.trim(),
+      price,
+      deposit,
+      subtotal,
+      total,
+      currency,
+      priceUnit,
+      user: {
+        name: user.name,
+        email: user.email,
+      },
+    };
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/booking`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      };
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/booking`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        },
-      );
-
-      const result = (await response.json()) as {
-        success?: boolean;
-        message?: string;
-      };
-
-      if (!response.ok || result?.success !== true) {
-        throw new Error(result?.message || "Booking failed.");
+        body: JSON.stringify(data),
       }
+    );
 
-      notify.success(
-        result?.message || "Booking request submitted successfully!",
+    const result = await response.json();
+
+    // Duplicate booking check
+    if (response.status === 409) {
+      notify.error(
+        result.message || "This studio is already in your booking list!"
       );
-
-      setOpen(false);
-
-      router.push("/my-bookings");
-    } catch (error) {
-      console.error("Booking error:", error);
-
-      notify.apiError(
-        error,
-        "Could not create this booking. Please try again.",
-      );
-    } finally {
-      setIsSubmitting(false);
+      return;
     }
-  };
+
+    if (!response.ok || result?.success !== true) {
+      throw new Error(result?.message || "Booking failed.");
+    }
+
+    notify.success(
+      result.message || "Booking request submitted successfully!"
+    );
+
+    setOpen(false);
+    router.push("/my-bookings");
+  } catch (error) {
+    console.error("Booking error:", error);
+
+    notify.apiError(
+      error,
+      "Could not create this booking. Please try again."
+    );
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
 
   return (
     <>
       <Button
         type="button"
-        className="w-full bg-brand-charcoal text-brand-ivory hover:bg-brand-charcoal/90"
+        className="w-full bg-foreground text-background hover:bg-foreground/90"
         disabled={isPending}
         onClick={() => setOpen(true)}
       >
@@ -418,7 +423,7 @@ export function BookingModal({
           </DialogHeader>
 
           <form onSubmit={handleBooking} className="space-y-5">
-            <div className="rounded-xl bg-brand-stone/10 p-4">
+            <div className="rounded-xl bg-muted-foreground/10 p-4">
               <h3 className="font-semibold">{studioTitle}</h3>
 
               <p className="mt-1 text-sm text-muted-foreground">

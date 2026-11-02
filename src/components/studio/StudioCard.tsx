@@ -59,9 +59,9 @@ export default function StudioCard({ studio }: StudioCardProps) {
   const hasCapacity = Number.isFinite(capacity) && capacity > 0;
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-[22px] border border-brand-border bg-white transition-all duration-500 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-brand-charcoal/[0.07]">
+    <article className="group flex h-full flex-col overflow-hidden rounded-[22px] border border-border bg-card transition-all duration-500 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-brand-charcoal/[0.07]">
       {/* IMAGE */}
-      <div className="relative aspect-[1.28/1] overflow-hidden bg-brand-stone/10">
+      <div className="relative aspect-[1.28/1] overflow-hidden bg-muted-foreground/10">
         {showImage && coverImage ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -92,13 +92,13 @@ export default function StudioCard({ studio }: StudioCardProps) {
               ? `Rated ${rating.toFixed(1)} out of 5`
               : "No ratings yet"
           }
-          className="absolute right-4 top-4 flex items-center gap-1.5 rounded-full bg-white/95 px-3 py-1.5 text-xs font-bold text-brand-charcoal shadow-sm"
+          className="absolute right-4 top-4 flex items-center gap-1.5 rounded-full bg-white/95 px-3 py-1.5 text-xs font-bold text-foreground shadow-sm"
         >
           <Star
             className={`h-3.5 w-3.5 ${
               hasRating
                 ? "fill-brand-bronze text-brand-bronze"
-                : "text-brand-stone/50"
+                : "text-muted-foreground/50"
             }`}
           />
 
@@ -116,11 +116,11 @@ export default function StudioCard({ studio }: StudioCardProps) {
       <div className="flex flex-1 flex-col p-5 sm:p-6">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <h3 className="truncate text-lg font-semibold tracking-tight text-brand-charcoal transition-colors group-hover:text-brand-bronze">
+            <h3 className="truncate text-lg font-semibold tracking-tight text-foreground transition-colors group-hover:text-brand-bronze">
               {studioTitle}
             </h3>
 
-            <p className="mt-2 flex items-center gap-1.5 text-sm text-brand-stone">
+            <p className="mt-2 flex items-center gap-1.5 text-sm text-muted-foreground">
               <MapPin className="h-3.5 w-3.5 shrink-0 text-brand-bronze" />
 
               <span className="truncate">
@@ -131,14 +131,14 @@ export default function StudioCard({ studio }: StudioCardProps) {
 
           <div className="shrink-0 text-right">
             {hourlyRate ? (
-              <p className="whitespace-nowrap text-lg font-bold text-brand-charcoal">
+              <p className="text-lg font-bold text-foreground">
                 {hourlyRate}
-                <span className="ml-1 text-xs font-medium text-brand-stone">
+                <span className="ml-1 text-xs font-medium text-muted-foreground">
                   / hr
                 </span>
               </p>
             ) : (
-              <p className="text-xs font-medium text-brand-stone">
+              <p className="text-xs font-medium text-muted-foreground">
                 Price on request
               </p>
             )}
@@ -146,15 +146,15 @@ export default function StudioCard({ studio }: StudioCardProps) {
         </div>
 
         {description && (
-          <p className="mt-4 line-clamp-2 text-sm leading-6 text-brand-stone">
+          <p className="mt-4 line-clamp-2 text-sm leading-6 text-muted-foreground">
             {description}
           </p>
         )}
 
         {/* FOOTER */}
-        <div className="mt-auto flex items-center justify-between gap-3 border-t border-brand-border pt-4">
+        <div className="mt-auto flex items-center justify-between gap-3 border-t border-border pt-4">
           {hasCapacity ? (
-            <div className="flex items-center gap-2 text-sm text-brand-stone">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Users className="h-4 w-4 text-brand-bronze" />
               <span>
                 {capacity} {capacity === 1 ? "guest" : "guests"}
@@ -168,13 +168,13 @@ export default function StudioCard({ studio }: StudioCardProps) {
             <Link
               href={`/studios/${studioId}`}
               aria-label={`View details for ${studioTitle}`}
-              className="inline-flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-xl bg-brand-charcoal px-4 text-xs font-semibold text-white transition-colors hover:bg-brand-bronze focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-bronze focus-visible:ring-offset-2"
+              className="inline-flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-xl bg-foreground px-4 text-xs font-semibold text-background transition-colors hover:bg-brand-bronze hover:text-brand-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-bronze focus-visible:ring-offset-2"
             >
               View Details
               <ArrowUpRight className="h-3.5 w-3.5" />
             </Link>
           ) : (
-            <span className="text-xs text-brand-stone">
+            <span className="text-xs text-muted-foreground">
               Details unavailable
             </span>
           )}

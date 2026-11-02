@@ -84,7 +84,7 @@ const DeleteStudioDialog = ({ id, title, onDeleted }: Props) => {
           <Button
             type="button"
             variant="outline"
-            className="h-10 border-red-200 bg-white px-3 text-xs font-semibold text-red-600 hover:bg-red-50 hover:text-red-700"
+            className="h-10 border-red-200 bg-card px-3 text-xs font-semibold text-red-600 hover:bg-red-50 hover:text-red-700 dark:border-red-900/60 dark:text-red-400 dark:hover:bg-red-950/40 dark:hover:text-red-300"
           >
             <Trash2 className="mr-2 h-3.5 w-3.5" />
             Delete
@@ -94,15 +94,15 @@ const DeleteStudioDialog = ({ id, title, onDeleted }: Props) => {
         Delete
       </AlertDialogTrigger>
 
-      <AlertDialogContent className="border-brand-border bg-brand-ivory">
+      <AlertDialogContent className="border-border bg-background">
         <AlertDialogHeader>
-          <AlertDialogTitle className="text-brand-charcoal">
+          <AlertDialogTitle className="text-foreground">
             Delete this studio?
           </AlertDialogTitle>
 
-          <AlertDialogDescription className="text-brand-stone">
+          <AlertDialogDescription className="text-muted-foreground">
             Are you sure you want to delete{" "}
-            <span className="font-semibold text-brand-charcoal">
+            <span className="font-semibold text-foreground">
               {title}
             </span>
             ? This action cannot be undone.
@@ -112,7 +112,7 @@ const DeleteStudioDialog = ({ id, title, onDeleted }: Props) => {
         <AlertDialogFooter>
           <AlertDialogCancel
             disabled={isDeleting}
-            className="border-brand-border text-brand-charcoal"
+            className="border-border text-foreground"
           >
             Cancel
           </AlertDialogCancel>

@@ -232,33 +232,33 @@ const handleSubmit = async (
 };
 
   return (
-    <main className="min-h-screen bg-brand-ivory px-4 py-10 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-background px-4 py-10 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-5xl">
         {/* Page Header */}
         <div className="mb-8">
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-brand-bronze/30 bg-brand-bronze-light/20 px-3 py-1 text-sm font-medium text-brand-bronze">
+          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-brand-bronze/30 bg-secondary/20 px-3 py-1 text-sm font-medium text-brand-bronze">
             <PackagePlus className="h-4 w-4" />
             Studio Management
           </div>
 
-          <h1 className="text-3xl font-bold tracking-tight text-brand-charcoal sm:text-4xl">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
             Add New Studio
           </h1>
 
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-brand-stone sm:text-base">
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
             Add your studio details, facilities, and pricing information.
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Admin Information */}
-          <section className="rounded-2xl border border-brand-border bg-white p-6 shadow-sm sm:p-8">
+          <section className="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8">
             <div className="mb-5">
-              <h2 className="text-lg font-semibold text-brand-charcoal">
+              <h2 className="text-lg font-semibold text-foreground">
                 Admin Information
               </h2>
 
-              <p className="mt-1 text-sm text-brand-stone">
+              <p className="mt-1 text-sm text-muted-foreground">
                 Populated from your authenticated session — not editable.
               </p>
             </div>
@@ -277,7 +277,7 @@ const handleSubmit = async (
                   }
                   readOnly
                   aria-readonly="true"
-                  className="h-12 cursor-not-allowed bg-brand-ivory text-brand-stone"
+                  className="h-12 cursor-not-allowed bg-background text-muted-foreground"
                 />
               </div>
 
@@ -295,20 +295,20 @@ const handleSubmit = async (
                   }
                   readOnly
                   aria-readonly="true"
-                  className="h-12 cursor-not-allowed bg-brand-ivory text-brand-stone"
+                  className="h-12 cursor-not-allowed bg-background text-muted-foreground"
                 />
               </div>
             </div>
           </section>
 
           {/* Basic Information */}
-          <section className="rounded-2xl border border-brand-border bg-white p-6 shadow-sm sm:p-8">
+          <section className="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8">
             <div className="mb-6">
-              <h2 className="text-lg font-semibold text-brand-charcoal">
+              <h2 className="text-lg font-semibold text-foreground">
                 Basic Information
               </h2>
 
-              <p className="mt-1 text-sm text-brand-stone">
+              <p className="mt-1 text-sm text-muted-foreground">
                 Provide the essential details about your studio.
               </p>
             </div>
@@ -367,13 +367,13 @@ const handleSubmit = async (
           </section>
 
           {/* Pricing */}
-          <section className="rounded-2xl border border-brand-border bg-white p-6 shadow-sm sm:p-8">
+          <section className="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8">
             <div className="mb-6">
-              <h2 className="text-lg font-semibold text-brand-charcoal">
+              <h2 className="text-lg font-semibold text-foreground">
                 Pricing Information
               </h2>
 
-              <p className="mt-1 text-sm text-brand-stone">
+              <p className="mt-1 text-sm text-muted-foreground">
                 Set your studio rental price in US Dollars.
               </p>
             </div>
@@ -425,7 +425,7 @@ const handleSubmit = async (
                   className="h-12"
                 />
 
-                <p className="text-xs text-brand-stone">
+                <p className="text-xs text-muted-foreground">
                   Optional. Leave empty if the studio has no rating yet.
                 </p>
               </div>
@@ -433,13 +433,13 @@ const handleSubmit = async (
           </section>
 
           {/* Location */}
-          <section className="rounded-2xl border border-brand-border bg-white p-6 shadow-sm sm:p-8">
+          <section className="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8">
             <div className="mb-6">
-              <h2 className="text-lg font-semibold text-brand-charcoal">
+              <h2 className="text-lg font-semibold text-foreground">
                 Studio Location
               </h2>
 
-              <p className="mt-1 text-sm text-brand-stone">
+              <p className="mt-1 text-sm text-muted-foreground">
                 Where is your studio located?
               </p>
             </div>
@@ -474,13 +474,13 @@ const handleSubmit = async (
           </section>
 
           {/* Studio Image */}
-          <section className="rounded-2xl border border-brand-border bg-white p-6 shadow-sm sm:p-8">
+          <section className="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8">
             <div className="mb-5">
-              <h2 className="text-lg font-semibold text-brand-charcoal">
+              <h2 className="text-lg font-semibold text-foreground">
                 Studio Image
               </h2>
 
-              <p className="mt-1 text-sm text-brand-stone">
+              <p className="mt-1 text-sm text-muted-foreground">
                 Add a URL for the main studio image.
               </p>
             </div>
@@ -500,14 +500,14 @@ const handleSubmit = async (
           </section>
 
           {/* Amenities */}
-          <section className="rounded-2xl border border-brand-border bg-white p-6 shadow-sm sm:p-8">
+          <section className="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8">
             <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h2 className="text-lg font-semibold text-brand-charcoal">
+                <h2 className="text-lg font-semibold text-foreground">
                   Studio Amenities
                 </h2>
 
-                <p className="mt-1 text-sm text-brand-stone">
+                <p className="mt-1 text-sm text-muted-foreground">
                   Select all facilities available at your studio.
                 </p>
               </div>
@@ -522,7 +522,7 @@ const handleSubmit = async (
                     amenities: [],
                   }))
                 }
-                className="text-brand-bronze hover:bg-brand-bronze-light/20"
+                className="text-brand-bronze hover:bg-secondary/20"
               >
                 Clear all
               </Button>
@@ -540,15 +540,15 @@ const handleSubmit = async (
                     aria-pressed={selected}
                     className={`flex items-center gap-3 rounded-xl border p-3 text-left text-sm transition ${
                       selected
-                        ? "border-brand-bronze bg-brand-bronze-light/20 text-brand-charcoal"
-                        : "border-brand-border text-brand-stone hover:border-brand-bronze/50"
+                        ? "border-brand-bronze bg-secondary/20 text-foreground"
+                        : "border-border text-muted-foreground hover:border-brand-bronze/50"
                     }`}
                   >
                     <span
                       className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border ${
                         selected
                           ? "border-brand-bronze bg-brand-bronze text-white"
-                          : "border-brand-border"
+                          : "border-border"
                       }`}
                     >
                       {selected && <Check className="h-3 w-3" />}
@@ -562,13 +562,13 @@ const handleSubmit = async (
           </section>
 
           {/* Description */}
-          <section className="rounded-2xl border border-brand-border bg-white p-6 shadow-sm sm:p-8">
+          <section className="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8">
             <div className="mb-5">
-              <h2 className="text-lg font-semibold text-brand-charcoal">
+              <h2 className="text-lg font-semibold text-foreground">
                 Studio Description
               </h2>
 
-              <p className="mt-1 text-sm text-brand-stone">
+              <p className="mt-1 text-sm text-muted-foreground">
                 Describe your studio and what makes it suitable for creative
                 work.
               </p>
@@ -595,7 +595,7 @@ const handleSubmit = async (
               variant="outline"
               onClick={handleReset}
               disabled={isSubmitting}
-              className="h-12 border-brand-border text-brand-charcoal hover:bg-brand-ivory"
+              className="h-12 border-border text-foreground hover:bg-background"
             >
               <RotateCcw className="mr-2 h-4 w-4" />
               Reset Form

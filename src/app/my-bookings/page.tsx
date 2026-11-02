@@ -71,7 +71,7 @@ const MyBookingsPage = async () => {
 
   if (!user?.email) {
     return (
-      <main className="min-h-screen bg-brand-ivory px-4 py-16 sm:px-6">
+      <main className="min-h-screen bg-background px-4 py-16 sm:px-6">
         <div className="mx-auto max-w-3xl">
           <EmptyState
             icon={CalendarDays}

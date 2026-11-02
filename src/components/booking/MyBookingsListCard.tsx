@@ -116,19 +116,19 @@ export default function MyBookingsList({
   const getStatusStyle = (status: TBooking["status"]) => {
     switch (status) {
       case "Pending":
-        return "border-amber-200 bg-amber-50 text-amber-700";
+        return "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800/60 dark:bg-amber-950/40 dark:text-amber-300";
 
       case "Confirmed":
-        return "border-blue-200 bg-blue-50 text-blue-700";
+        return "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800/60 dark:bg-blue-950/40 dark:text-blue-300";
 
       case "Completed":
-        return "border-green-200 bg-green-50 text-green-700";
+        return "border-green-200 bg-green-50 text-green-700 dark:border-green-800/60 dark:bg-green-950/40 dark:text-green-300";
 
       case "Cancelled":
-        return "border-red-200 bg-red-50 text-red-700";
+        return "border-red-200 bg-red-50 text-red-700 dark:border-red-800/60 dark:bg-red-950/40 dark:text-red-300";
 
       default:
-        return "border-gray-200 bg-gray-50 text-gray-700";
+        return "border-border bg-muted text-foreground";
     }
   };
 
@@ -167,20 +167,20 @@ export default function MyBookingsList({
 
   return (
     <main className="w-full">
-      <div className="mx-auto w-full max-w-7xl border-x border-gray-200/50 px-4 pt-8 pb-16 sm:px-6 sm:pt-10 sm:pb-20 lg:px-8 lg:pt-12 lg:pb-24">
+      <div className="mx-auto w-full max-w-7xl border-x border-border/50 px-4 pt-8 pb-16 sm:px-6 sm:pt-10 sm:pb-20 lg:px-8 lg:pt-12 lg:pb-24">
         {/* Page Heading */}
         <div className="mb-6 flex flex-col gap-4 sm:mb-7 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
-            <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-brand-bronze">
+            <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-brand-bronze dark:bg-amber-950/30 dark:text-amber-300">
               <CalendarDays className="h-3.5 w-3.5" />
               Production Schedule
             </div>
 
-            <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+            <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
               My Studio Bookings
             </h1>
 
-            <p className="mt-1 text-sm leading-5 text-gray-500">
+            <p className="mt-1 text-sm leading-5 text-muted-foreground">
               Track reservation statuses, cancellation requests, and shoot times
             </p>
           </div>
@@ -198,7 +198,7 @@ export default function MyBookingsList({
         {error && bookings.length > 0 && (
           <div
             role="alert"
-            className="mb-5 flex flex-col gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm leading-6 text-red-700 sm:flex-row sm:items-center sm:justify-between"
+            className="mb-5 flex flex-col gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm leading-6 text-red-700 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-300 sm:flex-row sm:items-center sm:justify-between"
           >
             <p>{error}</p>
 
@@ -206,7 +206,7 @@ export default function MyBookingsList({
               type="button"
               onClick={() => startRefresh(() => router.refresh())}
               disabled={isRefreshing}
-              className="inline-flex min-h-9 shrink-0 items-center justify-center gap-2 self-start rounded-lg border border-red-200 bg-white px-3 py-2 text-xs font-semibold text-red-700 transition hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-200 disabled:cursor-not-allowed disabled:opacity-60 sm:self-center sm:text-sm"
+              className="inline-flex min-h-9 shrink-0 items-center justify-center gap-2 self-start rounded-lg border border-red-200 bg-card px-3 py-2 text-xs font-semibold text-red-700 transition hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-200 disabled:cursor-not-allowed disabled:opacity-60 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-300 dark:hover:bg-red-950/60 dark:focus:ring-red-900/60 sm:self-center sm:text-sm"
             >
               {isRefreshing ? (
                 <Spinner className="size-3.5" />
@@ -261,11 +261,11 @@ export default function MyBookingsList({
               return (
                 <article
                   key={booking._id}
-                  className="group overflow-hidden rounded-xl border border-gray-200/80 bg-white shadow-sm transition hover:border-gray-300 hover:shadow-md sm:rounded-2xl"
+                  className="group overflow-hidden rounded-xl border border-border/80 bg-card shadow-sm transition hover:border-border hover:shadow-md sm:rounded-2xl"
                 >
                   <div className="flex flex-col gap-3 p-3 sm:gap-4 sm:p-4 md:flex-row md:items-center">
                     {/* Studio Image */}
-                    <div className="relative h-40 w-full shrink-0 overflow-hidden rounded-lg bg-gray-100 sm:h-44 md:h-24 md:w-28 lg:h-28 lg:w-32">
+                    <div className="relative h-40 w-full shrink-0 overflow-hidden rounded-lg bg-muted sm:h-44 md:h-24 md:w-28 lg:h-28 lg:w-32">
                       {booking.imageUrl ? (
                         <Image
                           src={booking.imageUrl}
@@ -275,7 +275,7 @@ export default function MyBookingsList({
                           className="object-cover transition-transform duration-300 group-hover:scale-105"
                         />
                       ) : (
-                        <div className="flex h-full items-center justify-center text-sm text-gray-400">
+                        <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
                           No studio image
                         </div>
                       )}
@@ -296,18 +296,18 @@ export default function MyBookingsList({
 
                         <span
                           title={booking._id}
-                          className="max-w-full truncate text-xs text-gray-400"
+                          className="max-w-full truncate text-xs text-muted-foreground"
                         >
                           ID: #{booking._id}
                         </span>
                       </div>
 
-                      <h2 className="mt-1.5 break-words text-base font-semibold leading-snug text-gray-900 sm:text-lg">
+                      <h2 className="mt-1.5 break-words text-base font-semibold leading-snug text-foreground sm:text-lg">
                         {booking.studioTitle}
                       </h2>
 
                       {/* Booking Information */}
-                      <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-gray-500 sm:text-sm">
+                      <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground sm:text-sm">
                         <div className="flex items-center gap-1.5">
                           <CalendarDays className="h-3.5 w-3.5 shrink-0 text-brand-bronze" />
                           <span>{formatDate(booking.date)}</span>
@@ -327,7 +327,7 @@ export default function MyBookingsList({
                       </div>
 
                       {booking.location && (
-                        <p className="mt-2 flex min-w-0 items-start gap-1.5 text-xs leading-5 text-gray-500 sm:text-sm">
+                        <p className="mt-2 flex min-w-0 items-start gap-1.5 text-xs leading-5 text-muted-foreground sm:text-sm">
                           <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-bronze" />
                           <span className="break-words">
                             {booking.location}
@@ -337,9 +337,9 @@ export default function MyBookingsList({
                     </div>
 
                     {/* Price and Actions */}
-                    <div className="flex shrink-0 flex-col gap-3 border-t border-gray-100 pt-3 sm:flex-row sm:items-center sm:justify-between md:w-44 md:flex-col md:items-end md:justify-center md:border-l md:border-t-0 md:pl-4 md:pt-0 lg:w-52">
+                    <div className="flex shrink-0 flex-col gap-3 border-t border-border pt-3 sm:flex-row sm:items-center sm:justify-between md:w-44 md:flex-col md:items-end md:justify-center md:border-l md:border-t-0 md:pl-4 md:pt-0 lg:w-52">
                       <div className="md:text-right">
-                        <p className="text-xs text-gray-400">Total amount</p>
+                        <p className="text-xs text-muted-foreground">Total amount</p>
 
                         <p className="mt-0.5 text-xl font-bold tracking-tight text-brand-bronze sm:text-2xl">
                           {formatCurrency(booking.total, booking.currency)}
@@ -350,7 +350,7 @@ export default function MyBookingsList({
                         <button
                           type="button"
                           onClick={() => setReceiptBooking(booking)}
-                          className="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-medium text-gray-700 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 sm:text-sm"
+                          className="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground transition hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring sm:text-sm"
                         >
                           <ReceiptText className="h-3.5 w-3.5" />
                           Receipt
@@ -361,7 +361,7 @@ export default function MyBookingsList({
                             type="button"
                             onClick={() => handleCancelBooking(booking._id)}
                             disabled={isCancelling || cancellingId !== null}
-                            className="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-medium text-red-700 transition hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-200 disabled:cursor-not-allowed disabled:opacity-60 sm:text-sm"
+                            className="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-medium text-red-700 transition hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-200 disabled:cursor-not-allowed disabled:opacity-60 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-300 dark:hover:bg-red-950/60 dark:focus:ring-red-900/60 sm:text-sm"
                           >
                             {isCancelling ? (
                               <>
@@ -395,17 +395,17 @@ export default function MyBookingsList({
             onClick={() => setReceiptBooking(null)}
           >
             <div
-              className="my-auto w-full max-w-md rounded-2xl border border-gray-100 bg-white p-5 shadow-2xl sm:rounded-3xl sm:p-7"
+              className="my-auto w-full max-w-md rounded-2xl border border-border bg-card p-5 shadow-2xl sm:rounded-3xl sm:p-7"
               onClick={(event) => event.stopPropagation()}
             >
               {/* Modal Header */}
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <p className="text-xs font-medium uppercase tracking-wider text-gray-400">
+                  <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                     StudioSpace
                   </p>
 
-                  <h2 className="mt-1 text-xl font-semibold tracking-tight text-gray-900">
+                  <h2 className="mt-1 text-xl font-semibold tracking-tight text-foreground">
                     Booking Receipt
                   </h2>
                 </div>
@@ -413,7 +413,7 @@ export default function MyBookingsList({
                 <button
                   type="button"
                   onClick={() => setReceiptBooking(null)}
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-gray-500 transition hover:bg-gray-100 hover:text-gray-900"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-muted-foreground transition hover:bg-muted hover:text-foreground"
                   aria-label="Close receipt"
                 >
                   <XCircle className="h-5 w-5" />
@@ -423,42 +423,42 @@ export default function MyBookingsList({
               {/* Receipt Details */}
               <div className="mt-6 space-y-4 text-sm">
                 <div className="flex items-start justify-between gap-4">
-                  <span className="shrink-0 text-gray-500">Studio</span>
-                  <span className="break-words text-right font-medium text-gray-900">
+                  <span className="shrink-0 text-muted-foreground">Studio</span>
+                  <span className="break-words text-right font-medium text-foreground">
                     {receiptBooking.studioTitle}
                   </span>
                 </div>
 
                 <div className="flex items-start justify-between gap-4">
-                  <span className="shrink-0 text-gray-500">Booking ID</span>
-                  <span className="break-all text-right font-medium text-gray-900">
+                  <span className="shrink-0 text-muted-foreground">Booking ID</span>
+                  <span className="break-all text-right font-medium text-foreground">
                     {receiptBooking._id}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between gap-4">
-                  <span className="text-gray-500">Date</span>
-                  <span className="text-right font-medium text-gray-900">
+                  <span className="text-muted-foreground">Date</span>
+                  <span className="text-right font-medium text-foreground">
                     {formatDate(receiptBooking.date)}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between gap-4">
-                  <span className="text-gray-500">Time</span>
-                  <span className="text-right font-medium text-gray-900">
+                  <span className="text-muted-foreground">Time</span>
+                  <span className="text-right font-medium text-foreground">
                     {receiptBooking.startTime}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between gap-4">
-                  <span className="text-gray-500">Duration</span>
-                  <span className="text-right font-medium text-gray-900">
+                  <span className="text-muted-foreground">Duration</span>
+                  <span className="text-right font-medium text-foreground">
                     {receiptBooking.duration} hours
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between gap-4">
-                  <span className="text-gray-500">Status</span>
+                  <span className="text-muted-foreground">Status</span>
                   <span
                     className={`rounded-full border px-2.5 py-1 text-xs font-semibold ${getStatusStyle(
                       receiptBooking.status,
@@ -469,10 +469,10 @@ export default function MyBookingsList({
                 </div>
 
                 {/* Receipt Amounts */}
-                <div className="space-y-3 border-t border-dashed border-gray-200 pt-4">
+                <div className="space-y-3 border-t border-dashed border-border pt-4">
                   <div className="flex items-center justify-between gap-4">
-                    <span className="text-gray-500">Subtotal</span>
-                    <span className="text-right font-medium text-gray-900">
+                    <span className="text-muted-foreground">Subtotal</span>
+                    <span className="text-right font-medium text-foreground">
                       {formatCurrency(
                         receiptBooking.subtotal,
                         receiptBooking.currency,
@@ -481,8 +481,8 @@ export default function MyBookingsList({
                   </div>
 
                   <div className="flex items-center justify-between gap-4">
-                    <span className="text-gray-500">Security deposit</span>
-                    <span className="text-right font-medium text-gray-900">
+                    <span className="text-muted-foreground">Security deposit</span>
+                    <span className="text-right font-medium text-foreground">
                       {formatCurrency(
                         receiptBooking.deposit,
                         receiptBooking.currency,
@@ -490,9 +490,9 @@ export default function MyBookingsList({
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between gap-4 rounded-xl bg-gray-50 p-3.5">
-                    <span className="font-semibold text-gray-900">Total</span>
-                    <span className="text-right text-lg font-bold text-gray-900">
+                  <div className="flex items-center justify-between gap-4 rounded-xl bg-muted p-3.5">
+                    <span className="font-semibold text-foreground">Total</span>
+                    <span className="text-right text-lg font-bold text-foreground">
                       {formatCurrency(
                         receiptBooking.total,
                         receiptBooking.currency,
@@ -505,7 +505,7 @@ export default function MyBookingsList({
               <button
                 type="button"
                 onClick={() => setReceiptBooking(null)}
-                className="mt-6 min-h-11 w-full rounded-xl bg-brand-charcoal px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-gray-300"
+                className="mt-6 min-h-11 w-full rounded-xl bg-foreground px-4 py-3 text-sm font-semibold text-background transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-ring"
               >
                 Close
               </button>

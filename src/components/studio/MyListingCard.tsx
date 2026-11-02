@@ -55,9 +55,9 @@ export default function MyListing({
     typeof studio.rating === "number" ? studio.rating : 0;
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-brand-border bg-white transition-all duration-300 hover:-translate-y-1 hover:border-brand-bronze/40 hover:shadow-xl hover:shadow-brand-charcoal/[0.07]">
+    <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all duration-300 hover:-translate-y-1 hover:border-brand-bronze/40 hover:shadow-xl hover:shadow-brand-charcoal/[0.07]">
       {/* Cover Image */}
-      <div className="relative aspect-[1.5/1] overflow-hidden bg-brand-stone/10">
+      <div className="relative aspect-[1.5/1] overflow-hidden bg-muted-foreground/10">
         {coverImage ? (
          
           <Image
@@ -80,7 +80,7 @@ export default function MyListing({
           className={`absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide backdrop-blur ${
             studio.isPublished
               ? "border-emerald-200/60 bg-white/95 text-emerald-700"
-              : "border-brand-border bg-white/95 text-brand-stone"
+              : "border-border bg-white/95 text-muted-foreground"
           }`}
         >
           {/* {studio.isPublished ? (
@@ -110,11 +110,11 @@ export default function MyListing({
       <div className="flex flex-1 flex-col p-5">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <h2 className="truncate text-lg font-semibold tracking-tight text-brand-charcoal transition-colors group-hover:text-brand-bronze">
+            <h2 className="truncate text-lg font-semibold tracking-tight text-foreground transition-colors group-hover:text-brand-bronze">
               {studio.title}
             </h2>
 
-            <p className="mt-1.5 flex items-center gap-1.5 text-xs text-brand-stone">
+            <p className="mt-1.5 flex items-center gap-1.5 text-xs text-muted-foreground">
               <MapPin className="h-3.5 w-3.5 shrink-0 text-brand-bronze" />
 
               <span className="truncate">
@@ -124,23 +124,23 @@ export default function MyListing({
           </div>
 
           <div className="shrink-0 text-right">
-            <p className="text-lg font-bold text-brand-charcoal">
+            <p className="text-lg font-bold text-foreground">
               {formatPrice(studio.price, studio.currency)}
             </p>
 
-            <p className="mt-0.5 text-[11px] text-brand-stone">
+            <p className="mt-0.5 text-[11px] text-muted-foreground">
               / {studio.priceUnit || "hour"}
             </p>
           </div>
         </div>
 
         {studio.description && (
-          <p className="mt-3 line-clamp-2 text-xs leading-5 text-brand-stone">
+          <p className="mt-3 line-clamp-2 text-xs leading-5 text-muted-foreground">
             {studio.description}
           </p>
         )}
 
-        <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-brand-stone">
+        <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground">
           <span className="inline-flex items-center gap-1.5">
             <Users className="h-3.5 w-3.5 text-brand-bronze" />
             {studio.capacity} {studio.capacity === 1 ? "guest" : "guests"}
@@ -151,7 +151,7 @@ export default function MyListing({
               className={`h-3.5 w-3.5 ${
                 rating > 0
                   ? "fill-brand-bronze text-brand-bronze"
-                  : "text-brand-stone/40"
+                  : "text-muted-foreground/40"
               }`}
             />
 
@@ -160,13 +160,13 @@ export default function MyListing({
         </div>
 
         {/* Actions */}
-        <div className="mt-auto flex items-center justify-between gap-3 border-t border-brand-border pt-4">
+        <div className="mt-auto flex items-center justify-between gap-3 border-t border-border pt-4">
           <div className="flex items-center gap-2">
             <Button
               type="button"
               variant="outline"
               onClick={() => onEdit(studio)}
-              className="h-10 rounded-xl border-brand-border bg-white px-3 text-xs font-semibold text-brand-charcoal hover:border-brand-bronze hover:bg-brand-ivory hover:text-brand-bronze"
+              className="h-10 rounded-xl border-border bg-card px-3 text-xs font-semibold text-foreground hover:border-brand-bronze hover:bg-background hover:text-brand-bronze"
             >
               <Pencil className="mr-1.5 h-3.5 w-3.5" />
               Edit

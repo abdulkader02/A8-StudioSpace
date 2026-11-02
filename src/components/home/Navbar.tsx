@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -19,6 +18,7 @@ import logo from "@/assets/logo.png";
 import { authClient } from "@/lib/auth-client";
 import { notify } from "@/lib/notify";
 import { Spinner } from "@/components/ui/spinner";
+import { ThemeSwitch } from "@/components/ui/theme-switch";
 
 import {
   Popover,
@@ -84,13 +84,13 @@ function UserMenu({
       <PopoverContent
         align="end"
         sideOffset={10}
-        className="w-64 border border-brand-border bg-brand-ivory p-2 text-brand-charcoal shadow-lg"
+        className="w-64 max-w-[calc(100vw-2rem)] border border-border bg-popover p-2 text-popover-foreground shadow-lg"
       >
-        <div className="border-b border-brand-border px-3 py-2">
-          <p className="font-semibold text-brand-charcoal">
+        <div className="border-b border-border px-3 py-2">
+          <p className="font-semibold text-popover-foreground">
             {user.name || "User"}
           </p>
-          <p className="truncate text-xs text-brand-stone">{user.email}</p>
+          <p className="truncate text-xs text-muted-foreground">{user.email}</p>
         </div>
 
         {/* Profile */}
@@ -133,14 +133,14 @@ function UserMenu({
           My Bookings
         </Link>
 
-        <div className="my-2 border-t border-brand-border" />
+        <div className="my-2 border-t border-border" />
 
         {/* Sign Out */}
         <button
           type="button"
           onClick={onLogout}
           disabled={isLoggingOut}
-          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-red-600 transition-colors hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-red-600 transition-colors hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60 dark:text-red-400 dark:hover:bg-red-950/40"
         >
           {isLoggingOut ? (
             <Spinner className="size-4" />
@@ -202,16 +202,16 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-brand-dark-soft bg-brand-dark backdrop-blur-md">
-      <nav className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 sm:h-[72px] sm:px-6 lg:px-8">
+      <nav className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-2 px-4 sm:h-[72px] sm:px-6 lg:px-8">
         {/* Logo */}
         <Link
           href="/"
-          className="flex shrink-0 items-center gap-2.5"
+          className="flex min-w-0 shrink items-center gap-2.5"
           onClick={() => setIsOpen(false)}
         >
           <Image src={logo} alt="StudioSpace Logo" height={40} width={40} />
 
-          <span className="text-xl font-bold tracking-tight text-brand-ivory sm:text-2xl">
+          <span className="truncate text-xl font-bold tracking-tight text-brand-ivory sm:text-2xl">
             Studio<span className="text-brand-bronze">Space</span>
           </span>
         </Link>
@@ -233,44 +233,49 @@ export default function Navbar() {
           ))}
         </div>
 
-        {/* Desktop Authentication */}
-        <div className="hidden items-center gap-3 lg:flex">
-          {isPending ? null : user ? (
-            <UserMenu
-              user={user}
-              isLoggingOut={isLoggingOut}
-              onLogout={handleLogout}
-            />
-          ) : (
-            <>
-              <Link
-                href="/login"
-                className="rounded-lg px-4 py-2.5 text-sm font-semibold text-brand-ivory transition-colors hover:bg-brand-dark-soft"
-              >
-                Login
-              </Link>
+        {/* Right controls — theme toggle sits immediately left of the profile/auth area */}
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+          <ThemeSwitch />
 
-              <Link
-                href="/register"
-                className="rounded-xl bg-brand-bronze px-5 py-2.5 text-sm font-semibold text-brand-dark shadow-sm transition-colors hover:bg-brand-bronze-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-bronze focus-visible:ring-offset-2 focus-visible:ring-offset-brand-dark"
-              >
-                Register
-              </Link>
-            </>
-          )}
+          {/* Desktop Authentication */}
+          <div className="hidden items-center gap-3 lg:flex">
+            {isPending ? null : user ? (
+              <UserMenu
+                user={user}
+                isLoggingOut={isLoggingOut}
+                onLogout={handleLogout}
+              />
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="rounded-lg px-4 py-2.5 text-sm font-semibold text-brand-ivory transition-colors hover:bg-brand-dark-soft"
+                >
+                  Login
+                </Link>
+
+                <Link
+                  href="/register"
+                  className="rounded-xl bg-brand-bronze px-5 py-2.5 text-sm font-semibold text-brand-dark shadow-sm transition-colors hover:bg-brand-bronze-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-bronze focus-visible:ring-offset-2 focus-visible:ring-offset-brand-dark"
+                >
+                  Register
+                </Link>
+              </>
+            )}
+          </div>
+
+          {/* Mobile Menu Toggle */}
+          <button
+            type="button"
+            onClick={() => setIsOpen(!isOpen)}
+            aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={isOpen}
+            aria-controls="mobile-navigation"
+            className="flex h-10 w-10 items-center justify-center rounded-lg text-brand-ivory transition-colors hover:bg-brand-dark-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-bronze lg:hidden"
+          >
+            {isOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
-
-        {/* Mobile Menu Toggle */}
-        <button
-          type="button"
-          onClick={() => setIsOpen(!isOpen)}
-          aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
-          aria-expanded={isOpen}
-          aria-controls="mobile-navigation"
-          className="flex h-10 w-10 items-center justify-center rounded-lg text-brand-ivory transition-colors hover:bg-brand-dark-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-bronze lg:hidden"
-        >
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
       </nav>
 
       {/* Mobile & Tablet Navigation */}
@@ -297,7 +302,8 @@ export default function Navbar() {
 
             <div className="mt-3 border-t border-brand-dark-soft pt-4">
               {isPending ? null : user ? (
-                <div className="flex items-center px-2">
+                <div className="flex items-center justify-between gap-3 px-2">
+                  <ThemeSwitch />
                   <UserMenu
                     user={user}
                     isLoggingOut={isLoggingOut}

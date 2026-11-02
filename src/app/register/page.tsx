@@ -124,13 +124,13 @@ export default function SignUpPage() {
 
   return (
     <div className="mx-auto my-10 w-full max-w-md px-4">
-      <Card className="border-brand-border bg-brand-ivory shadow-lg">
+      <Card className="border-border bg-background shadow-lg">
         <CardHeader className="space-y-2 text-center">
-          <CardTitle className="text-2xl font-bold text-brand-charcoal">
+          <CardTitle className="text-2xl font-bold text-foreground">
             Create an Account
           </CardTitle>
 
-          <CardDescription className="text-brand-stone">
+          <CardDescription className="text-muted-foreground">
             Join StudioSpace and start exploring creative spaces.
           </CardDescription>
         </CardHeader>
@@ -143,7 +143,7 @@ export default function SignUpPage() {
                 <Button
                   type="button"
                   variant="outline"
-                  className="border-brand-border text-brand-charcoal hover:bg-brand-stone/10"
+                  className="border-border text-foreground hover:bg-muted-foreground/10"
                   disabled={!!socialLoading || loading}
                   onClick={() => handleSocialLogin("google")}
                 >
@@ -162,7 +162,7 @@ export default function SignUpPage() {
 
               </Field>
 
-              <FieldSeparator className="*:data-[slot=field-separator-content]:bg-brand-ivory">
+              <FieldSeparator className="*:data-[slot=field-separator-content]:bg-background">
                 Or register with email
               </FieldSeparator>
 
@@ -175,7 +175,7 @@ export default function SignUpPage() {
                   type="text"
                   placeholder="Enter your full name"
                   required
-                  className="border-brand-border"
+                  className="border-border"
                 />
               </Field>
 
@@ -188,7 +188,7 @@ export default function SignUpPage() {
                   type="url"
                   placeholder="https://example.com/photo.jpg"
                   required
-                  className="border-brand-border"
+                  className="border-border"
                 />
               </Field>
 
@@ -201,7 +201,7 @@ export default function SignUpPage() {
                   type="email"
                   placeholder="m@example.com"
                   required
-                  className="border-brand-border"
+                  className="border-border"
                 />
               </Field>
 
@@ -216,16 +216,16 @@ export default function SignUpPage() {
                   required
                   minLength={6}
                   onChange={() => setPasswordError("")}
-                  className="border-brand-border"
+                  className="border-border"
                 />
 
                 {passwordError && (
-                  <FieldDescription className="text-sm text-red-600">
+                  <FieldDescription className="text-sm text-red-600 dark:text-red-400">
                     {passwordError}
                   </FieldDescription>
                 )}
 
-                <FieldDescription className="text-brand-stone">
+                <FieldDescription className="text-muted-foreground">
                   Must contain uppercase, lowercase and at least 6 characters.
                 </FieldDescription>
               </Field>
@@ -247,7 +247,7 @@ export default function SignUpPage() {
                   )}
                 </Button>
 
-                <FieldDescription className="text-center text-brand-stone">
+                <FieldDescription className="text-center text-muted-foreground">
                   Already have an account?{" "}
                   <Link
                     href="/login"
@@ -262,7 +262,7 @@ export default function SignUpPage() {
         </CardContent>
       </Card>
 
-      <FieldDescription className="mt-4 px-6 text-center text-brand-stone">
+      <FieldDescription className="mt-4 px-6 text-center text-muted-foreground">
         By creating an account, you agree to our{" "}
         <Link href="/terms" className="underline underline-offset-4">
           Terms of Service

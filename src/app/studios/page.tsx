@@ -201,43 +201,43 @@ function StudiosContent() {
     maxPrice !== "";
 
   return (
-    <main className="min-h-screen bg-brand-ivory">
+    <main className="min-h-screen bg-background">
       {/* HERO */}
-      <section className="relative overflow-hidden border-b border-brand-border">
+      <section className="relative overflow-hidden border-b border-border">
         <div className="pointer-events-none absolute -left-32 -top-32 h-[350px] w-[350px] rounded-full bg-brand-bronze/10 blur-[100px]" />
 
-        <div className="pointer-events-none absolute -right-32 bottom-0 h-[300px] w-[300px] rounded-full bg-brand-stone/15 blur-[100px]" />
+        <div className="pointer-events-none absolute -right-32 bottom-0 h-[300px] w-[300px] rounded-full bg-muted-foreground/15 blur-[100px]" />
 
         <div className="relative mx-auto max-w-7xl px-4 pb-14 pt-14 sm:px-6 sm:pb-16 sm:pt-16 lg:px-8">
           {/* HEADING */}
           <div className="mx-auto max-w-2xl text-center">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-brand-bronze/25 bg-white/60 px-3.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-brand-bronze backdrop-blur">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-brand-bronze/25 bg-card/60 px-3.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-brand-bronze backdrop-blur">
               <Sparkles className="h-3 w-3" />
               Spaces that inspire
             </div>
 
-            <h1 className="text-3xl font-semibold leading-tight tracking-tight text-brand-charcoal sm:text-4xl md:text-5xl">
+            <h1 className="text-3xl font-semibold leading-tight tracking-tight text-foreground sm:text-4xl md:text-5xl">
               Find your space.
               <span className="block font-serif italic font-normal text-brand-bronze">
                 Create something remarkable.
               </span>
             </h1>
 
-            <p className="mx-auto mt-3 max-w-lg text-xs leading-6 text-brand-stone sm:text-sm">
+            <p className="mx-auto mt-3 max-w-lg text-xs leading-6 text-muted-foreground sm:text-sm">
               Discover creative spaces for photography, filmmaking, music, and
               everything in between.
             </p>
           </div>
 
           {/* SEARCH PANEL */}
-          <div className="mx-auto mt-8 max-w-5xl rounded-2xl border border-brand-border bg-white p-2.5 shadow-lg shadow-brand-charcoal/[0.05]">
+          <div className="mx-auto mt-8 max-w-5xl rounded-2xl border border-border bg-card p-2.5 shadow-lg shadow-brand-charcoal/[0.05]">
             <div className="grid gap-2 md:grid-cols-[1.2fr_1fr_1fr_auto] md:items-center">
               {/* Keyword */}
-              <div className="flex min-w-0 items-center gap-2.5 rounded-xl px-3 py-2.5 transition hover:bg-brand-ivory/70">
+              <div className="flex min-w-0 items-center gap-2.5 rounded-xl px-3 py-2.5 transition hover:bg-background/70">
                 <Search className="h-4 w-4 shrink-0 text-brand-bronze" />
 
                 <div className="min-w-0 flex-1">
-                  <label className="mb-0.5 block text-[9px] font-bold uppercase tracking-[0.14em] text-brand-stone">
+                  <label className="mb-0.5 block text-[9px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
                     Find a space
                   </label>
 
@@ -245,7 +245,7 @@ function StudiosContent() {
                     value={keyword}
                     onChange={(e) => setKeyword(e.target.value)}
                     placeholder="Studio or keyword"
-                    className="w-full bg-transparent text-xs font-medium text-brand-charcoal outline-none placeholder:font-normal placeholder:text-brand-stone/70"
+                    className="w-full bg-transparent text-xs font-medium text-foreground outline-none placeholder:font-normal placeholder:text-muted-foreground/70"
                   />
                 </div>
               </div>
@@ -253,11 +253,11 @@ function StudiosContent() {
               <div className="hidden h-8 w-px bg-brand-border md:block" />
 
               {/* Location */}
-              <div className="flex min-w-0 items-center gap-2.5 rounded-xl px-3 py-2.5 transition hover:bg-brand-ivory/70">
+              <div className="flex min-w-0 items-center gap-2.5 rounded-xl px-3 py-2.5 transition hover:bg-background/70">
                 <MapPin className="h-4 w-4 shrink-0 text-brand-bronze" />
 
                 <div className="min-w-0 flex-1">
-                  <label className="mb-0.5 block text-[9px] font-bold uppercase tracking-[0.14em] text-brand-stone">
+                  <label className="mb-0.5 block text-[9px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
                     Location
                   </label>
 
@@ -265,7 +265,7 @@ function StudiosContent() {
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
                     placeholder="City or area"
-                    className="w-full bg-transparent text-xs font-medium text-brand-charcoal outline-none placeholder:font-normal placeholder:text-brand-stone/70"
+                    className="w-full bg-transparent text-xs font-medium text-foreground outline-none placeholder:font-normal placeholder:text-muted-foreground/70"
                   />
                 </div>
               </div>
@@ -273,18 +273,18 @@ function StudiosContent() {
               <div className="hidden h-8 w-px bg-brand-border md:block" />
 
               {/* Category */}
-              <div className="flex min-w-0 items-center gap-2.5 rounded-xl px-3 py-2.5 transition hover:bg-brand-ivory/70">
+              <div className="flex min-w-0 items-center gap-2.5 rounded-xl px-3 py-2.5 transition hover:bg-background/70">
                 <SlidersHorizontal className="h-4 w-4 shrink-0 text-brand-bronze" />
 
                 <div className="min-w-0 flex-1">
-                  <label className="mb-0.5 block text-[9px] font-bold uppercase tracking-[0.14em] text-brand-stone">
+                  <label className="mb-0.5 block text-[9px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
                     Category
                   </label>
 
                   <select
                     value={category}
                     onChange={(e) => handleCategoryChange(e.target.value)}
-                    className="w-full cursor-pointer appearance-none bg-transparent text-xs font-medium text-brand-charcoal outline-none"
+                    className="w-full cursor-pointer appearance-none bg-transparent text-xs font-medium text-foreground outline-none"
                   >
                     {categories.map((item) => (
                       <option key={item.name} value={item.name}>
@@ -311,15 +311,15 @@ function StudiosContent() {
             </div>
 
             {/* PRICE FILTER */}
-            <div className="mt-1 flex flex-wrap items-center gap-2 border-t border-brand-border px-3 pt-2.5">
-              <span className="text-[10px] font-semibold text-brand-stone">
+            <div className="mt-1 flex flex-wrap items-center gap-2 border-t border-border px-3 pt-2.5">
+              <span className="text-[10px] font-semibold text-muted-foreground">
                 Max hourly price
               </span>
 
               <select
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(e.target.value)}
-                className="rounded-lg border border-brand-border bg-brand-ivory/60 px-2.5 py-1.5 text-[10px] font-medium text-brand-charcoal outline-none focus:border-brand-bronze"
+                className="rounded-lg border border-border bg-background/60 px-2.5 py-1.5 text-[10px] font-medium text-foreground outline-none focus:border-brand-bronze"
               >
                 <option value="">Any price</option>
                 <option value="30">Up to $30</option>
@@ -341,7 +341,7 @@ function StudiosContent() {
           </div>
 
           {/* TRUST POINTS */}
-          <div className="mt-5 flex flex-wrap justify-center gap-x-6 gap-y-2 text-[10px] font-medium text-brand-stone sm:text-xs">
+          <div className="mt-5 flex flex-wrap justify-center gap-x-6 gap-y-2 text-[10px] font-medium text-muted-foreground sm:text-xs">
             <span className="flex items-center gap-1.5">
               <span className="h-1.5 w-1.5 rounded-full bg-brand-bronze" />
               Flexible hourly booking
@@ -361,7 +361,7 @@ function StudiosContent() {
       </section>
 
       {/* CATEGORY QUICK FILTER */}
-      <section className="border-b border-brand-border bg-white/60">
+      <section className="border-b border-border bg-card/60">
         <div className="mx-auto max-w-7xl overflow-x-auto px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex min-w-max items-center gap-2.5">
             {categories.map((item) => {
@@ -376,8 +376,8 @@ function StudiosContent() {
                   aria-pressed={active}
                   className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-2 text-[11px] font-semibold transition ${
                     active
-                      ? "border-brand-charcoal bg-brand-charcoal text-brand-ivory"
-                      : "border-brand-border bg-white text-brand-stone hover:border-brand-bronze hover:text-brand-bronze"
+                      ? "border-foreground bg-foreground text-background"
+                      : "border-border bg-card text-muted-foreground hover:border-brand-bronze hover:text-brand-bronze"
                   }`}
                 >
                   <Icon className="h-3.5 w-3.5" />
@@ -400,16 +400,16 @@ function StudiosContent() {
               The Studio Collection
             </p>
 
-            <h2 className="text-2xl font-semibold tracking-tight text-brand-charcoal sm:text-3xl">
+            <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
               Spaces worth creating in.
             </h2>
 
-            <p className="mt-2 text-xs text-brand-stone sm:text-sm">
+            <p className="mt-2 text-xs text-muted-foreground sm:text-sm">
               Explore spaces selected for your next creative project.
             </p>
           </div>
 
-          <span className="w-fit rounded-full border border-brand-border bg-white px-4 py-2 text-xs text-brand-stone">
+          <span className="w-fit rounded-full border border-border bg-card px-4 py-2 text-xs text-muted-foreground">
             {visibleStudios.length} spaces found
           </span>
         </div>
@@ -531,11 +531,11 @@ function StudiosContent() {
 
 function StudiosPageFallback() {
   return (
-    <main className="min-h-screen bg-brand-ivory">
+    <main className="min-h-screen bg-background">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="mb-10 space-y-3">
-          <div className="h-8 w-64 animate-pulse rounded bg-brand-stone/10" />
-          <div className="h-4 w-96 max-w-full animate-pulse rounded bg-brand-stone/10" />
+          <div className="h-8 w-64 animate-pulse rounded bg-muted-foreground/10" />
+          <div className="h-4 w-96 max-w-full animate-pulse rounded bg-muted-foreground/10" />
         </div>
 
         <StudioGridSkeleton />

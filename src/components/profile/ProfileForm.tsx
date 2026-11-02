@@ -171,28 +171,28 @@ export default function ProfileForm({
   };
 
   return (
-    <main className="min-h-screen bg-brand-ivory">
-      <section className="relative overflow-hidden border-b border-brand-border bg-gradient-to-br from-brand-ivory via-white to-brand-bronze-light/40">
+    <main className="min-h-screen bg-background">
+      <section className="relative overflow-hidden border-b border-border bg-gradient-to-br from-brand-ivory via-white to-brand-bronze-light/40">
         <div className="pointer-events-none absolute -left-32 -top-32 h-80 w-80 rounded-full bg-brand-bronze/10 blur-3xl" />
 
-        <div className="pointer-events-none absolute -bottom-32 right-0 h-80 w-80 rounded-full bg-brand-bronze-light/70 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-32 right-0 h-80 w-80 rounded-full bg-secondary/70 blur-3xl" />
 
         <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
           <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
             <div className="max-w-2xl">
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-brand-bronze/25 bg-white/70 px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-brand-bronze shadow-sm backdrop-blur">
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-brand-bronze/25 bg-card/70 px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-brand-bronze shadow-sm backdrop-blur">
                 <Sparkles className="h-3.5 w-3.5" />
                 Account settings
               </div>
 
-              <h1 className="text-3xl font-semibold leading-tight tracking-tight text-brand-charcoal sm:text-4xl lg:text-5xl">
+              <h1 className="text-3xl font-semibold leading-tight tracking-tight text-foreground sm:text-4xl lg:text-5xl">
                 Your profile,
                 <span className="block font-serif font-normal italic text-brand-bronze">
                   in focus.
                 </span>
               </h1>
 
-              <p className="mt-4 max-w-xl text-sm leading-7 text-brand-stone sm:text-base">
+              <p className="mt-4 max-w-xl text-sm leading-7 text-muted-foreground sm:text-base">
                 Keep the name and photo connected to your StudioSpace account
                 up to date. Changes are saved securely through Better Auth and
                 appear across the app.
@@ -201,7 +201,7 @@ export default function ProfileForm({
 
             <Link
               href="/my-listings"
-              className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 self-start rounded-xl border border-brand-border bg-white px-5 py-2.5 text-sm font-semibold text-brand-charcoal shadow-sm transition hover:border-brand-bronze hover:text-brand-bronze focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-bronze focus-visible:ring-offset-2 md:self-auto"
+              className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 self-start rounded-xl border border-border bg-card px-5 py-2.5 text-sm font-semibold text-foreground shadow-sm transition hover:border-brand-bronze hover:text-brand-bronze focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-bronze focus-visible:ring-offset-2 md:self-auto"
             >
               <LayoutDashboard className="h-4 w-4" />
               Manage listings
@@ -213,27 +213,27 @@ export default function ProfileForm({
 
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
         <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.35fr)]">
-          <Card className="gap-0 overflow-hidden border-brand-border bg-white py-0 shadow-sm">
-            <CardHeader className="border-b border-brand-border px-6 py-5">
-              <div className="mb-3 inline-flex w-fit items-center gap-2 rounded-full bg-brand-bronze-light/50 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-brand-bronze">
+          <Card className="gap-0 overflow-hidden border-border bg-card py-0 shadow-sm">
+            <CardHeader className="border-b border-border px-6 py-5">
+              <div className="mb-3 inline-flex w-fit items-center gap-2 rounded-full bg-secondary/50 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-brand-bronze">
                 <Sparkles className="h-3 w-3" />
                 Live preview
               </div>
 
-              <CardTitle className="text-lg font-semibold text-brand-charcoal">
+              <CardTitle className="text-lg font-semibold text-foreground">
                 Profile preview
               </CardTitle>
 
-              <CardDescription className="text-sm leading-6 text-brand-stone">
+              <CardDescription className="text-sm leading-6 text-muted-foreground">
                 This is how your profile identity will appear across
                 StudioSpace.
               </CardDescription>
             </CardHeader>
 
             <CardContent className="space-y-5 px-6 py-6">
-              <div className="flex flex-col items-center gap-4 rounded-2xl border border-brand-border bg-brand-ivory/70 px-5 py-8 text-center">
+              <div className="flex flex-col items-center gap-4 rounded-2xl border border-border bg-background/70 px-5 py-8 text-center">
                 <div className="relative">
-                  <Avatar className="size-28 border-4 border-white shadow-xl shadow-brand-charcoal/10 ring-1 ring-brand-border sm:size-32">
+                  <Avatar className="size-28 border-4 border-white shadow-xl shadow-brand-charcoal/10 ring-1 ring-border sm:size-32">
                     {previewImageUrl ? (
                       <AvatarImage
                         key={previewImageUrl}
@@ -243,7 +243,7 @@ export default function ProfileForm({
                       />
                     ) : null}
 
-                    <AvatarFallback className="bg-brand-bronze text-2xl font-bold text-brand-charcoal sm:text-3xl">
+                    <AvatarFallback className="bg-brand-bronze text-2xl font-bold text-foreground sm:text-3xl">
                       {initials}
                     </AvatarFallback>
                   </Avatar>
@@ -254,33 +254,33 @@ export default function ProfileForm({
                 </div>
 
                 <div className="min-w-0">
-                  <p className="break-words text-xl font-semibold tracking-tight text-brand-charcoal">
+                  <p className="break-words text-xl font-semibold tracking-tight text-foreground">
                     {displayName}
                   </p>
 
-                  <p className="mt-1 break-all text-sm text-brand-stone">
+                  <p className="mt-1 break-all text-sm text-muted-foreground">
                     {displayEmail}
                   </p>
                 </div>
 
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-brand-bronze/20 bg-brand-bronze-light/40 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-brand-bronze">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-brand-bronze/20 bg-secondary/40 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-brand-bronze">
                   <ShieldCheck className="h-3 w-3" />
                   StudioSpace member
                 </span>
               </div>
 
-              <div className="rounded-xl border border-brand-border bg-white p-3.5">
+              <div className="rounded-xl border border-border bg-card p-3.5">
                 <div className="flex items-start gap-3">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-bronze-light/50 text-brand-bronze">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-secondary/50 text-brand-bronze">
                     <ImageIcon className="h-4 w-4" />
                   </div>
 
                   <div className="min-w-0">
-                    <p className="text-xs font-semibold uppercase tracking-[0.12em] text-brand-stone">
+                    <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                       Profile image
                     </p>
 
-                    <p className="mt-1 break-all text-xs leading-5 text-brand-charcoal">
+                    <p className="mt-1 break-all text-xs leading-5 text-foreground">
                       {previewImageUrl || "Default avatar using your initials"}
                     </p>
                   </div>
@@ -289,13 +289,13 @@ export default function ProfileForm({
             </CardContent>
           </Card>
 
-          <Card className="gap-0 overflow-hidden border-brand-border bg-white py-0 shadow-sm">
-            <CardHeader className="border-b border-brand-border px-6 py-5">
-              <CardTitle className="text-lg font-semibold text-brand-charcoal">
+          <Card className="gap-0 overflow-hidden border-border bg-card py-0 shadow-sm">
+            <CardHeader className="border-b border-border px-6 py-5">
+              <CardTitle className="text-lg font-semibold text-foreground">
                 Account details
               </CardTitle>
 
-              <CardDescription className="text-sm leading-6 text-brand-stone">
+              <CardDescription className="text-sm leading-6 text-muted-foreground">
                 Update the name and profile image associated with your account.
                 Your email is managed by your sign-in provider.
               </CardDescription>
@@ -306,7 +306,7 @@ export default function ProfileForm({
                 <div className="space-y-2">
                   <Label
                     htmlFor="profile-name"
-                    className="text-sm font-semibold text-brand-charcoal"
+                    className="text-sm font-semibold text-foreground"
                   >
                     <UserRound className="h-4 w-4 text-brand-bronze" />
                     Name
@@ -327,14 +327,14 @@ export default function ProfileForm({
                     aria-describedby={
                       showNameError ? "profile-name-error" : "profile-name-help"
                     }
-                    className="h-11 rounded-xl border-brand-border bg-brand-ivory/30 px-3 text-sm text-brand-charcoal placeholder:text-brand-stone/60 focus-visible:border-brand-bronze focus-visible:ring-brand-bronze/20"
+                    className="h-11 rounded-xl border-border bg-background/30 px-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus-visible:border-brand-bronze focus-visible:ring-brand-bronze/20"
                   />
 
                   {showNameError ? (
                     <p
                       id="profile-name-error"
                       role="alert"
-                      className="flex items-start gap-2 text-xs font-medium text-red-600"
+                      className="flex items-start gap-2 text-xs font-medium text-red-600 dark:text-red-400"
                     >
                       <CircleAlert className="mt-0.5 h-3.5 w-3.5 shrink-0" />
                       {nameError}
@@ -342,7 +342,7 @@ export default function ProfileForm({
                   ) : (
                     <p
                       id="profile-name-help"
-                      className="text-xs leading-5 text-brand-stone"
+                      className="text-xs leading-5 text-muted-foreground"
                     >
                       This name appears on your profile and studio listings.
                     </p>
@@ -352,7 +352,7 @@ export default function ProfileForm({
                 <div className="space-y-2">
                   <Label
                     htmlFor="profile-image"
-                    className="text-sm font-semibold text-brand-charcoal"
+                    className="text-sm font-semibold text-foreground"
                   >
                     <ImageIcon className="h-4 w-4 text-brand-bronze" />
                     Profile image URL
@@ -376,14 +376,14 @@ export default function ProfileForm({
                         ? "profile-image-error"
                         : "profile-image-help"
                     }
-                    className="h-11 rounded-xl border-brand-border bg-brand-ivory/30 px-3 text-sm text-brand-charcoal placeholder:text-brand-stone/60 focus-visible:border-brand-bronze focus-visible:ring-brand-bronze/20"
+                    className="h-11 rounded-xl border-border bg-background/30 px-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus-visible:border-brand-bronze focus-visible:ring-brand-bronze/20"
                   />
 
                   {showImageError ? (
                     <p
                       id="profile-image-error"
                       role="alert"
-                      className="flex items-start gap-2 text-xs font-medium text-red-600"
+                      className="flex items-start gap-2 text-xs font-medium text-red-600 dark:text-red-400"
                     >
                       <CircleAlert className="mt-0.5 h-3.5 w-3.5 shrink-0" />
                       {imageUrlError}
@@ -392,7 +392,7 @@ export default function ProfileForm({
                     <p
                       id="profile-image-error"
                       role="alert"
-                      className="flex items-start gap-2 text-xs font-medium text-amber-700"
+                      className="flex items-start gap-2 text-xs font-medium text-amber-700 dark:text-amber-300"
                     >
                       <TriangleAlert className="mt-0.5 h-3.5 w-3.5 shrink-0" />
                       This image URL could not be loaded. The default avatar is
@@ -402,12 +402,12 @@ export default function ProfileForm({
                     <p
                       id="profile-image-help"
                       aria-live="polite"
-                      className="flex items-start gap-2 text-xs leading-5 text-brand-stone"
+                      className="flex items-start gap-2 text-xs leading-5 text-muted-foreground"
                     >
                       {imageStatus === "loading" ? (
                         <Spinner className="mt-0.5 size-3.5" />
                       ) : (
-                        <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-600" />
+                        <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-600 dark:text-emerald-400" />
                       )}
                       {imageStatus === "loading"
                         ? "Loading image preview..."
@@ -416,7 +416,7 @@ export default function ProfileForm({
                   ) : (
                     <p
                       id="profile-image-help"
-                      className="flex items-start gap-2 text-xs leading-5 text-brand-stone"
+                      className="flex items-start gap-2 text-xs leading-5 text-muted-foreground"
                     >
                       <ImageIcon className="mt-0.5 h-3.5 w-3.5 shrink-0" />
                       No image URL added. Your initials will be used as the
@@ -428,11 +428,11 @@ export default function ProfileForm({
                 <div className="space-y-2">
                   <Label
                     htmlFor="profile-email"
-                    className="text-sm font-semibold text-brand-charcoal"
+                    className="text-sm font-semibold text-foreground"
                   >
                     <Mail className="h-4 w-4 text-brand-bronze" />
                     Email address
-                    <span className="ml-auto rounded-full bg-brand-stone/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-brand-stone">
+                    <span className="ml-auto rounded-full bg-muted-foreground/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
                       Read only
                     </span>
                   </Label>
@@ -446,15 +446,15 @@ export default function ProfileForm({
                       readOnly
                       aria-readonly="true"
                       aria-describedby="profile-email-help"
-                      className="h-11 cursor-not-allowed rounded-xl border-brand-border bg-brand-stone/5 pr-10 text-sm text-brand-stone focus-visible:border-brand-border focus-visible:ring-0"
+                      className="h-11 cursor-not-allowed rounded-xl border-border bg-muted-foreground/5 pr-10 text-sm text-muted-foreground focus-visible:border-border focus-visible:ring-0"
                     />
 
-                    <LockKeyhole className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-brand-stone/70" />
+                    <LockKeyhole className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/70" />
                   </div>
 
                   <p
                     id="profile-email-help"
-                    className="text-xs leading-5 text-brand-stone"
+                    className="text-xs leading-5 text-muted-foreground"
                   >
                     Your email is connected to your sign-in provider and cannot
                     be changed here.
@@ -462,8 +462,8 @@ export default function ProfileForm({
                 </div>
               </CardContent>
 
-              <CardFooter className="flex flex-col items-stretch justify-between gap-3 border-t border-brand-border bg-brand-ivory/50 px-6 py-4 sm:flex-row sm:items-center">
-                <p className="flex items-center gap-2 text-xs leading-5 text-brand-stone">
+              <CardFooter className="flex flex-col items-stretch justify-between gap-3 border-t border-border bg-background/50 px-6 py-4 sm:flex-row sm:items-center">
+                <p className="flex items-center gap-2 text-xs leading-5 text-muted-foreground">
                   <ShieldCheck className="h-4 w-4 shrink-0 text-brand-bronze" />
                   Updates are saved securely through Better Auth.
                 </p>
