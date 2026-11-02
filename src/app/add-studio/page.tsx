@@ -19,6 +19,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { authClient } from "@/lib/auth-client";
 import { notify } from "@/lib/notify";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 
 
 type FormValues = {
@@ -117,6 +118,8 @@ const handleSubmit = async (
 ) => {
   event.preventDefault();
 
+  const token = await getTokenFromClient()
+
   if (isSubmitting) {
     return;
   }
@@ -204,6 +207,7 @@ const handleSubmit = async (
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(studioData),
     });

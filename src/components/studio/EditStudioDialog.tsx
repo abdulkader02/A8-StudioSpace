@@ -26,6 +26,7 @@ import { Textarea } from "@/components/ui/textarea";
 
 import { notify } from "@/lib/notify";
 import type { TStudio } from "@/lib/type/type";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 
 type Props = {
   studio: TStudio;
@@ -102,6 +103,8 @@ export default function EditStudioDialog({ studio, onClose }: Props) {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    const token = await getTokenFromClient()
+
     if (isSubmitting) {
       return;
     }
@@ -166,6 +169,7 @@ export default function EditStudioDialog({ studio, onClose }: Props) {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
+            authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(updatedData),
         },

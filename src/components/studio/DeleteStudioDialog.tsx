@@ -19,10 +19,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { notify } from "@/lib/notify";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 
-const API_URL = (
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000"
-).replace(/\/+$/, "");
 
 type Props = {
   id: string;
@@ -35,6 +33,9 @@ const DeleteStudioDialog = ({ id, title, onDeleted }: Props) => {
   const [open, setOpen] = useState(false);
 
  const handleDeleteStudio = async () => {
+
+  const token = await getTokenFromClient()
+
   if (isDeleting) {
     return;
   }
@@ -44,6 +45,9 @@ const DeleteStudioDialog = ({ id, title, onDeleted }: Props) => {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/studio/${id}`, {
       method: "DELETE",
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
     });
 
     const result = (await response.json()) as {

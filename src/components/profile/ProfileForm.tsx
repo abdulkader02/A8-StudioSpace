@@ -185,9 +185,9 @@ export default function ProfileForm({
                 Account settings
               </div>
 
-              <h1 className="text-3xl font-semibold leading-tight tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+              <h1 className="text-3xl font-semibold leading-tight tracking-tight text-brand-bronze sm:text-4xl lg:text-5xl">
                 Your profile,
-                <span className="block font-serif font-normal italic text-brand-bronze">
+                <span className="block font-serif font-normal italic text-brand-bronze/90">
                   in focus.
                 </span>
               </h1>

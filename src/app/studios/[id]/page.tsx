@@ -29,6 +29,7 @@ import {
   StudioReviews,
   BookingModal,
 } from "@/components/booking/BookingCard";
+import { getTokenFromServer } from "@/lib/getTokenFromServer";
 
 export const dynamic = "force-dynamic";
 
@@ -53,10 +54,14 @@ type StudioResult = { studio: TStudio } | { error: string };
  */
 async function getStudio(id: string): Promise<StudioResult> {
   let response: Response;
+  const token = await getTokenFromServer()
 
   try {
     response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/studio/${id}`, {
       cache: "no-store",
+      headers: {
+        authorization: `Bearer ${token}`
+      }
     });
   } catch (error) {
     return {

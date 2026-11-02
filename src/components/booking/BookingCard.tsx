@@ -34,6 +34,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 
 /* ----------------------------------
    Studio Gallery
@@ -284,6 +285,7 @@ export function BookingModal({
 
 const handleBooking = async (event: FormEvent<HTMLFormElement>) => {
   event.preventDefault();
+  const token = await getTokenFromClient()
 
   if (isSubmitting) return;
 
@@ -349,6 +351,7 @@ const handleBooking = async (event: FormEvent<HTMLFormElement>) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(data),
       }

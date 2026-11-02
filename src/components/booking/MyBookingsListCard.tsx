@@ -19,6 +19,7 @@ import EmptyState from "@/components/shared/EmptyState";
 import { Spinner } from "@/components/ui/spinner";
 import { notify } from "@/lib/notify";
 import type { TBooking, TBookingStatus } from "@/lib/type/booking";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 
 type MyBookingsListProps = {
   initialBookings: TBooking[];
@@ -59,6 +60,9 @@ export default function MyBookingsList({
   }, [receiptBooking]);
 
   const handleCancelBooking = async (bookingId: string) => {
+
+    const token = await getTokenFromClient();
+
     if (cancellingId) {
       return;
     }
@@ -84,6 +88,7 @@ export default function MyBookingsList({
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
+            authorization: `Bearer ${token}`
           },
         },
       );
