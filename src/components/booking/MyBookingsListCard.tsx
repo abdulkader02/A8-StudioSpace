@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
@@ -21,10 +20,6 @@ import { Spinner } from "@/components/ui/spinner";
 import { notify } from "@/lib/notify";
 import type { TBooking, TBookingStatus } from "@/lib/type/booking";
 
-const API_URL = (
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000"
-).replace(/\/+$/, "");
-
 type MyBookingsListProps = {
   initialBookings: TBooking[];
   error?: string;
@@ -37,7 +32,6 @@ export default function MyBookingsList({
   const router = useRouter();
   const [isRefreshing, startRefresh] = useTransition();
 
- 
   const [statusOverrides, setStatusOverrides] = useState<
     Partial<Record<string, TBookingStatus>>
   >({});
@@ -84,12 +78,15 @@ export default function MyBookingsList({
     setCancellingId(bookingId);
 
     try {
-      const response = await fetch(`${API_URL}/booking/${bookingId}/cancel`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/booking/${bookingId}/cancel`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
         },
-      });
+      );
 
       const result = (await response.json()) as {
         success?: boolean;
@@ -107,7 +104,10 @@ export default function MyBookingsList({
 
       notify.success(result?.message || "Booking cancelled successfully.");
     } catch (error) {
-      notify.apiError(error, "Could not cancel this booking. Please try again.");
+      notify.apiError(
+        error,
+        "Could not cancel this booking. Please try again.",
+      );
     } finally {
       setCancellingId(null);
     }
@@ -168,7 +168,6 @@ export default function MyBookingsList({
   return (
     <main className="w-full">
       <div className="mx-auto w-full max-w-7xl border-x border-gray-200/50 px-4 pt-8 pb-16 sm:px-6 sm:pt-10 sm:pb-20 lg:px-8 lg:pt-12 lg:pb-24">
-
         {/* Page Heading */}
         <div className="mb-6 flex flex-col gap-4 sm:mb-7 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
@@ -265,7 +264,6 @@ export default function MyBookingsList({
                   className="group overflow-hidden rounded-xl border border-gray-200/80 bg-white shadow-sm transition hover:border-gray-300 hover:shadow-md sm:rounded-2xl"
                 >
                   <div className="flex flex-col gap-3 p-3 sm:gap-4 sm:p-4 md:flex-row md:items-center">
-
                     {/* Studio Image */}
                     <div className="relative h-40 w-full shrink-0 overflow-hidden rounded-lg bg-gray-100 sm:h-44 md:h-24 md:w-28 lg:h-28 lg:w-32">
                       {booking.imageUrl ? (
@@ -285,12 +283,11 @@ export default function MyBookingsList({
 
                     {/* Booking Details */}
                     <div className="min-w-0 flex-1">
-
                       {/* Title and Status */}
                       <div className="flex min-w-0 flex-wrap items-center gap-2">
                         <span
                           className={`inline-flex w-fit shrink-0 items-center rounded-full border px-2.5 py-1 text-xs font-medium ${getStatusStyle(
-                            booking.status
+                            booking.status,
                           )}`}
                         >
                           <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-current" />
@@ -332,7 +329,9 @@ export default function MyBookingsList({
                       {booking.location && (
                         <p className="mt-2 flex min-w-0 items-start gap-1.5 text-xs leading-5 text-gray-500 sm:text-sm">
                           <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-bronze" />
-                          <span className="break-words">{booking.location}</span>
+                          <span className="break-words">
+                            {booking.location}
+                          </span>
                         </p>
                       )}
                     </div>
@@ -340,9 +339,7 @@ export default function MyBookingsList({
                     {/* Price and Actions */}
                     <div className="flex shrink-0 flex-col gap-3 border-t border-gray-100 pt-3 sm:flex-row sm:items-center sm:justify-between md:w-44 md:flex-col md:items-end md:justify-center md:border-l md:border-t-0 md:pl-4 md:pt-0 lg:w-52">
                       <div className="md:text-right">
-                        <p className="text-xs text-gray-400">
-                          Total amount
-                        </p>
+                        <p className="text-xs text-gray-400">Total amount</p>
 
                         <p className="mt-0.5 text-xl font-bold tracking-tight text-brand-bronze sm:text-2xl">
                           {formatCurrency(booking.total, booking.currency)}
@@ -464,7 +461,7 @@ export default function MyBookingsList({
                   <span className="text-gray-500">Status</span>
                   <span
                     className={`rounded-full border px-2.5 py-1 text-xs font-semibold ${getStatusStyle(
-                      receiptBooking.status
+                      receiptBooking.status,
                     )}`}
                   >
                     {receiptBooking.status}
@@ -478,7 +475,7 @@ export default function MyBookingsList({
                     <span className="text-right font-medium text-gray-900">
                       {formatCurrency(
                         receiptBooking.subtotal,
-                        receiptBooking.currency
+                        receiptBooking.currency,
                       )}
                     </span>
                   </div>
@@ -488,7 +485,7 @@ export default function MyBookingsList({
                     <span className="text-right font-medium text-gray-900">
                       {formatCurrency(
                         receiptBooking.deposit,
-                        receiptBooking.currency
+                        receiptBooking.currency,
                       )}
                     </span>
                   </div>
@@ -498,7 +495,7 @@ export default function MyBookingsList({
                     <span className="text-right text-lg font-bold text-gray-900">
                       {formatCurrency(
                         receiptBooking.total,
-                        receiptBooking.currency
+                        receiptBooking.currency,
                       )}
                     </span>
                   </div>

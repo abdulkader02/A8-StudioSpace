@@ -105,10 +105,11 @@ export default function SignUpPage() {
     setSocialLoading(provider);
 
     try {
-      const { error } = await authClient.signIn.social({
+      const {error } = await authClient.signIn.social({
         provider,
         callbackURL: "/",
       });
+      // console.log(data);
 
       if (error) {
         notify.error(error.message || `${provider} sign-in failed.`);

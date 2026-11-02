@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Suspense, useEffect, useMemo, useState } from "react";
@@ -29,10 +28,6 @@ import {
   RotateCcw,
 } from "lucide-react";
 
-const API_URL = (
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000"
-).replace(/\/+$/, "");
-
 const categories = [
   { name: "All Spaces", icon: Sparkles },
   { name: "Photo Studio", icon: Camera },
@@ -47,7 +42,6 @@ const categories = [
 
 export default function AllStudiosPage() {
   return (
-
     <Suspense fallback={<StudiosPageFallback />}>
       <StudiosContent />
     </Suspense>
@@ -82,9 +76,12 @@ function StudiosContent() {
       try {
         setLoading(true);
 
-        const response = await fetch(`${API_URL}/studios`, {
-          cache: "no-store",
-        });
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/studios`,
+          {
+            cache: "no-store",
+          },
+        );
 
         if (!response.ok) {
           throw new Error(
@@ -161,10 +158,7 @@ function StudiosContent() {
         studio.category?.toLowerCase().includes(searchText) ||
         studio.description?.toLowerCase().includes(searchText);
 
-      const studioLocation = [
-        studio.location?.city,
-        studio.location?.area,
-      ]
+      const studioLocation = [studio.location?.city, studio.location?.area]
         .filter(Boolean)
         .join(" ")
         .toLowerCase();
@@ -186,10 +180,7 @@ function StudiosContent() {
           studioPrice <= priceLimit);
 
       return (
-        matchesKeyword &&
-        matchesLocation &&
-        matchesCategory &&
-        matchesPrice
+        matchesKeyword && matchesLocation && matchesCategory && matchesPrice
       );
     });
   }, [studios, keyword, location, category, maxPrice]);

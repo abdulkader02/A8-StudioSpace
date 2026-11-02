@@ -32,10 +32,6 @@ import {
 
 export const dynamic = "force-dynamic";
 
-const API_URL = (
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000"
-).replace(/\/+$/, "");
-
 const formatPrice = (amount: number) => amount.toLocaleString("en-US");
 
 function CurrencyMark({ currency }: { currency: string }) {
@@ -59,7 +55,7 @@ async function getStudio(id: string): Promise<StudioResult> {
   let response: Response;
 
   try {
-    response = await fetch(`${API_URL}/studio/${id}`, {
+    response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/studio/${id}`, {
       cache: "no-store",
     });
   } catch (error) {

@@ -20,9 +20,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { authClient } from "@/lib/auth-client";
 import { notify } from "@/lib/notify";
 
-const API_URL = (
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000"
-).replace(/\/+$/, "");
 
 type FormValues = {
   title: string;
@@ -203,7 +200,7 @@ const handleSubmit = async (
   };
 
   try {
-    const response = await fetch(`${API_URL}/add-studio`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/add-studio`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

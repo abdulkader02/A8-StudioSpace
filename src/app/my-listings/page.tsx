@@ -21,10 +21,6 @@ import { getErrorMessage } from "@/lib/utils";
 
 import type { TStudio } from "@/lib/type/type";
 
-const API_URL = (
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000"
-).replace(/\/+$/, "");
-
 type ListingStudio = TStudio & {
   name?: string;
   email?: string;
@@ -68,12 +64,13 @@ export default function MyListingsPage() {
       try {
         setLoading(true);
         setFetchError("");
+        
 
-        // GET /my-listings/:email is already scoped to the signed-in user;
-        // no cookies/credentials are involved, and the API's CORS policy
-        // (Access-Control-Allow-Origin: *) rejects credentialed requests.
+        // Fetch the user's listings from the API
+
+
         const response = await fetch(
-          `${API_URL}/my-listings/${encodeURIComponent(user.email)}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/my-listings/${encodeURIComponent(user.email)}`,
           { cache: "no-store" },
         );
 

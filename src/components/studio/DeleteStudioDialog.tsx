@@ -42,7 +42,7 @@ const DeleteStudioDialog = ({ id, title, onDeleted }: Props) => {
   setIsDeleting(true);
 
   try {
-    const response = await fetch(`${API_URL}/studio/${id}`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/studio/${id}`, {
       method: "DELETE",
     });
 

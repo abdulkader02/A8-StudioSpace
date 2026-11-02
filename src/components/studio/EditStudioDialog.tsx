@@ -27,10 +27,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { notify } from "@/lib/notify";
 import type { TStudio } from "@/lib/type/type";
 
-const API_URL = (
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000"
-).replace(/\/+$/, "");
-
 type Props = {
   studio: TStudio;
   onClose: () => void;
@@ -65,10 +61,7 @@ const amenitiesList = [
   "Power Backup",
 ];
 
-export default function EditStudioDialog({
-  studio,
-  onClose,
-}: Props) {
+export default function EditStudioDialog({ studio, onClose }: Props) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [form, setForm] = useState({
@@ -106,9 +99,7 @@ export default function EditStudioDialog({
   };
 
   // Submit
-  const handleSubmit = async (
-    event: React.FormEvent<HTMLFormElement>
-  ) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (isSubmitting) {
@@ -118,13 +109,7 @@ export default function EditStudioDialog({
     setIsSubmitting(true);
 
     try {
-      const {
-        _id,
-        city,
-        area,
-        imageUrl,
-        ...studioData
-      } = form;
+      const { _id, city, area, imageUrl, ...studioData } = form;
 
       const price = Number(form.price);
       const capacity = Number(form.capacity);
@@ -149,7 +134,6 @@ export default function EditStudioDialog({
         throw new Error("Please check the deposit and rating values.");
       }
 
-  
       const trimmedImageUrl = imageUrl.trim();
       const existingImages = (studio.imageUrls ?? []).filter(Boolean);
 
@@ -174,15 +158,18 @@ export default function EditStudioDialog({
         imageUrls,
       };
 
-        //FETCHING
+      //FETCHING
 
-      const response = await fetch(`${API_URL}/studio/${_id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/studio/${_id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedData),
         },
-        body: JSON.stringify(updatedData),
-      });
+      );
 
       const result = (await response.json()) as {
         success?: boolean;
@@ -234,10 +221,7 @@ export default function EditStudioDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-5 p-5 sm:p-7"
-        >
+        <form onSubmit={handleSubmit} className="space-y-5 p-5 sm:p-7">
           {/* Host Information */}
           <section className="rounded-xl border border-brand-border bg-white p-5">
             <h3 className="mb-4 font-semibold text-brand-charcoal">
@@ -284,9 +268,7 @@ export default function EditStudioDialog({
                 <Input
                   id="title"
                   value={form.title}
-                  onChange={(event) =>
-                    update("title", event.target.value)
-                  }
+                  onChange={(event) => update("title", event.target.value)}
                   required
                 />
               </div>
@@ -296,9 +278,7 @@ export default function EditStudioDialog({
 
                 <Select
                   value={form.category}
-                  onValueChange={(value) =>
-                    update("category", value ?? "")
-                  }
+                  onValueChange={(value) => update("category", value ?? "")}
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select category" />
@@ -306,10 +286,7 @@ export default function EditStudioDialog({
 
                   <SelectContent>
                     {categories.map((category) => (
-                      <SelectItem
-                        key={category}
-                        value={category}
-                      >
+                      <SelectItem key={category} value={category}>
                         {category}
                       </SelectItem>
                     ))}
@@ -318,18 +295,14 @@ export default function EditStudioDialog({
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="capacity">
-                  Guest Capacity
-                </Label>
+                <Label htmlFor="capacity">Guest Capacity</Label>
 
                 <Input
                   id="capacity"
                   type="number"
                   min="1"
                   value={form.capacity}
-                  onChange={(event) =>
-                    update("capacity", event.target.value)
-                  }
+                  onChange={(event) => update("capacity", event.target.value)}
                   required
                 />
               </div>
@@ -344,9 +317,7 @@ export default function EditStudioDialog({
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="grid gap-2">
-                <Label htmlFor="price">
-                  Hourly Price (USD)
-                </Label>
+                <Label htmlFor="price">Hourly Price (USD)</Label>
 
                 <Input
                   id="price"
@@ -354,17 +325,13 @@ export default function EditStudioDialog({
                   min="0"
                   step="0.01"
                   value={form.price}
-                  onChange={(event) =>
-                    update("price", event.target.value)
-                  }
+                  onChange={(event) => update("price", event.target.value)}
                   required
                 />
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="securityDeposit">
-                  Security Deposit (USD)
-                </Label>
+                <Label htmlFor="securityDeposit">Security Deposit (USD)</Label>
 
                 <Input
                   id="securityDeposit"
@@ -373,18 +340,13 @@ export default function EditStudioDialog({
                   step="0.01"
                   value={form.securityDeposit}
                   onChange={(event) =>
-                    update(
-                      "securityDeposit",
-                      event.target.value
-                    )
+                    update("securityDeposit", event.target.value)
                   }
                 />
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="rating">
-                  Rating (out of 5)
-                </Label>
+                <Label htmlFor="rating">Rating (out of 5)</Label>
 
                 <Input
                   id="rating"
@@ -393,9 +355,7 @@ export default function EditStudioDialog({
                   max="5"
                   step="0.1"
                   value={form.rating}
-                  onChange={(event) =>
-                    update("rating", event.target.value)
-                  }
+                  onChange={(event) => update("rating", event.target.value)}
                 />
               </div>
             </div>
@@ -414,9 +374,7 @@ export default function EditStudioDialog({
                 <Input
                   id="city"
                   value={form.city}
-                  onChange={(event) =>
-                    update("city", event.target.value)
-                  }
+                  onChange={(event) => update("city", event.target.value)}
                   required
                 />
               </div>
@@ -427,9 +385,7 @@ export default function EditStudioDialog({
                 <Input
                   id="area"
                   value={form.area}
-                  onChange={(event) =>
-                    update("area", event.target.value)
-                  }
+                  onChange={(event) => update("area", event.target.value)}
                   required
                 />
               </div>
@@ -450,9 +406,7 @@ export default function EditStudioDialog({
                 type="url"
                 placeholder="https://example.com/image.jpg"
                 value={form.imageUrl}
-                onChange={(event) =>
-                  update("imageUrl", event.target.value)
-                }
+                onChange={(event) => update("imageUrl", event.target.value)}
               />
             </div>
           </section>
@@ -465,8 +419,7 @@ export default function EditStudioDialog({
 
             <div className="grid gap-3 sm:grid-cols-2">
               {amenitiesList.map((amenity) => {
-                const selected =
-                  form.amenities.includes(amenity);
+                const selected = form.amenities.includes(amenity);
 
                 return (
                   <button
@@ -480,9 +433,7 @@ export default function EditStudioDialog({
                     }`}
                   >
                     <span className="flex h-5 w-5 items-center justify-center rounded border border-brand-bronze">
-                      {selected && (
-                        <Check className="h-3 w-3" />
-                      )}
+                      {selected && <Check className="h-3 w-3" />}
                     </span>
 
                     {amenity}
@@ -501,9 +452,7 @@ export default function EditStudioDialog({
             <Textarea
               id="description"
               value={form.description}
-              onChange={(event) =>
-                update("description", event.target.value)
-              }
+              onChange={(event) => update("description", event.target.value)}
               placeholder="Describe your studio..."
               className="min-h-32"
               required

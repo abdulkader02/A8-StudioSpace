@@ -1,4 +1,3 @@
-
 import Link from "next/link";
 import Image from "next/image";
 import logo from "@/assets/logo.png";
@@ -6,7 +5,7 @@ import logo from "@/assets/logo.png";
 const exploreLinks = [
   { name: "All Workspaces", href: "/studios" },
   { name: "How It Works", href: "#how-it-works" },
-  { name: "Booking History", href: "/bookings" },
+  { name: "Booking History", href: "/my-bookings" },
 ];
 
 const categoryLinks = [

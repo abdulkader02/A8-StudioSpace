@@ -9,10 +9,6 @@ import type { TStudio } from "@/lib/type/type";
 import MyBookingsListCard from "@/components/booking/MyBookingsListCard";
 import EmptyState from "@/components/shared/EmptyState";
 
-const API_URL = (
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000"
-).replace(/\/+$/, "");
-
 type BookingsResponse =
   | TBooking[]
   | { bookings?: TBooking[]; data?: TBooking[] };
@@ -49,7 +45,7 @@ const formatLocation = (location?: TStudio["location"]) => {
 
 const getStudios = async (): Promise<TStudio[]> => {
   try {
-    const response = await fetch(`${API_URL}/studios`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/studios`, {
       cache: "no-store",
     });
 
@@ -106,7 +102,7 @@ const MyBookingsPage = async () => {
 
   try {
     const response = await fetch(
-      `${API_URL}/my-bookings/${encodeURIComponent(user.email)}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/my-bookings/${encodeURIComponent(user.email)}`,
       { cache: "no-store" },
     );
 

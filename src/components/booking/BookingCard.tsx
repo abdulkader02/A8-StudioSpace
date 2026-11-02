@@ -35,10 +35,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-const API_URL = (
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000"
-).replace(/\/+$/, "");
-
 /* ----------------------------------
    Studio Gallery
 ---------------------------------- */
@@ -347,13 +343,16 @@ export function BookingModal({
         },
       };
 
-      const response = await fetch(`${API_URL}/booking`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/booking`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
         },
-        body: JSON.stringify(data),
-      });
+      );
 
       const result = (await response.json()) as {
         success?: boolean;
@@ -374,7 +373,10 @@ export function BookingModal({
     } catch (error) {
       console.error("Booking error:", error);
 
-      notify.apiError(error, "Could not create this booking. Please try again.");
+      notify.apiError(
+        error,
+        "Could not create this booking. Please try again.",
+      );
     } finally {
       setIsSubmitting(false);
     }
